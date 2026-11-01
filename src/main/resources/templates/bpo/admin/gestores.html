@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Gestores de Contenido')}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-bpo-contenidos')}"></div>
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <div class="dashboard-page-header animate-fade-in">
+                    <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+                        <div>
+                            <h1 class="dashboard-page-title">Gestores de Contenido</h1>
+                            <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-top:var(--spacing-xs);">Administra los gestores, sus subcarpetas y publicaciones</p>
+                        </div>
+                        <a href="/admin/bpo/gestores/nuevo" th:href="@{/admin/bpo/gestores/nuevo}" class="btn btn-primary" style="display:flex;align-items:center;gap:0.5rem;">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                            Nuevo Gestor
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card animate-slide-up">
+                    <div style="padding:var(--spacing-xl);">
+                        <div th:if="${#lists.isEmpty(gestores)}" style="text-align:center;padding:3rem 1rem;color:var(--text-muted);">
+                            <svg style="width:3rem;height:3rem;margin:0 auto 1rem;opacity:0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                            <p style="font-size:1rem;font-weight:500;margin-bottom:0.5rem;">No hay gestores creados</p>
+                            <p style="font-size:0.875rem;">Crea tu primer gestor de contenido para comenzar</p>
+                            <a href="/admin/bpo/gestores/nuevo" th:href="@{/admin/bpo/gestores/nuevo}" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:0.5rem;margin-top:1rem;">
+                                + Nuevo Gestor
+                            </a>
+                        </div>
+                        <div th:unless="${#lists.isEmpty(gestores)}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;">
+                            <div th:each="g : ${gestores}"
+                                 style="display:flex;flex-direction:column;background:var(--bg-body);border:1px solid var(--border-default);border-radius:0.75rem;text-decoration:none;transition:box-shadow 0.2s,border-color 0.2s;"
+                                 onmouseover="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'"
+                                 onmouseout="this.style.borderColor='';this.style.boxShadow=''">
+                                <a th:href="@{/admin/bpo/gestores/{id}(id=${g.codigo})}" style="display:flex;align-items:center;gap:1rem;flex:1;text-decoration:none;min-width:0;padding:1.25rem 1.25rem 0.75rem 1.25rem;">
+                                    <div style="width:2.5rem;height:2.5rem;border-radius:0.5rem;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <svg style="width:1.25rem;height:1.25rem;color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                                    </div>
+                                    <div style="min-width:0;flex:1;">
+                                        <div style="font-weight:600;font-size:1rem;color:var(--text-primary);" th:text="${g.nombre}">Nombre</div>
+                                        <div style="font-size:0.8125rem;color:var(--text-muted);margin-top:0.125rem;">Gestionar subcarpetas y publicaciones</div>
+                                    </div>
+                                    <svg style="width:1rem;height:1rem;color:var(--text-muted);flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                                </a>
+                                <div style="display:flex;gap:0.5rem;padding:0.5rem 1.25rem 1rem 1.25rem;border-top:1px solid var(--border-default);margin-top:0.25rem;justify-content:flex-end;">
+                                    <a th:href="@{/admin/bpo/gestores/{id}/editar(id=${g.codigo})}"
+                                       style="display:inline-flex;align-items:center;gap:0.25rem;background:none;border:1px solid var(--text-secondary);color:var(--text-secondary);border-radius:0.375rem;padding:0.375rem 0.75rem;cursor:pointer;font-size:0.75rem;font-weight:500;text-decoration:none;transition:all 0.15s;">
+                                        <svg style="width:0.75rem;height:0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                                        Editar
+                                    </a>
+                                    <a th:href="@{/admin/bpo/gestores/{id}/compartir(id=${g.codigo})}"
+                                       style="display:inline-flex;align-items:center;gap:0.25rem;background:none;border:1px solid var(--color-accento);color:var(--color-accento);border-radius:0.375rem;padding:0.375rem 0.75rem;cursor:pointer;font-size:0.75rem;font-weight:500;text-decoration:none;transition:all 0.15s;">
+                                        <svg style="width:0.75rem;height:0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"/></svg>
+                                        Compartir
+                                    </a>
+                                    <form th:action="@{/admin/bpo/gestores/{id}/eliminar(id=${g.codigo})}" method="post" style="display:inline;margin:0;" onsubmit="return confirm('¿Eliminar gestor \'' + '${g.nombre}' + '\'? Se eliminarán todas sus subcarpetas y publicaciones.');">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <button type="submit" style="display:inline-flex;align-items:center;gap:0.25rem;background:none;border:1px solid var(--color-danger);color:var(--color-danger);border-radius:0.375rem;padding:0.375rem 0.75rem;cursor:pointer;font-size:0.75rem;font-weight:500;transition:all 0.15s;">
+                                            <svg style="width:0.75rem;height:0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

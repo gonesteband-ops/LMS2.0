@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Incidentes de Seguridad')}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-incidentes')}"></div>
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;padding:var(--spacing-lg);">
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 class="dashboard-page-title">Incidentes de Seguridad</h1>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-top:var(--spacing-xs);">Detección de ataques de fuerza bruta y brechas de seguridad</p>
+                    </div>
+                </div>
+
+                <div class="card animate-slide-up">
+                    <div style="padding:var(--spacing-lg) var(--spacing-xl);border-bottom:1px solid var(--border-default);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;">
+                        <div style="display:flex;gap:0.5rem;">
+                            <button class="btn btn-sm filter-btn active" data-estado="todas" onclick="filtrarIncidentes('todas', this)" style="background:var(--color-accento);color:#fff;border:none;border-radius:0.375rem;padding:0.375rem 0.75rem;cursor:pointer;font-size:0.8125rem;">Todas</button>
+                            <button class="btn btn-sm filter-btn" data-estado="PENDIENTE" onclick="filtrarIncidentes('PENDIENTE', this)" style="background:var(--bg-body);color:var(--text-secondary);border:1px solid var(--border-default);border-radius:0.375rem;padding:0.375rem 0.75rem;cursor:pointer;font-size:0.8125rem;">Pendientes</button>
+                            <button class="btn btn-sm filter-btn" data-estado="RESUELTO" onclick="filtrarIncidentes('RESUELTO', this)" style="background:var(--bg-body);color:var(--text-secondary);border:1px solid var(--border-default);border-radius:0.375rem;padding:0.375rem 0.75rem;cursor:pointer;font-size:0.8125rem;">Resueltos</button>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" onclick="cargarIncidentes()" style="display:inline-flex;align-items:center;gap:0.375rem;padding:0.375rem 0.75rem;font-size:0.8125rem;border:1px solid var(--border-default);border-radius:0.375rem;cursor:pointer;background:var(--bg-body);">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/></svg>
+                            Refrescar
+                        </button>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <div id="incidentes-container">
+                            <p style="color:var(--text-muted);font-size:0.875rem;">Cargando incidentes...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script>
+        var filtroActual = 'todas';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarIncidentes();
+        });
+
+        function cargarIncidentes() {
+            var container = document.getElementById('incidentes-container');
+            container.innerHTML = '<p style="color:var(--text-muted);font-size:0.875rem;">Cargando incidentes...</p>';
+            var url = '/api/v1/incidentes';
+            if (filtroActual !== 'todas') url += '?estado=' + filtroActual;
+
+            fetch(url)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data || data.length === 0) {
+                        container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);"><p>No hay incidentes registrados.</p></div>';
+                        return;
+                    }
+                    var html = '<table style="width:100%;border-collapse:collapse;font-size:0.875rem;">';
+                    html += '<thead><tr style="background:var(--bg-body);border-bottom:2px solid var(--border-default);">';
+                    html += '<th style="padding:0.625rem 0.75rem;text-align:left;font-weight:600;color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">Tipo</th>';
+                    html += '<th style="padding:0.625rem 0.75rem;text-align:left;font-weight:600;color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">Nivel</th>';
+                    html += '<th style="padding:0.625rem 0.75rem;text-align:left;font-weight:600;color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">Descripción</th>';
+                    html += '<th style="padding:0.625rem 0.75rem;text-align:left;font-weight:600;color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">IP Origen</th>';
+                    html += '<th style="padding:0.625rem 0.75rem;text-align:left;font-weight:600;color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">Estado</th>';
+                    html += '<th style="padding:0.625rem 0.75rem;text-align:left;font-weight:600;color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">Fecha</th>';
+                    html += '<th style="padding:0.625rem 0.75rem;text-align:center;font-weight:600;color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">Acción</th>';
+                    html += '</tr></thead><tbody>';
+                    data.forEach(function(i) {
+                        var estadoColor = i.estado === 'RESUELTO' ? '#15803d' : (i.estado === 'PENDIENTE' ? '#b91c1c' : 'var(--text-muted)');
+                        var nivelColor = i.nivelRiesgo === 'ALTO' ? '#b91c1c' : (i.nivelRiesgo === 'MEDIO' ? '#d97706' : '#6366f1');
+                        html += '<tr style="border-bottom:1px solid var(--border-default);">';
+                        html += '<td style="padding:0.625rem 0.75rem;font-weight:500;">' + escapeHtml(i.tipo || '—') + '</td>';
+                        html += '<td style="padding:0.625rem 0.75rem;"><span style="display:inline-block;padding:0.125rem 0.5rem;border-radius:0.25rem;font-size:0.75rem;font-weight:600;color:' + nivelColor + ';background:' + nivelColor.replace('#','rgba(') + ',0.08);">' + escapeHtml(i.nivelRiesgo || '—') + '</span></td>';
+                        html += '<td style="padding:0.625rem 0.75rem;">' + escapeHtml(i.descripcion || '—') + '</td>';
+                        html += '<td style="padding:0.625rem 0.75rem;font-family:monospace;font-size:0.8125rem;">' + escapeHtml(i.ipOrigen || '—') + '</td>';
+                        html += '<td style="padding:0.625rem 0.75rem;"><span style="display:inline-block;padding:0.125rem 0.5rem;border-radius:0.25rem;font-size:0.75rem;font-weight:600;color:' + estadoColor + ';background:' + estadoColor.replace('#','rgba(') + ',0.08);">' + escapeHtml(i.estado || '—') + '</span></td>';
+                        html += '<td style="padding:0.625rem 0.75rem;font-size:0.8125rem;color:var(--text-muted);">' + (i.fechaDeteccion ? new Date(i.fechaDeteccion).toLocaleString('es-CL') : '—') + '</td>';
+                        html += '<td style="padding:0.625rem 0.75rem;text-align:center;">';
+                        if (i.estado !== 'RESUELTO') {
+                            html += '<button onclick="resolverIncidente(\'' + i.id + '\')" style="background:none;border:1px solid #15803d;color:#15803d;border-radius:0.375rem;padding:0.25rem 0.625rem;cursor:pointer;font-size:0.75rem;font-weight:500;">Resolver</button>';
+                        } else {
+                            html += '<span style="font-size:0.75rem;color:#15803d;">✓ Resuelto</span>';
+                        }
+                        html += '</td></tr>';
+                    });
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+                })
+                .catch(function(e) {
+                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--color-danger);"><p>Error al cargar incidentes.</p></div>';
+                });
+        }
+
+        function filtrarIncidentes(estado, btn) {
+            filtroActual = estado;
+            document.querySelectorAll('.filter-btn').forEach(function(b) { b.style.background = 'var(--bg-body)'; b.style.color = 'var(--text-secondary)'; b.style.border = '1px solid var(--border-default)'; });
+            if (btn) { btn.style.background = 'var(--color-accento)'; btn.style.color = '#fff'; btn.style.border = 'none'; }
+            cargarIncidentes();
+        }
+
+        function resolverIncidente(id) {
+            var csrfMeta = document.querySelector('meta[name="_csrf"]');
+            var csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+            var headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+            if (csrfMeta && csrfHeader) { headers[csrfHeader.getAttribute('content')] = csrfMeta.getAttribute('content'); }
+
+            fetch('/api/v1/incidentes/' + id + '/estado?estado=RESUELTO', { method: 'PUT', headers: headers })
+                .then(function(r) {
+                    if (r.ok) { cargarIncidentes(); }
+                    else { alert('Error al resolver el incidente'); }
+                })
+                .catch(function(e) { alert('Error de conexión'); });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '—';
+            var d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+    </script>
+</body>
+</html>

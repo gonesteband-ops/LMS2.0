@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head>
+    <title>Usuarios Fragment</title>
+</head>
+<body>
+<div th:fragment="usuarios-list">
+    <!-- Mensaje de éxito -->
+    <div th:if="${mensajeExito != null}"
+         style="padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-md);border-radius:var(--border-radius-lg);background:rgba(22,163,74,0.06);border:1px solid rgba(22,163,74,0.2);color:#166534;font-size:var(--font-size-xs);font-weight:500;display:flex;align-items:center;gap:var(--spacing-sm);">
+        <svg style="width:1rem;height:1rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span th:text="${mensajeExito}">Éxito</span>
+    </div>
+
+    <!-- Reporte carga masiva -->
+    <div th:if="${reporteMasivo != null}" style="padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-md);border-radius:var(--border-radius-lg);background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.2);font-size:var(--font-size-xs);">
+        <div style="font-weight:600;color:var(--text-primary);margin-bottom:0.25rem;">Reporte de carga masiva</div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <span style="color:#166534;" th:text="'✅ ' + ${reporteMasivo.exitosos} + ' creados'">0 creados</span>
+            <span style="color:#b45309;" th:text="'⚠️ ' + ${reporteMasivo.duplicados} + ' duplicados'">0 duplicados</span>
+            <span style="color:#dc2626;" th:text="'❌ ' + ${reporteMasivo.errores} + ' errores'">0 errores</span>
+        </div>
+        <div th:if="${!reporteMasivo.detalleDuplicados.isEmpty()}" style="margin-top:0.25rem;color:var(--text-secondary);">
+            <span th:each="dup : ${reporteMasivo.detalleDuplicados}" th:text="${dup + ' '}" style="display:inline;font-family:monospace;font-size:0.625rem;">dup</span>
+        </div>
+        <div th:if="${!reporteMasivo.detalleErrores.isEmpty()}" style="margin-top:0.25rem;color:#dc2626;">
+            <div th:each="err : ${reporteMasivo.detalleErrores}" th:text="${err}" style="font-size:0.625rem;">err</div>
+        </div>
+    </div>
+
+    <div th:if="${errorMasivo != null}"
+         style="padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-md);border-radius:var(--border-radius-lg);background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:#dc2626;font-size:var(--font-size-xs);font-weight:500;">
+        <span th:text="${errorMasivo}">Error</span>
+    </div>
+
+    <div th:if="${usuarios != null && !usuarios.isEmpty()}"
+         style="overflow-x:auto;">
+
+        <!-- Barra de acciones masivas -->
+        <div id="bulk-actions-bar"
+             style="display:none;align-items:center;justify-content:space-between;padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-md);background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:var(--border-radius-lg);">
+            <span style="font-size:var(--font-size-xs);font-weight:600;color:var(--text-primary);" id="selected-count">
+                0 seleccionados
+            </span>
+            <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+                <form id="bulk-delete-form"
+                      hx-post="/hx/admin/usuarios/eliminar-masivo"
+                      hx-target="#usuarios-list"
+                      hx-swap="innerHTML"
+                      hx-confirm="¿Está seguro de eliminar los usuarios seleccionados? Esta acción no se puede revertir."
+                      style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                    <div id="bulk-ids-container"></div>
+                    <input type="hidden" name="motivo" value="Eliminación masiva desde administración">
+                    <button type="submit" class="btn btn-danger btn-sm"
+                            style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:0.25rem 0.75rem;font-size:var(--font-size-xs);border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);color:#dc2626;border-radius:var(--border-radius-lg);cursor:pointer;">
+                        <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        Eliminar seleccionados
+                    </button>
+                </form>
+                <button type="button" class="btn btn-ghost btn-sm"
+                        onclick="deseleccionarTodos()"
+                        style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:0.25rem 0.75rem;font-size:var(--font-size-xs);cursor:pointer;border:none;background:none;color:var(--text-muted);">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+
+        <table style="width:100%;border-collapse:collapse;font-size:var(--font-size-sm);">
+            <thead>
+                <tr style="background:var(--bg-body);border-bottom:2px solid var(--border-default);">
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;font-weight:600;color:var(--text-secondary);white-space:nowrap;width:2.5rem;">
+                        <input type="checkbox"
+                               id="select-all"
+                               onchange="seleccionarTodos(this.checked)"
+                               style="cursor:pointer;width:1rem;height:1rem;accent-color:var(--color-accento);">
+                    </th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;width:8rem;">RUT</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Nombre</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Email</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Roles</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;font-weight:600;color:var(--text-secondary);white-space:nowrap;width:5rem;">Estado</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Consentimiento</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;font-weight:600;color:var(--text-secondary);white-space:nowrap;">MFA</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Registro</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;font-weight:600;color:var(--text-secondary);white-space:nowrap;width:7rem;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="usuario : ${usuarios}"
+                    style="border-bottom:1px solid var(--border-default);transition:background 0.15s;"
+                    onmouseover="this.style.background='var(--bg-body)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;">
+                        <input type="checkbox"
+                               class="user-checkbox"
+                               th:value="${usuario.id}"
+                               onchange="actualizarSeleccion()"
+                               style="cursor:pointer;width:1rem;height:1rem;accent-color:var(--color-accento);">
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);white-space:nowrap;">
+                        <code style="font-size:var(--font-size-xs);color:var(--text-secondary);font-family:monospace;"
+                              th:text="${usuario.rut != null ? #strings.replace(#strings.replace(usuario.rut, '.', ''), ' ', '') : '—'}">RUT</code>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);">
+                        <span style="font-weight:500;color:var(--text-primary);" th:text="${usuario.nombreCompleto}">Nombre</span>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);">
+                        <code style="font-size:var(--font-size-xs);color:var(--text-secondary);font-family:monospace;"
+                              th:text="${usuario.email}">email</code>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);">
+                        <div style="display:flex;flex-wrap:wrap;gap:0.25rem;">
+                            <span th:each="rol : ${usuario.roles}"
+                                  style="display:inline-flex;align-items:center;padding:0.125rem 0.5rem;font-size:0.625rem;font-weight:600;border-radius:var(--border-radius-xl);white-space:nowrap;text-transform:uppercase;"
+                                  th:classappend="${rol.nombre == 'SUPERADMIN'} ? 'badge badge-warning' : (rol.nombre == 'ADMIN' ? 'badge badge-danger' : (rol.nombre == 'INSTRUCTOR' ? 'badge badge-info' : 'badge badge-default'))"
+                                  th:text="${rol.nombre}">ROL</span>
+                            <span th:if="${usuario.roles == null || usuario.roles.isEmpty()}"
+                                  style="color:var(--text-muted);font-size:var(--font-size-xs);">Sin roles</span>
+                        </div>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;">
+                        <span th:if="${usuario.estado == 'Activo'}"
+                              style="display:inline-flex;align-items:center;gap:0.25rem;color:#166534;font-weight:600;font-size:var(--font-size-xs);">
+                            <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#16a34a;display:inline-block;"></span>
+                            Activo
+                        </span>
+                        <span th:if="${usuario.estado == 'Bloqueado'}"
+                              style="display:inline-flex;align-items:center;gap:0.25rem;color:#b45309;font-weight:600;font-size:var(--font-size-xs);">
+                            <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#f59e0b;display:inline-block;"></span>
+                            Bloqueado
+                        </span>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;">
+                        <span th:if="${usuario.consentimientoOtorgado}"
+                              style="display:inline-flex;align-items:center;gap:0.25rem;color:#166534;font-weight:600;font-size:var(--font-size-xs);">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Sí
+                        </span>
+                        <span th:unless="${usuario.consentimientoOtorgado}"
+                              style="color:var(--text-muted);font-size:var(--font-size-xs);">No</span>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;">
+                        <span th:if="${usuario.mfaHabilitado}"
+                              style="display:inline-flex;align-items:center;gap:0.25rem;color:#6b21a8;font-weight:600;font-size:var(--font-size-xs);">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+                            Activo
+                        </span>
+                        <span th:unless="${usuario.mfaHabilitado}"
+                              style="color:var(--text-muted);font-size:var(--font-size-xs);">—</span>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-muted);font-size:var(--font-size-xs);white-space:nowrap;"
+                        th:text="${#temporals.format(usuario.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;white-space:nowrap;">
+                        <div style="display:flex;align-items:center;justify-content:center;gap:0.25rem;">
+                            <!-- Botón Editar -->
+                            <button type="button"
+                                    th:data-usuario-id="${usuario.id}"
+                                    onclick="abrirEdicion(this.dataset.usuarioId, this)"
+                                    style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.25rem 0.5rem;font-size:0.625rem;font-weight:500;border:1px solid rgba(59,130,246,0.3);background:rgba(59,130,246,0.08);color:#2563eb;border-radius:var(--border-radius-lg);cursor:pointer;transition:all 0.15s;white-space:nowrap;"
+                                    onmouseover="this.style.background='rgba(59,130,246,0.15)'"
+                                    onmouseout="this.style.background='rgba(59,130,246,0.08)'">
+                                <svg style="width:0.75rem;height:0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+                                </svg>
+                                Editar
+                            </button>
+                            <!-- Botón Eliminar -->
+                            <button type="button"
+                                    th:data-usuario-id="${usuario.id}"
+                                    th:data-usuario-nombre="${usuario.nombreCompleto}"
+                                    onclick="confirmarEliminar(this.dataset.usuarioId, this.dataset.usuarioNombre)"
+                                    style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.25rem 0.5rem;font-size:0.625rem;font-weight:500;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);color:#dc2626;border-radius:var(--border-radius-lg);cursor:pointer;transition:all 0.15s;white-space:nowrap;"
+                                    onmouseover="this.style.background='rgba(239,68,68,0.15)'"
+                                    onmouseout="this.style.background='rgba(239,68,68,0.08)'">
+                                <svg style="width:0.75rem;height:0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                                Eliminar
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Contenedor para formulario de edición inline -->
+        <div id="editar-usuario-container" style="margin-top:var(--spacing-md);"></div>
+
+        <!-- Paginación -->
+        <div th:if="${usuarios.totalPages > 1}"
+             style="display:flex;align-items:center;justify-content:center;gap:var(--spacing-sm);padding:var(--spacing-lg) 0 0;border-top:1px solid var(--border-default);margin-top:var(--spacing-lg);">
+            <span style="font-size:var(--font-size-xs);color:var(--text-muted);"
+                  th:text="'Página ' + (usuarios.number + 1) + ' de ' + usuarios.totalPages + ' (' + usuarios.totalElements + ' usuarios)'">
+                Paginación
+            </span>
+        </div>
+    </div>
+    <div th:if="${usuarios == null || usuarios.isEmpty()}"
+         style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-2xl) 0;color:var(--text-muted);">
+        <svg style="width:3rem;height:3rem;margin-bottom:var(--spacing-lg);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+        <p style="font-size:var(--font-size-sm);font-weight:500;">No hay usuarios registrados</p>
+    </div>
+</div>
+</body>
+</html>

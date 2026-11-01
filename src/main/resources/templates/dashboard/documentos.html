@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Documentos')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='documentos')}"></div>
+
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 class="dashboard-page-title">Documentos</h1>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-top:var(--spacing-xs);">Gestión de documentos legales con almacenamiento seguro en MinIO</p>
+                    </div>
+                </div>
+
+                <!-- Drag & Drop Zone (solo ADMIN/INSTRUCTOR/SUPERADMIN) -->
+                <div class="drop-zone animate-slide-up" id="upload-zone"
+                     sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')"
+                     style="margin-bottom:var(--spacing-xl);cursor:pointer;"
+                     ondragover="event.preventDefault();this.classList.add('active');document.getElementById('upload-text').textContent='Suelta los archivos aquí';"
+                     ondragleave="this.classList.remove('active');document.getElementById('upload-text').textContent='Arrastra y suelta tus documentos aquí o haz clic para seleccionar';"
+                     ondrop="handleDrop(event);this.classList.remove('active');"
+                     onclick="document.getElementById('file-input').click();">
+                    <input type="file" name="file" id="file-input" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.jpg,.png" onchange="handleFiles(this.files)" multiple>
+                    <svg style="width:2.5rem;height:2.5rem;margin:0 auto var(--spacing-md);color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                    <p id="upload-text" style="font-size:var(--font-size-sm);color:var(--text-secondary);font-weight:500;margin:0;">Arrastra y suelta tus documentos aquí o haz clic para seleccionar</p>
+                    <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--spacing-xs);">PDF, DOCX, XLSX, JPG, PNG — Máx 50 MB</p>
+                    <div id="upload-indicator" style="display:none;margin-top:var(--spacing-md);">
+                        <div style="display:flex;align-items:center;justify-content:center;gap:var(--spacing-sm);">
+                            <div class="spinner"></div>
+                            <span style="font-size:var(--font-size-sm);color:var(--color-accento);font-weight:500;">Subiendo documentos...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Form (solo ADMIN/INSTRUCTOR/SUPERADMIN) -->
+                <div class="card animate-slide-up" style="margin-bottom:var(--spacing-xl);" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                    <div style="padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                        <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);">Subir Documento (Formulario)</h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <form id="upload-form" enctype="multipart/form-data">
+                            <div style="margin-bottom:var(--spacing-lg);">
+                                <label for="file-input-form" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">Seleccionar archivo</label>
+                                <input type="file" id="file-input-form" name="file"
+                                       style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);font-size:var(--font-size-sm);color:var(--text-primary);"
+                                       onchange="document.getElementById('file-name-form').textContent = this.files.length ? this.files[0].name : 'Ningún archivo seleccionado';">
+                                <p id="file-name-form" style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--spacing-xs);">Ningún archivo seleccionado</p>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                Subir Documento
+                            </button>
+                            <div id="upload-indicator-form" style="display:none;margin-top:var(--spacing-sm);">
+                                <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+                                    <div class="spinner"></div>
+                                    <span style="font-size:var(--font-size-sm);color:var(--color-accento);font-weight:500;">Subiendo...</span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Document List -->
+                <div class="card animate-fade-in">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                        <span id="user-role-admin-doc" style="display:none" sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')"></span>
+                            <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);">Mis Documentos</h2>
+                        <span style="font-size:var(--font-size-xs);color:var(--text-muted);" id="doc-count">Cargando...</span>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <div id="document-list" style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">
+                            <svg style="width:3rem;height:3rem;margin:0 auto var(--spacing-md);color:var(--text-muted);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                            <p style="font-size:var(--font-size-sm);">Cargando documentos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            var uploadQueue = [];
+
+            window.handleDrop = function(e) {
+                e.preventDefault();
+                var files = e.dataTransfer.files;
+                handleFiles(files);
+            };
+
+            window.handleFiles = function(files) {
+                if (!files.length) return;
+                for (var i = 0; i < files.length; i++) {
+                    uploadQueue.push(files[i]);
+                }
+                processQueue();
+            };
+
+            function processQueue() {
+                if (!uploadQueue.length) return;
+                var file = uploadQueue.shift();
+                uploadFile(file, function() {
+                    processQueue();
+                });
+            }
+
+            function uploadFile(file, cb) {
+                var indicator = document.getElementById('upload-indicator');
+                indicator.style.display = 'block';
+                var formData = new FormData();
+                formData.append('file', file);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/v1/documentos/upload', true);
+                xhr.onload = function() {
+                    indicator.style.display = 'none';
+                    if (xhr.status === 200 || xhr.status === 201) {
+                        showToast('Documento "' + file.name + '" subido exitosamente', 'success');
+                        loadDocuments();
+                    } else {
+                        var msg = 'Error al subir "' + file.name + '"';
+                        try { var d = JSON.parse(xhr.responseText); if (d.mensaje) msg = d.mensaje; } catch(e) {}
+                        showToast(msg, 'error');
+                    }
+                    if (cb) cb();
+                };
+                xhr.onerror = function() {
+                    indicator.style.display = 'none';
+                    showToast('Error de conexión al subir "' + file.name + '"', 'error');
+                    if (cb) cb();
+                };
+                xhr.send(formData);
+            }
+
+            // Subir documento (solo si el formulario existe — visible solo para ADMIN/INSTRUCTOR/SUPERADMIN)
+            var uploadForm = document.getElementById('upload-form');
+            if (uploadForm) {
+                uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var input = document.getElementById('file-input-form');
+                if (!input.files.length) {
+                    showToast('Seleccione un archivo para subir', 'warning');
+                    return;
+                }
+                var indicator = document.getElementById('upload-indicator-form');
+                indicator.style.display = 'block';
+                var formData = new FormData(this);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/v1/documentos/upload', true);
+                xhr.onload = function() {
+                    indicator.style.display = 'none';
+                    if (xhr.status === 200 || xhr.status === 201) {
+                        showToast('Documento subido exitosamente', 'success');
+                        input.value = '';
+                        document.getElementById('file-name-form').textContent = 'Ningún archivo seleccionado';
+                        loadDocuments();
+                    } else {
+                        var msg = 'Error al subir el documento';
+                        try { var d = JSON.parse(xhr.responseText); if (d.mensaje) msg = d.mensaje; } catch(e) {}
+                        showToast(msg, 'error');
+                    }
+                };
+                xhr.onerror = function() {
+                    indicator.style.display = 'none';
+                    showToast('Error de conexión', 'error');
+                };
+                xhr.send(formData);
+                });
+            }
+
+            function loadDocuments() {
+                var list = document.getElementById('document-list');
+                var count = document.getElementById('doc-count');
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/documentos', true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var data = JSON.parse(xhr.responseText);
+                        count.textContent = data.length + ' documentos';
+                        if (data.length > 0) {
+                            var esAdminDoc = document.getElementById('user-role-admin-doc');
+                            let html = '<div style="overflow-x:auto;"><table class="table-base" style="width:100%;">' +
+                                '<thead><tr style="border-bottom:2px solid var(--border-default);">' +
+                                (esAdminDoc ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Código</th>' : '') +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Nombre</th>' +
+                                (esAdminDoc ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Tamaño</th>' : '') +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Fecha</th>' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Acciones</th></tr></thead><tbody>';
+                            data.forEach(function(doc) {
+                                var codigo = doc.codigo || (doc.id ? doc.id.substring(0, 8) + '…' : '—');
+                                var mt = (doc.mimeType || '').toLowerCase();
+                                var esVideo = mt.indexOf('video/') === 0;
+                                var acciones = '<button type="button" class="btn-firmar-doc" data-doc-id="' + (doc.id || '') + '" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;margin-right:8px;background:var(--color-accento);color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:500;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>Firmar</button> <a href="/api/v1/documentos/' + (doc.id || '') + '/stream" class="btn btn-ghost btn-sm" style="text-decoration:none;" target="_blank"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg> Descargar</a>';
+                                if (esVideo) {
+                                    acciones += ' <a href="/cursos/reproductor?documentoId=' + (doc.id || '') + '" class="btn btn-accent btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;">' +
+                                        '<svg style="width:0.875rem;height:0.875rem;" fill="currentColor" viewBox="0 0 24 24"><path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg> Ver Video</a>';
+                                }
+                                html += '<tr style="border-bottom:1px solid var(--border-default);transition:background 0.2s;" onmouseover="this.style.background=\'var(--bg-body)\'" onmouseout="this.style.background=\'transparent\'">' +
+                                    (esAdminDoc ? '<td style="padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--color-accento);font-size:var(--font-size-xs);font-family:monospace;">' + escapeHtml(codigo) + '</td>' : '') +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);font-weight:500;color:var(--text-primary);font-size:var(--font-size-sm);">' +
+                                        (esVideo ? '<span class="badge badge-warning" style="margin-right:0.5rem;font-size:0.7rem;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9.75A2.25 2.25 0 0016.5 16.5V7.5A2.25 2.25 0 0014.25 5.25H4.5A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg> Video</span>' : '') +
+                                        escapeHtml(doc.nombreOriginal || doc.fileName || '—') + '</td>' +
+                                    (esAdminDoc ? '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-sm);">' + formatBytes(doc.tamanoBytes || doc.tamanio || doc.size || 0) + '</td>' : '') +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-xs);">' + (doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('es-CL') : '—') + '</td>' +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);white-space:nowrap;">' + acciones + '</td></tr>';
+                            });
+                            html += '</tbody></table></div>';
+                            list.innerHTML = html;
+                            // Verificar firmas existentes y marcar como Firmado
+                            list.querySelectorAll('.btn-firmar-doc').forEach(function(btn) {
+                                var docId = btn.getAttribute('data-doc-id');
+                                fetch('/api/v1/documentos/' + docId + '/firmado')
+                                    .then(function(r) { return r.json(); })
+                                    .then(function(data) {
+                                        if (data.firmado) {
+                                            btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Firmado';
+                                            btn.style.background = 'var(--color-success)';
+                                            btn.disabled = false;
+                                            btn.classList.remove('btn-firmar-doc');
+                                        }
+                                    })
+                                    .catch(function() {});
+                            });
+                        } else {
+                            list.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">' +
+                                '<svg style="width:3rem;height:3rem;margin:0 auto var(--spacing-md);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>' +
+                                '<p style="font-size:var(--font-size-sm);">No hay documentos aún. Arrastra archivos para subirlos.</p></div>';
+                        }
+                    }
+                };
+                xhr.send();
+            }
+
+            function formatBytes(bytes) {
+                if (!bytes || bytes === 0) return '0 B';
+                var k = 1024, sizes = ['B', 'KB', 'MB', 'GB'], i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            }
+
+            function escapeHtml(t) { if (!t) return ''; var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+
+            loadDocuments();
+        })();
+    
+
+        // Handler para boton Firmar documento
+        document.addEventListener('click', function(e) {
+            var btn = e.target.closest('.btn-firmar-doc');
+            if (!btn) return;
+            e.preventDefault();
+            var docId = btn.getAttribute('data-doc-id');
+            if (!docId) return;
+            btn.disabled = true;
+            btn.innerHTML = 'Firmando...';
+            fetch('/api/v1/documentos/' + docId + '/hash')
+                .then(function(r) { if (!r.ok) throw new Error('Error al obtener hash'); return r.json(); })
+                .then(function(data) {
+                    return fetch('/api/v1/firmas', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ documentoId: docId, hashDocumento: data.hashDocumento })
+                    });
+                })
+                .then(function(r) { if (!r.ok) throw new Error('Error al firmar'); return r.json(); })
+                .then(function() {
+                    btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Firmado';
+                    btn.style.background = 'var(--color-success)';
+                    btn.disabled = false;
+                    btn.classList.remove('btn-firmar-doc');
+                })
+                .catch(function(err) {
+                    alert('Error al firmar: ' + err.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg> Firmar';
+                });
+        });
+
+</script>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

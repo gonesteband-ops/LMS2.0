@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Admin Usuarios')}">
+    <title>Administración de Usuarios - LMS LegalTech</title>
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-usuarios')}"></div>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <!-- Mobile nav pills -->
+                <div style="display:none;" class="mobile-nav-pills">
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);">
+                        <a href="/dashboard" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                            Panel
+                        </a>
+                        <a href="/cursos" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                            Cursos
+                        </a>
+                        <a href="/dashboard/documentos" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5"/></svg>
+                            Docs
+                        </a>
+                        <a href="/consentimiento" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                            Cons.
+                        </a>
+                        <a href="/dashboard/firmas" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                            Firmas
+                        </a>
+                        <a href="/dashboard/perfil" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                            Perfil
+                        </a>
+                        <a href="/dashboard/exportaciones" class="pills-link" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12"/></svg>
+                            Export
+                        </a>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);margin-top:var(--spacing-xs);">
+                        <a href="/admin/usuarios" class="pills-link" style="background:rgba(245,158,11,0.08);color:rgba(180,83,9,1);border-color:rgba(245,158,11,0.2);">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                            Usuarios
+                        </a>
+                        <a href="/admin/roles" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75"/></svg>
+                            Roles
+                        </a>
+                        <a href="/admin/auditoria" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                            Auditoría
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="dashboard-page-header animate-fade-in">
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+                        <div style="width:2.5rem;height:2.5rem;border-radius:var(--border-radius-xl);background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <svg style="width:1.25rem;height:1.25rem;color:rgba(180,83,9,1);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                        </div>
+                        <div>
+                            <h1 class="dashboard-page-title">Administración de Usuarios</h1>
+                            <p style="margin-top:var(--spacing-xs);font-size:var(--font-size-sm);color:var(--text-secondary);">Gestione usuarios, roles y permisos del sistema</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crear Usuario (formulario colapsable) -->
+                <div class="card animate-slide-up" style="margin-bottom:var(--spacing-xl);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);background:var(--bg-body);cursor:pointer;"
+                         onclick="var f=document.getElementById('crear-usuario-form');f.style.display=f.style.display==='none'?'block':'none'">
+                        <h2 style="font-size:1rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1.25rem;height:1.25rem;color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            Crear Nuevo Usuario
+                        </h2>
+                        <span style="font-size:var(--font-size-xs);color:var(--text-muted);">Click para expandir</span>
+                    </div>
+                    <div id="crear-usuario-form" style="display:none;"
+                         hx-get="/hx/admin/usuarios/crear"
+                         hx-trigger="load"
+                         hx-swap="innerHTML">
+                        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-2xl) 0;color:var(--text-muted);">
+                            <div class="spinner" style="margin-bottom:var(--spacing-lg);"></div>
+                            <p style="font-size:var(--font-size-sm);font-weight:500;">Cargando formulario...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carga Masiva de Usuarios -->
+                <div class="card animate-slide-up" style="margin-bottom:var(--spacing-xl);">
+                    <div style="padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);background:var(--bg-body);">
+                        <h2 style="font-size:1rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1.25rem;height:1.25rem;color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                            </svg>
+                            Carga Masiva de Usuarios
+                        </h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin-bottom:var(--spacing-sm);">
+                            Sube un archivo CSV con los usuarios a crear. Cada fila debe tener las columnas separadas por <code style="font-size:var(--font-size-xs);">;</code>:
+                        </p>
+                        <div style="font-size:var(--font-size-xs);color:var(--text-secondary);margin-bottom:var(--spacing-md);background:var(--bg-body);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);padding:var(--spacing-sm) var(--spacing-md);line-height:1.7;">
+                            <code style="display:block;"><strong style="color:var(--color-accento);">rut</strong>; <strong style="color:var(--color-accento);">nombreCompleto</strong>; <strong style="color:var(--color-accento);">email</strong>; <strong style="color:var(--color-accento);">password</strong>; <strong style="color:var(--color-accento);">rol</strong></code>
+                            <code style="display:block;color:var(--text-muted);">11.111.111-1; Juan Pérez; juan@example.cl; Password123!; ESTUDIANTE</code>
+                        </div>
+                        <div style="display:flex;gap:var(--spacing-md);align-items:center;flex-wrap:wrap;">
+                            <form hx-post="/hx/admin/usuarios/masivo" hx-target="#usuarios-list" hx-swap="innerHTML" hx-encoding="multipart/form-data" style="display:flex;gap:var(--spacing-sm);align-items:center;flex:1;">
+                                <input type="file" name="archivo" accept=".csv" required
+                                       style="flex:1;font-size:var(--font-size-xs);">
+                                <button type="submit" class="btn btn-accent btn-sm" style="display:inline-flex;align-items:center;gap:0.25rem;font-size:var(--font-size-xs);padding:0.375rem 0.75rem;">
+                                    Subir CSV
+                                </button>
+                            </form>
+                            <a href="/hx/admin/usuarios/plantilla-masiva"
+                               style="display:inline-flex;align-items:center;gap:0.375rem;font-size:var(--font-size-xs);color:var(--color-accento);text-decoration:none;">
+                                <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                                Descargar plantilla
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usuarios List -->
+                <div class="card animate-slide-up">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);background:var(--bg-body);">
+                        <h2 style="font-size:1rem;font-weight:600;color:var(--text-primary);">Usuarios del Sistema</h2>
+                        <span style="font-size:var(--font-size-xs);color:var(--text-muted);">Activos (no eliminados)</span>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <div id="usuarios-list"
+                             hx-get="/hx/admin/usuarios"
+                             hx-trigger="load"
+                             hx-swap="innerHTML">
+                            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-2xl) 0;color:var(--text-muted);">
+                                <div class="spinner" style="margin-bottom:var(--spacing-lg);"></div>
+                                <p style="font-size:var(--font-size-sm);font-weight:500;">Cargando usuarios...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script>
+        // ============================================================
+        // Funciones para la gestión de usuarios (Usuarios del Sistema)
+        // ============================================================
+
+        /**
+         * Selecciona o deselecciona todos los checkboxes de usuarios.
+         */
+        function seleccionarTodos(checked) {
+            document.querySelectorAll('.user-checkbox').forEach(function(cb) {
+                cb.checked = checked;
+            });
+            actualizarSeleccion();
+        }
+
+        /**
+         * Deselecciona todos los checkboxes.
+         */
+        function deseleccionarTodos() {
+            document.querySelectorAll('.user-checkbox').forEach(function(cb) {
+                cb.checked = false;
+            });
+            document.getElementById('select-all').checked = false;
+            actualizarSeleccion();
+        }
+
+        /**
+         * Actualiza la barra de acciones masivas basada en los checkboxes seleccionados.
+         */
+        function actualizarSeleccion() {
+            var checkboxes = document.querySelectorAll('.user-checkbox:checked');
+            var bar = document.getElementById('bulk-actions-bar');
+            var countSpan = document.getElementById('selected-count');
+            var container = document.getElementById('bulk-ids-container');
+
+            if (checkboxes.length > 0) {
+                bar.style.display = 'flex';
+                countSpan.textContent = checkboxes.length + ' seleccionado(s)';
+                container.innerHTML = '';
+                checkboxes.forEach(function(cb) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids';
+                    input.value = cb.value;
+                    container.appendChild(input);
+                });
+            } else {
+                bar.style.display = 'none';
+                container.innerHTML = '';
+            }
+        }
+
+        /**
+         * Confirma y ejecuta la eliminación individual de un usuario.
+         */
+        function confirmarEliminar(id, nombre) {
+            if (confirm('¿Está seguro de eliminar al usuario ' + nombre + '? Esta acción no se puede revertir.')) {
+                htmx.ajax('POST', '/hx/admin/usuarios/eliminar/' + id, {
+                    target: '#usuarios-list',
+                    swap: 'innerHTML',
+                    values: { motivo: 'Eliminación manual de ' + nombre }
+                });
+            }
+        }
+
+        /**
+         * Abre el formulario de edición para un usuario.
+         * Hace una petición GET vía HTMX para cargar el formulario en el contenedor.
+         */
+        function abrirEdicion(usuarioId, btn) {
+            htmx.ajax('GET', '/hx/admin/usuarios/editar/' + usuarioId, {
+                target: '#editar-usuario-container',
+                swap: 'innerHTML'
+            });
+            setTimeout(function() {
+                var container = document.getElementById('editar-usuario-container');
+                if (container) {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
+
+        /**
+         * Cancela la edición actual y limpia el contenedor.
+         */
+        function cancelarEdicion() {
+            var container = document.getElementById('editar-usuario-container');
+            if (container) {
+                container.innerHTML = '';
+            }
+        }
+
+        /**
+         * Alterna visibilidad del campo de contraseña (ojito).
+         */
+        function togglePasswordVisibilidad(inputId, btn) {
+            var input = document.getElementById(inputId);
+            if (!input) return;
+            var isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            var eyeOpen = btn.querySelector('.eye-open');
+            var eyeClosed = btn.querySelector('.eye-closed');
+            if (eyeOpen) eyeOpen.style.display = isPassword ? 'none' : '';
+            if (eyeClosed) eyeClosed.style.display = isPassword ? '' : 'none';
+        }
+
+    </script>
+</body>
+</html>

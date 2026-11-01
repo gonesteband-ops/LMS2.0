@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Compartir Gestor')}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-bpo-contenidos')}"></div>
+        <main class="dashboard-content">
+            <div style="max-width:720px;margin:0 auto;padding:var(--spacing-lg);">
+                <div style="margin-bottom:1.5rem;font-size:0.875rem;color:var(--text-muted);">
+                    <a href="/admin/bpo/gestores" th:href="@{/admin/bpo/gestores}" style="color:var(--color-accento);text-decoration:none;">Gestores</a>
+                    / Compartir Gestor
+                </div>
+
+                <h1 style="font-size:1.5rem;font-weight:600;margin-bottom:1.5rem;">Compartir <span th:text="${gestor.nombre}">Gestor</span></h1>
+
+                <!-- Compartir individual -->
+                <div class="card" style="margin-bottom:var(--spacing-xl);">
+                    <div style="padding:var(--spacing-lg) var(--spacing-xl);border-bottom:1px solid var(--border-default);background:var(--bg-body);">
+                        <h2 style="font-size:1rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1.25rem;height:1.25rem;color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                            Compartir individual
+                        </h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <div th:if="${mensajeExito}" style="padding:0.75rem 1rem;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:0.375rem;color:#15803d;font-size:0.875rem;margin-bottom:1rem;" th:text="${mensajeExito}">Éxito</div>
+                        <div th:if="${error}" style="padding:0.75rem 1rem;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:0.375rem;color:#b91c1c;font-size:0.875rem;margin-bottom:1rem;" th:text="${error}">Error</div>
+                        <form th:action="@{/admin/bpo/gestores/{id}/compartir(id=${gestor.codigo})}" method="post"
+                              style="display:flex;flex-direction:column;gap:1.25rem;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <div style="display:flex;flex-direction:column;gap:0.375rem;">
+                                <label style="font-weight:500;font-size:0.875rem;">RUT o email del usuario</label>
+                                <div style="display:flex;gap:0.75rem;">
+                                    <input type="text" name="usuarioId" required
+                                           placeholder="Ej: 16.478.280-8 o usuario@correo.cl"
+                                           style="flex:1;padding:0.5rem 0.75rem;border:1px solid var(--border-default);border-radius:0.375rem;font-size:0.9375rem;">
+                                    <button type="submit" class="btn btn-primary">Compartir</button>
+                                </div>
+                                <span style="font-size:0.75rem;color:var(--text-muted);">Acepta UUID, RUT (con o sin puntos) o email</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Carga masiva -->
+                <div class="card" style="margin-bottom:var(--spacing-xl);" sec:authorize="hasAnyRole('SUPERADMIN')">
+                    <div style="padding:var(--spacing-lg) var(--spacing-xl);border-bottom:1px solid var(--border-default);background:var(--bg-body);">
+                        <h2 style="font-size:1rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1.25rem;height:1.25rem;color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg>
+                            Carga masiva (CSV)
+                        </h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <form th:action="@{/api/v1/bpo/gestores/{id}/compartir-masivo(id=${gestor.id})}" method="post" enctype="multipart/form-data"
+                              style="display:flex;flex-direction:column;gap:1.25rem;">
+                            <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;border:2px dashed var(--border-default);border-radius:0.5rem;background:var(--bg-body);">
+                                <svg style="width:1.5rem;height:1.5rem;color:var(--text-muted);flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                                <input type="file" name="archivo" accept=".csv" style="flex:1;font-size:0.875rem;">
+                            </div>
+                            <p style="font-size:0.75rem;color:var(--text-muted);margin:0;">Formato: CSV con una columna "usuarioId" (UUID, RUT o email). <a href="/api/v1/plantilla-inscripcion" style="color:var(--color-accento);">Descargar plantilla</a></p>
+                            <button type="submit" class="btn btn-accent" style="align-self:flex-start;">Subir y compartir</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Usuarios asignados -->
+                <div class="card">
+                    <div style="padding:var(--spacing-lg) var(--spacing-xl);border-bottom:1px solid var(--border-default);background:var(--bg-body);">
+                        <h2 style="font-size:1rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1.25rem;height:1.25rem;color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                            Usuarios con acceso
+                        </h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <div th:if="${#lists.isEmpty(asignados)}" style="text-align:center;padding:1rem;color:var(--text-muted);font-size:0.875rem;">
+                            No hay usuarios asignados a este gestor.
+                        </div>
+                        <div th:unless="${#lists.isEmpty(asignados)}" style="display:flex;flex-direction:column;gap:0.5rem;">
+                            <div th:each="a : ${asignados}"
+                                 style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.75rem;background:var(--bg-body);border-radius:0.375rem;border:1px solid var(--border-default);">
+                                <div style="display:flex;align-items:center;gap:0.75rem;">
+                                    <div style="width:2rem;height:2rem;border-radius:50%;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;color:var(--color-accento);font-size:0.75rem;font-weight:600;" th:text="${#strings.substring(a.usuario.email, 0, 2).toUpperCase()}">AB</div>
+                                    <div>
+                                        <div style="font-weight:500;font-size:0.8125rem;color:var(--text-primary);" th:text="${a.usuario.nombreCompleto}">Nombre</div>
+                                        <div style="font-size:0.75rem;color:var(--text-muted);" th:text="${a.usuario.email}">email</div>
+                                    </div>
+                                </div>
+                                <form th:action="@{/admin/bpo/gestores/{gid}/compartir/{uid}/remover(gid=${gestor.codigo},uid=${a.usuario.id})}" method="post" style="display:inline;" onsubmit="return confirm('¿Revocar acceso a ' + '${a.usuario.nombreCompleto}' + '?');">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" style="background:none;border:1px solid var(--color-danger);color:var(--color-danger);border-radius:0.375rem;padding:0.25rem 0.625rem;cursor:pointer;font-size:0.75rem;font-weight:500;">Revocar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

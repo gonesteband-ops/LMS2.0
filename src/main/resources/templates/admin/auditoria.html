@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Auditoría')}">
+    <title>Auditoría del Sistema - LMS LegalTech</title>
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-auditoria')}"></div>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <!-- Mobile nav pills -->
+                <div style="display:none;" class="mobile-nav-pills">
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);">
+                        <a href="/dashboard" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                            Panel
+                        </a>
+                        <a href="/cursos" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                            Cursos
+                        </a>
+                        <a href="/dashboard/documentos" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5"/></svg>
+                            Docs
+                        </a>
+                        <a href="/consentimiento" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                            Cons.
+                        </a>
+                        <a href="/dashboard/firmas" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                            Firmas
+                        </a>
+                        <a href="/dashboard/perfil" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                            Perfil
+                        </a>
+                        <a href="/dashboard/exportaciones" class="pills-link" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12"/></svg>
+                            Export
+                        </a>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);margin-top:var(--spacing-xs);">
+                        <a href="/admin/usuarios" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                            Usuarios
+                        </a>
+                        <a href="/admin/roles" class="pills-link">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75"/></svg>
+                            Roles
+                        </a>
+                        <a href="/admin/auditoria" class="pills-link" style="background:rgba(245,158,11,0.08);color:rgba(180,83,9,1);border-color:rgba(245,158,11,0.2);">
+                            <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                            Auditoría
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="dashboard-page-header animate-fade-in">
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+                        <div style="width:2.5rem;height:2.5rem;border-radius:var(--border-radius-xl);background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <svg style="width:1.25rem;height:1.25rem;color:rgba(180,83,9,1);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                        </div>
+                        <div>
+                            <h1 class="dashboard-page-title">Auditoría del Sistema</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="card animate-slide-up" style="margin-bottom:var(--spacing-xl);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);background:var(--bg-body);">
+                        <h2 style="font-size:1rem;font-weight:600;color:var(--text-primary);">Filtros de Búsqueda</h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-lg);">
+                            <div style="width:100%;max-width:14rem;">
+                                <label for="categoria-evento" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">Categoría</label>
+                                <div style="position:relative;">
+                                    <select id="categoria-evento"
+                                            style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);font-size:var(--font-size-sm);color:var(--text-primary);transition:all 0.2s;outline:none;appearance:none;"
+                                            onchange="
+                                                var cat = this.value;
+                                                if (cat === 'TODOS') {
+                                                    document.getElementById('tipo-evento-select').value = '';
+                                                    htmx.ajax('GET', '/hx/admin/auditoria', {target: '#audit-list', swap: 'innerHTML'});
+                                                } else {
+                                                    htmx.ajax('GET', '/hx/admin/auditoria/categoria/' + cat + '/opciones-tipos', {target: '#tipo-evento-container', swap: 'innerHTML'});
+                                                    htmx.ajax('GET', '/hx/admin/auditoria/categoria/' + cat, {target: '#audit-list', swap: 'innerHTML'});
+                                                }"
+                                            onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+                                            onblur="this.style.borderColor='var(--border-default)';this.style.boxShadow='none'">
+                                        <option value="TODOS">Todas las categorías</option>
+                                        <option value="SEGURIDAD">Seguridad</option>
+                                        <option value="USUARIOS">Usuarios</option>
+                                        <option value="ROLES">Roles</option>
+                                        <option value="CONSENTIMIENTO">Consentimiento</option>
+                                        <option value="FIRMAS">Firmas</option>
+                                        <option value="CURSOS">Cursos</option>
+                                        <option value="EVALUACIONES">Evaluaciones</option>
+                                        <option value="DOCUMENTOS">Documentos</option>
+                                        <option value="SCORM">SCORM</option>
+                                        <option value="INSCRIPCIONES">Inscripciones</option>
+                                        <option value="EXPORTACIONES">Exportaciones</option>
+                                        <option value="NOTIFICACIONES">Notificaciones</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="width:100%;max-width:16rem;">
+                                <label for="tipo-evento-select" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">Tipo de Evento</label>
+                                <div id="tipo-evento-container" style="position:relative;">
+                                    <select id="tipo-evento-select"
+                                            style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);font-size:var(--font-size-sm);color:var(--text-primary);transition:all 0.2s;outline:none;appearance:none;"
+                                            onchange="if(this.value) htmx.ajax('GET', '/hx/admin/auditoria/tipo/' + this.value, {target: '#audit-list', swap: 'innerHTML'}); else htmx.ajax('GET', '/hx/admin/auditoria', {target: '#audit-list', swap: 'innerHTML'});"
+                                            onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+                                            onblur="this.style.borderColor='var(--border-default)';this.style.boxShadow='none'">
+                                        <option value="">Todas las categorías</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Buscador en tiempo real -->
+                            <div style="width:100%;max-width:18rem;margin-left:auto;">
+                                <label for="buscador-auditoria" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">
+                                    <svg style="width:0.875rem;height:0.875rem;vertical-align:middle;margin-right:4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                                    Buscar
+                                </label>
+                                <input type="text" id="buscador-auditoria"
+                                       style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);font-size:var(--font-size-sm);color:var(--text-primary);transition:all 0.2s;outline:none;"
+                                       placeholder="Buscar por código, RUT, email o ID..."
+                                       hx-get="/hx/admin/auditoria/buscar"
+                                       hx-trigger="keyup changed delay:300ms"
+                                       hx-target="#audit-list"
+                                       hx-swap="innerHTML"
+                                       name="q"
+                                       autocomplete="off"
+                                       onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+                                       onblur="this.style.borderColor='var(--border-default)';this.style.boxShadow='none'">
+                                <span style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--spacing-xs);display:block;">Busca por código (DOC001), RUT (12.345.678-9), email o ID parcial</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Eventos -->
+                <div class="card animate-fade-in">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);background:var(--bg-body);">
+                        <h2 style="font-size:1rem;font-weight:600;color:var(--text-primary);">Eventos de Auditoría</h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                         <div id="audit-list">
+                             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-2xl) 0;color:var(--text-muted);">
+                                <svg style="width:3rem;height:3rem;margin-bottom:var(--spacing-lg);color:var(--text-muted);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                                <p style="font-size:var(--font-size-sm);font-weight:500;">Cargando eventos de auditoría...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof htmx !== 'undefined') {
+                htmx.ajax('GET', '/hx/admin/auditoria', {target: '#audit-list', swap: 'innerHTML'});
+            } else {
+                document.getElementById('audit-list').innerHTML =
+                    '<div style="text-align:center;padding:2rem;color:var(--text-muted);">' +
+                    '<p>Error al cargar eventos (HTMX no disponible)</p></div>';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(titulo='Aviso Legal')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <main style="max-width:48rem;margin:0 auto;padding:calc(var(--header-height) + var(--spacing-xl)) var(--spacing-md) var(--spacing-2xl);">
+        <h1>Aviso Legal</h1>
+        <p style="color:var(--text-muted);">Última actualización: Julio 2026</p>
+        <section style="margin-top:var(--spacing-xl);">
+            <h2>Información General</h2>
+            <p>Este sitio web es operado por LMS LegalTech. El acceso y uso del portal web atribuye la condición de usuario e implica la aceptación de las disposiciones contenidas en este aviso legal.</p>
+        </section>
+        <section style="margin-top:var(--spacing-lg);">
+            <h2>Leyes Aplicables</h2>
+            <p>Este sistema cumple con la <strong>Ley 19.799</strong> sobre documentación electrónica, firma electrónica y servicios de certificación, y la <strong>Ley 21.719</strong> de Protección de Datos Personales de la República de Chile.</p>
+        </section>
+        <section style="margin-top:var(--spacing-lg);">
+            <h2>Confidencialidad</h2>
+            <p>Los datos personales almacenados en la plataforma son tratados con estricta confidencialidad y bajo las medidas de seguridad técnicas y organizativas adecuadas para evitar su alteración, pérdida o acceso no autorizado.</p>
+        </section>
+        <section style="margin-top:var(--spacing-lg);">
+            <h2>Contacto del DPO</h2>
+            <p>Delegado de Protección de Datos: <strong>dpo@lms.cl</strong></p>
+            <p>Tiempo de respuesta estimado: 48 horas hábiles.</p>
+        </section>
+    </main>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

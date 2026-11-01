@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Administrar Contenidos BPO')}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-bpo-contenidos')}"></div>
+        <main class="dashboard-content">
+            <div class="bpo-admin-container">
+                <div class="bpo-admin-header">
+                    <h1>Administrar Contenidos BPO</h1>
+                    <a th:href="@{/bpo/admin/contenidos/nuevo}" class="bpo-btn bpo-btn-primary">
+                        + Nuevo Contenido
+                    </a>
+                </div>
+
+                <div class="bpo-admin-tabla-container"
+                     hx-get="/bpo/contenidos/lista?estado="
+                     hx-trigger="load"
+                     hx-swap="innerHTML">
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="detalle-contenido" class="bpo-detalle-contenido">
+    <div class="bpo-detalle-header">
+        <span class="bpo-detalle-tipo" th:text="${contenido.tipo}">tipo</span>
+        <span class="bpo-detalle-estado" th:text="${contenido.estado}">estado</span>
+    </div>
+    <h2 class="bpo-detalle-titulo" th:text="${contenido.titulo}">titulo</h2>
+    <p class="bpo-detalle-cuenta" th:text="${contenido.cuentaNombre}">cuenta</p>
+    <div class="bpo-detalle-contenido" th:utext="${contenido.contenidoHtml}">contenido</div>
+    <div class="bpo-detalle-vigencia" th:if="${contenido.vigenciaDesde != null}">
+        <span>Vigencia: <span th:text="${contenido.vigenciaDesde}">desde</span> - <span th:text="${contenido.vigenciaHasta}">hasta</span></span>
+    </div>
+</div>
+</body>
+</html>

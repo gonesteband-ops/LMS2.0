@@ -1,0 +1,236 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Dashboard')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='dashboard')}"></div>
+
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <!-- Mobile nav pills -->
+                <div style="display:none;" class="mobile-nav-pills">
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);">
+                        <a href="/dashboard" class="pills-link active">Inicio</a>
+                        <a href="/cursos" class="pills-link">Cursos</a>
+                        <a href="/dashboard/documentos" class="pills-link">Docs</a>
+                        <a href="/dashboard/firmas" class="pills-link">Firmas</a>
+                        <a href="/dashboard/exportaciones" class="pills-link" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">Export</a>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);margin-top:var(--spacing-xs);" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <a href="/admin/usuarios" class="pills-link">Usuarios</a>
+                        <a href="/admin/roles" class="pills-link">Roles</a>
+                        <a href="/admin/auditoria" class="pills-link">Auditoría</a>
+                    </div>
+                </div>
+
+                <!-- Page Header -->
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 class="dashboard-page-title">Inicio</h1>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-top:var(--spacing-xs);">Resumen de tu actividad en el sistema</p>
+                    </div>
+                    <div style="display:none;" class="dashboard-status-indicator">
+                        <span style="position:relative;display:flex;width:0.5rem;height:0.5rem;">
+                            <span style="position:absolute;inset:0;border-radius:50%;background:var(--color-success);opacity:0.75;animation:pulse-soft 2s infinite;"></span>
+                            <span style="position:relative;width:0.5rem;height:0.5rem;border-radius:50%;background:var(--color-success);"></span>
+                        </span>
+                        <span style="font-size:var(--font-size-sm);color:var(--text-muted);">Sistema operativo</span>
+                    </div>
+                </div>
+
+                <!-- KPI Grid -->
+                <div class="grid-4 animate-slide-up" style="margin-bottom:var(--spacing-xl);">
+                    <a href="/cursos" class="kpi-card" style="text-decoration:none;display:block;cursor:pointer;">
+                        <div class="kpi-icon" style="background:rgba(245,158,11,0.1);color:var(--color-accento);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                        </div>
+                        <div class="kpi-value" id="kpi-cursos">—</div>
+                        <div class="kpi-label">Cursos Activos</div>
+                        <div class="kpi-change" id="kpi-cursos-change"></div>
+                    </a>
+                    <a href="/dashboard/documentos" class="kpi-card" style="text-decoration:none;display:block;cursor:pointer;">
+                        <div class="kpi-icon" style="background:rgba(16,185,129,0.1);color:var(--color-success);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                        </div>
+                        <div class="kpi-value" id="kpi-documentos">—</div>
+                        <div class="kpi-label">Documentos</div>
+                        <div class="kpi-change" id="kpi-documentos-change"></div>
+                    </a>
+                    <a href="/dashboard/firmas" class="kpi-card" style="text-decoration:none;display:block;cursor:pointer;">
+                        <div class="kpi-icon" style="background:rgba(99,102,241,0.1);color:var(--color-info);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                        </div>
+                        <div class="kpi-value" id="kpi-firmas">—</div>
+                        <div class="kpi-label">Firmas Electrónicas</div>
+                        <div class="kpi-change" id="kpi-firmas-change"></div>
+                    </a>
+                    <a href="/dashboard/exportaciones" class="kpi-card" style="text-decoration:none;display:block;cursor:pointer;" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                        <div class="kpi-icon" style="background:rgba(245,158,11,0.1);color:var(--color-accento);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                        </div>
+                        <div class="kpi-value" id="kpi-exportaciones">—</div>
+                        <div class="kpi-label">Exportaciones</div>
+                        <div class="kpi-change" id="kpi-exportaciones-change"></div>
+                    </a>
+                    <a href="/dashboard/evaluaciones-pendientes" class="kpi-card" style="text-decoration:none;display:block;cursor:pointer;" sec:authorize="isAuthenticated()">
+                        <div class="kpi-icon" style="background:rgba(16,185,129,0.1);color:#10b981;">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                        </div>
+                        <div class="kpi-value" id="kpi-evaluaciones-pendientes">—</div>
+                        <div class="kpi-label">Evaluaciones Pendientes</div>
+                    </a>
+                    <a href="/bpo/gestores" class="kpi-card" style="text-decoration:none;display:block;cursor:pointer;" sec:authorize="isAuthenticated()">
+                        <div class="kpi-icon" style="background:rgba(99,102,241,0.1);color:var(--color-info);">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                        </div>
+                        <div class="kpi-value" id="kpi-gestores" hx-get="/bpo/gestores/contar" hx-trigger="load" hx-swap="innerHTML">—</div>
+                        <div class="kpi-label">Gestor de Contenidos</div>
+                    </a>
+                    <a th:href="${certificacionesUrl}" class="kpi-card" style="text-decoration:none;display:block;cursor:pointer;" sec:authorize="isAuthenticated()">
+                        <div class="kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1;">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                        </div>
+                        <div class="kpi-value" id="kpi-certificaciones" hx-get="/certificaciones/contar" hx-trigger="load" hx-swap="innerHTML">—</div>
+                        <div class="kpi-label">Mis Certificaciones</div>
+                    </a>
+                </div>
+
+                <!-- Two column grid -->
+                <div style="display:grid;grid-template-columns:1fr;gap:var(--spacing-xl);" class="lg-grid-2">
+                    <!-- Recent Activity -->
+                    <div class="card animate-fade-in">
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                            <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);">Actividad Reciente</h2>
+                            <span style="font-size:var(--font-size-xs);color:var(--text-muted);" id="activity-count">Cargando...</span>
+                        </div>
+                        <div style="padding:var(--spacing-xl);">
+                            <div id="activity-list" style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">
+                                <svg style="width:3rem;height:3rem;margin:0 auto var(--spacing-md);color:var(--text-muted);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <p style="font-size:var(--font-size-sm);">No hay actividad reciente</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Access -->
+                    <div class="card animate-fade-in">
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                            <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);">Acceso Rápido</h2>
+                        </div>
+                        <div style="padding:var(--spacing-xl);display:flex;flex-direction:column;gap:var(--spacing-sm);">
+                            <a href="/dashboard/documentos" style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--border-radius-lg);background:var(--bg-body);transition:all 0.2s;text-decoration:none;" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')"
+                               onmouseover="this.style.background='rgba(245,158,11,0.08)'" onmouseout="this.style.background='var(--bg-body)'">
+                                <span style="width:2.5rem;height:2.5rem;border-radius:var(--border-radius-lg);background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;color:var(--color-accento);flex-shrink:0;">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                                </span>
+                                <div>
+                                    <p style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);margin:0;">Subir Documentos</p>
+                                    <p style="font-size:var(--font-size-xs);color:var(--text-secondary);margin:0;">Arrastra y suelta archivos</p>
+                                </div>
+                            </a>
+                            <a href="/dashboard/firmas" style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--border-radius-lg);background:var(--bg-body);transition:all 0.2s;text-decoration:none;"
+                               onmouseover="this.style.background='rgba(245,158,11,0.08)'" onmouseout="this.style.background='var(--bg-body)'">
+                                <span style="width:2.5rem;height:2.5rem;border-radius:var(--border-radius-lg);background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;color:var(--color-success);flex-shrink:0;">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                                </span>
+                                <div>
+                                    <p style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);margin:0;">Firmar Documentos</p>
+                                    <p style="font-size:var(--font-size-xs);color:var(--text-secondary);margin:0;">Firma electrónica avanzada</p>
+                                </div>
+                            </a>
+                            <a href="/dashboard/exportaciones" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')" style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--border-radius-lg);background:var(--bg-body);transition:all 0.2s;text-decoration:none;"
+                               onmouseover="this.style.background='rgba(245,158,11,0.08)'" onmouseout="this.style.background='var(--bg-body)'">
+                                <span style="width:2.5rem;height:2.5rem;border-radius:var(--border-radius-lg);background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;color:var(--color-info);flex-shrink:0;">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                </span>
+                                <div>
+                                    <p style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);margin:0;">Exportar Reportes</p>
+                                    <p style="font-size:var(--font-size-xs);color:var(--text-secondary);margin:0;">Reportes XLSX del sistema</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            function loadKPIs() {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/dashboard/resumen', true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try {
+                            var d = JSON.parse(xhr.responseText);
+                            document.getElementById('kpi-cursos').textContent = d.cursosActivos || '0';
+                            document.getElementById('kpi-documentos').textContent = d.documentos || '0';
+                            document.getElementById('kpi-firmas').textContent = d.firmas || '0';
+                            document.getElementById('kpi-evaluaciones-pendientes').textContent = d.evaluacionesPendientes || '0';
+                            document.getElementById('kpi-exportaciones').textContent = d.exportaciones || '0';
+                        } catch(e) {}
+                    }
+                };
+                xhr.send();
+            }
+            function loadActivity() {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/dashboard/actividad', true);
+                xhr.onload = function() {
+                    var list = document.getElementById('activity-list');
+                    var count = document.getElementById('activity-count');
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            if (data.length > 0) {
+                                count.textContent = data.length + ' eventos';
+                                var html = '<div style="display:flex;flex-direction:column;gap:var(--spacing-sm);">';
+                                data.forEach(function(ev) {
+                                    var iconSvg = '';
+                                    var tipo = ev.tipoEvento || '';
+                                    if (tipo === 'LOGIN' || tipo === 'LOGOUT') {
+                                        iconSvg = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-info);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>';
+                                    } else if (tipo === 'FIRMA' || tipo === 'FIRMA_REGISTRADA') {
+                                        iconSvg = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-success);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>';
+                                    } else if (tipo === 'DOCUMENTO_SUBIDO' || tipo === 'DOCUMENTO') {
+                                        iconSvg = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-accento);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>';
+                                    } else if (tipo === 'EXPORTACION' || tipo === 'EXPORTACION_SOLICITADA') {
+                                        iconSvg = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-accento);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>';
+                                    } else if (tipo === 'CONSENTIMIENTO' || tipo === 'CONSENTIMIENTO_OTORGADO') {
+                                        iconSvg = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-success);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                                    } else if (tipo === 'CURSO' || tipo === 'CURSO_CREADO') {
+                                        iconSvg = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-info);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>';
+                                    } else {
+                                        iconSvg = '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--text-muted);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                                    }
+                                    var descripcion = (function(e){var m=e.metadata||{};switch(e.tipoEvento){case'DOCUMENTO_SUBIDO':return'Documento subido: '+(m.nombreOriginal||m.codigo||'—');case'SCORM_SUBIDO':return'SCORM subido: '+(m.codigo||m.titulo||'—');case'CURSO_CREADO':return'Curso creado: '+(m.titulo||'—');case'CURSO_ACTUALIZADO':return'Curso actualizado: '+(m.titulo||'—');case'EVALUACION_CREADA':return'Evaluacion creada: '+(m.codigo||'—');case'USUARIO_REGISTRADO':case'USUARIO_CREADO_ADMIN':return'Usuario registrado: '+(m.email||'—');case'EXPORTACION_SOLICITADA':return'Exportacion solicitada';case'INSCRIPCION_CREADA':return'Inscripcion realizada';case'CURSO_COMPLETADO':return'Curso completado';case'INTENTO_APROBADO':return'Evaluacion aprobada: '+(m.evaluacionCodigo||'—');case'INTENTO_COMPLETADO':return'Evaluacion respondida: '+(m.evaluacionCodigo||'—');case'CONSENTIMIENTO_OTORGADO':return'Consentimiento firmado';case'FIRMA_REGISTRADA':return'Firma electronica registrada';case'ROL_CREADO':return'Rol creado: '+(m.nombre||'—');case'USUARIO_ACTUALIZADO':return'Usuario actualizado: '+(m.email||'—');default:return e.accion||e.tipoEvento||'Evento';}})(ev);
+                                    html += '<div style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">' +
+                                        '<span style="width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' + iconSvg + '</span>' +
+                                        '<div style="flex:1;"><p style="font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin:0;">' + escapeHtml(descripcion) + '</p>' +
+                                        '<p style="font-size:var(--font-size-xs);color:var(--text-muted);margin:0;">' + (ev.createdAt ? (function(d){return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)})(new Date(ev.createdAt)) : '') + '</p></div></div>';
+                                });
+                                html += '</div>';
+                                list.innerHTML = html;
+                            } else {
+                                count.textContent = 'Sin actividad';
+                            }
+                        } catch(e) {}
+                    } else {
+                        count.textContent = 'Error';
+                    }
+                };
+                xhr.send();
+            }
+            function escapeHtml(t) { if (!t) return ''; var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+            loadKPIs();
+            loadActivity();
+        })();
+    </script>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

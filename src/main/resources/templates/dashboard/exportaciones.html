@@ -1,0 +1,533 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Exportaciones')}">
+<style>
+    @keyframes fadeSlideIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='exportaciones')}"></div>
+
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 class="dashboard-page-title">Exportaciones</h1>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-top:var(--spacing-xs);">Solicite y descargue reportes del sistema en formato XLSX</p>
+                    </div>
+                </div>
+
+                <div style="display:grid;gap:var(--spacing-xl);" class="lg-grid-2">
+                    <!-- Solicit form -->
+                    <div class="card animate-slide-up">
+                        <div style="padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                            <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);">Solicitar Exportación</h2>
+                        </div>
+                        <div style="padding:var(--spacing-xl);">
+                            <div id="export-response" style="display:none;"></div>
+                            <form id="export-form" method="post" style="display:flex;flex-direction:column;gap:var(--spacing-lg);" onsubmit="return solicitarExportacion(event)">
+                                <div>
+                                    <label for="tipoReporte" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">Tipo de Reporte</label>
+                                    <div style="position:relative;">
+                                        <div style="position:absolute;inset-y:0;left:0;padding-left:0.875rem;display:flex;align-items:center;pointer-events:none;color:var(--text-muted);">
+                                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg>
+                                        </div>
+                                        <select id="tipoReporte" name="tipoReporte" onchange="actualizarFiltros()"
+                                                style="width:100%;padding:var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 2.5rem;border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);font-size:var(--font-size-sm);color:var(--text-primary);transition:all 0.2s;outline:none;appearance:none;">
+                                            <option value="cursos">Cursos</option>
+                                            <option value="usuarios">Usuarios</option>
+                                            <option value="evaluaciones">Evaluaciones</option>
+                                            <option value="scorm">Paquetes SCORM</option>
+                                            <option value="firmas">Firmas Electrónicas</option>
+                                            <option value="auditoria">Auditoría</option>
+                                            <option value="certificaciones">Certificaciones</option>
+                                            <option value="resultados_certificaciones">Resultados Certificaciones</option>
+                                            <option value="gestores_contenido">Gestores de Contenido</option>
+                                            <option value="publicaciones_bpo">Publicaciones BPO</option>
+                                            <option value="incidentes_seguridad">Incidencias de Seguridad</option>
+                                            <option value="notificaciones">Notificaciones</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="filtros" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">Filtros</label>
+                                    <div style="position:relative;">
+                                        <div style="position:absolute;inset-y:0;left:0;padding-left:0.875rem;display:flex;align-items:center;pointer-events:none;color:var(--text-muted);">
+                                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg>
+                                        </div>
+                                        <select id="filtros" name="filtros" onchange="onFiltroChange()"
+                                                style="width:100%;padding:var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 2.5rem;border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);font-size:var(--font-size-sm);color:var(--text-primary);transition:all 0.2s;outline:none;appearance:none;">
+                                            <!-- Options populated dynamically by JS -->
+                                        </select>
+                                    </div>
+                                    <!-- Campo de código específico (oculto por defecto) -->
+                                    <div id="codigo-filtro-container" style="display:none;margin-top:var(--spacing-sm);">
+                                        <div style="position:relative;">
+                                            <div style="position:absolute;inset-y:0;left:0;padding-left:0.875rem;display:flex;align-items:center;pointer-events:none;color:var(--text-muted);">
+                                                <span style="font-size:0.9rem;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/></svg></span>
+                                            </div>
+                                            <input type="text" id="codigo-filtro" name="codigoFiltro"
+                                                   placeholder="Ej: EVA001, SCO042..."
+                                                   style="width:100%;padding:var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 2.5rem;border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);font-size:var(--font-size-sm);color:var(--text-primary);transition:all 0.2s;outline:none;">
+                                        </div>
+                                        <span style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--spacing-xs);display:block;">
+                                            Ingresa el código específico (EVA001, SCO001, etc.)
+                                        </span>
+                                    </div>
+                                </div>
+                                <button id="btn-solicitar" type="submit" class="btn btn-accent" style="display:flex;align-items:center;justify-content:center;gap:var(--spacing-sm);">
+                                    <svg id="btn-icon" style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                    <span id="btn-text">Solicitar Exportación</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Download example -->
+                    <div class="card animate-slide-up">
+                        <div style="padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                            <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);">Descargar Ejemplo</h2>
+                        </div>
+                        <div style="padding:var(--spacing-xl);">
+                            <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin-bottom:var(--spacing-xl);">Descargue un archivo XLSX de ejemplo para ver el formato de los reportes generados por el sistema.</p>
+                            <a href="/api/v1/exportaciones/ejemplo"
+                               style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-lg);font-size:var(--font-size-sm);font-weight:600;color:var(--color-success);background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:var(--border-radius-xl);text-decoration:none;transition:all 0.2s;"
+                               onmouseover="this.style.background='rgba(16,185,129,0.15)'" onmouseout="this.style.background='rgba(16,185,129,0.08)'">
+                                <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m12 4.5v-3"/></svg>
+                                Descargar reporte_ejemplo.xlsx
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export list -->
+                <div class="card animate-fade-in" style="margin-top:var(--spacing-xl);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                        <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);">Mis Exportaciones</h2>
+                        <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <button id="btn-limpiar-historial" onclick="limpiarHistorial()" class="btn btn-outline btn-sm" type="button" style="font-size:var(--font-size-xs);padding:0.25rem 0.75rem;display:none;">
+                                <svg style="width:0.75rem;height:0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                Limpiar historial
+                            </button>
+                            <span style="font-size:var(--font-size-xs);color:var(--text-muted);" id="export-count">Cargando...</span>
+                        </div>
+                    </div>
+                    <div style="padding:var(--spacing-xl);" id="export-list">
+                        <div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">
+                            <svg class="spinner" style="width:1.5rem;height:1.5rem;margin:0 auto var(--spacing-sm);color:var(--color-accento);" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <p style="font-size:var(--font-size-sm);">Cargando exportaciones...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            var feedbackTimeout = null;
+
+            // ── Dynamic filter options by report type ──
+            var FILTER_OPTIONS = {
+                cursos: [
+                    { value: '{"estado":"todos"}',   label: 'Todos los cursos' },
+                    { value: '{"estado":"activo"}',   label: 'Solo activos' },
+                    { value: '{"estado":"inactivo"}', label: 'Solo inactivos' }
+                ],
+                usuarios: [
+                    { value: '{"all":true}',               label: 'Todos los usuarios' },
+                    { value: '{"activo":true}',             label: 'Solo activos' },
+                    { value: '{"rol":"ESTUDIANTE"}',        label: 'Estudiantes' },
+                    { value: '{"rol":"INSTRUCTOR"}',        label: 'Instructores' },
+                    { value: '{"rol":"ADMIN"}',             label: 'Administradores' },
+                    { value: '{"estado":"en-proceso"}',     label: 'En proceso de eliminación' },
+                    { value: '{"estado":"eliminados"}',     label: 'Eliminados' }
+                ],
+                evaluaciones: [
+                    { value: '{"all":true}',           label: 'Todas las evaluaciones' },
+                    { value: '{"estado":"pendiente"}', label: 'Pendientes' },
+                    { value: '{"estado":"completado"}',label: 'Completadas' },
+                    { value: '{"tipo":"por_codigo"}',  label: 'Por c\u00f3digo (EVA###)'},
+                    { value: '{"tipo":"resultados"}',  label: 'Resultados (aprobados/reprobados)' },
+                ],
+                scorm: [
+                    { value: '{"all":true}',           label: 'Todos los paquetes' },
+                    { value: '{"con_progreso":true}',  label: 'Con progreso registrado' },
+                    { value: '{"tipo":"por_codigo"}',  label: 'Por c\u00f3digo (SCO###)' }
+                ],
+                firmas: [
+                    { value: '{"all":true}',           label: 'Todas las firmas' },
+                    { value: '{"estado":"pendiente"}', label: 'Pendientes' },
+                    { value: '{"estado":"completado"}',label: 'Completadas' }
+                ],
+                auditoria: [
+                    { value: '{"all":true}',         label: 'Todos los eventos' },
+                    { value: '{"tipo":"LOGIN"}',     label: 'Inicios de sesi\u00f3n' },
+                    { value: '{"tipo":"EXPORT"}',    label: 'Exportaciones' }
+                ],
+                certificaciones: [
+                    { value: '{"all":true}',         label: 'Todas las certificaciones' },
+                    { value: '{"activo":true}',      label: 'Solo activas' },
+                    { value: '{"activo":false}',     label: 'Solo inactivas' },
+                    { value: '{"tipo":"por_codigo"}',label: 'Por c\u00f3digo (CER###)' }
+                ],
+                resultados_certificaciones: [
+                    { value: '{"all":true}',          label: 'Todos los resultados' },
+                    { value: '{"aprobado":true}',     label: 'Solo aprobados' },
+                    { value: '{"aprobado":false}',    label: 'Solo reprobados' },
+                    { value: '{"tipo":"por_codigo"}', label: 'Por certificaci\u00f3n (CER###)' }
+                ],
+                gestores_contenido: [
+                    { value: '{"all":true}',      label: 'Todos los gestores' },
+                    { value: '{"activo":true}',   label: 'Solo activos' },
+                    { value: '{"activo":false}',  label: 'Solo inactivos' }
+                ],
+                publicaciones_bpo: [
+                    { value: '{"all":true}',          label: 'Todas las publicaciones' },
+                    { value: '{"estado":"publicado"}',label: 'Solo publicadas' },
+                    { value: '{"estado":"borrador"}', label: 'Solo borradores' },
+                    { value: '{"tipo":"procedimiento"}', label: 'Procedimientos' },
+                    { value: '{"tipo":"noticia"}',    label: 'Noticias' },
+                    { value: '{"tipo":"oferta"}',     label: 'Ofertas' }
+                ],
+                incidentes_seguridad: [
+                    { value: '{"all":true}',       label: 'Todos los incidentes' },
+                    { value: '{"resuelto":true}',  label: 'Solo resueltos' },
+                    { value: '{"resuelto":false}', label: 'Solo pendientes' }
+                ],
+                notificaciones: [
+                    { value: '{"all":true}',    label: 'Todas las notificaciones' },
+                    { value: '{"leida":true}',  label: 'Solo leídas' },
+                    { value: '{"leida":false}', label: 'Solo no leídas' }
+                ]
+            };
+
+            window.actualizarFiltros = function() {
+                var tipoSelect = document.getElementById('tipoReporte');
+                var filtrosSelect = document.getElementById('filtros');
+                if (!tipoSelect || !filtrosSelect) return;
+                var tipo = tipoSelect.value;
+                var options = FILTER_OPTIONS[tipo] || FILTER_OPTIONS.cursos;
+                filtrosSelect.innerHTML = '';
+                options.forEach(function(opt) {
+                    var el = document.createElement('option');
+                    el.value = opt.value;
+                    el.textContent = opt.label;
+                    filtrosSelect.appendChild(el);
+                });
+                // Sincronizar visibilidad del campo de c\u00f3digo
+                if (window.onFiltroChange) window.onFiltroChange();
+            };
+
+            window.onFiltroChange = function() {
+                var filtrosSelect = document.getElementById('filtros');
+                var codigoContainer = document.getElementById('codigo-filtro-container');
+                if (!filtrosSelect || !codigoContainer) return;
+                var val = filtrosSelect.value;
+                try {
+                    var parsed = JSON.parse(val);
+                    codigoContainer.style.display = (parsed.tipo === 'por_codigo' || parsed.tipo === 'resultados') ? 'block' : 'none';
+                    if (parsed.tipo !== 'por_codigo' && parsed.tipo !== 'resultados') {
+                        document.getElementById('codigo-filtro').value = '';
+                    }
+                } catch(e) {
+                    codigoContainer.style.display = 'none';
+                }
+            };
+
+            function mostrarFeedback(tipo, mensaje) {
+                var container = document.getElementById('export-response');
+                if (!container) return;
+                container.style.display = 'block';
+                container.style.animation = 'none';
+                container.offsetHeight; // reflow
+                container.style.animation = 'fadeSlideIn 0.3s ease-out';
+
+                if (tipo === 'success') {
+                    container.innerHTML =
+                        '<div style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-md);' +
+                        'border-radius:var(--border-radius-lg);background:rgba(16,185,129,0.08);' +
+                        'border:1px solid rgba(16,185,129,0.2);color:var(--color-success);font-size:var(--font-size-sm);font-weight:500;">' +
+                        '<svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+                        '<span>' + mensaje + '</span></div>';
+                } else {
+                    container.innerHTML =
+                        '<div style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-md);' +
+                        'border-radius:var(--border-radius-lg);background:rgba(239,68,68,0.08);' +
+                        'border:1px solid rgba(239,68,68,0.2);color:var(--color-danger);font-size:var(--font-size-sm);font-weight:500;">' +
+                        '<svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+                        '<span>' + mensaje + '</span></div>';
+                }
+
+                // Auto-hide success after 6s
+                if (feedbackTimeout) clearTimeout(feedbackTimeout);
+                if (tipo === 'success') {
+                    feedbackTimeout = setTimeout(function() {
+                        container.style.display = 'none';
+                    }, 6000);
+                }
+            }
+
+            function setLoading(loading) {
+                var btn = document.getElementById('btn-solicitar');
+                var icon = document.getElementById('btn-icon');
+                var text = document.getElementById('btn-text');
+                if (!btn || !icon || !text) return;
+                if (loading) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                    btn.style.cursor = 'not-allowed';
+                    icon.innerHTML = '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>' +
+                        '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>';
+                    text.textContent = 'Solicitando...';
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>';
+                    text.textContent = 'Solicitar Exportación';
+                }
+            }
+
+            window.solicitarExportacion = function(event) {
+                event.preventDefault();
+
+                var filtrosSelect = document.getElementById('filtros');
+                var codigoInput = document.getElementById('codigo-filtro');
+                var filtroVal = filtrosSelect ? filtrosSelect.value : '{}';
+
+                // Si el filtro es "por_codigo", reemplazar con el c\u00f3digo ingresado
+                try {
+                    var filtroParsed = JSON.parse(filtroVal);
+                    if (filtroParsed.tipo === 'por_codigo') {
+                        var codigo = codigoInput ? codigoInput.value.trim().toUpperCase() : '';
+                        if (!codigo) {
+                            mostrarFeedback('error', 'Debes ingresar un c\u00f3digo v\u00e1lido (ej: EVA001, SCO042)');
+                            return false;
+                        }
+                        filtroVal = JSON.stringify({ codigo: codigo });
+                    }
+                } catch(e) {
+                    // usar valor original
+                }
+
+                var form = document.getElementById('export-form');
+                var formData = new FormData(form);
+                // Sobrescribir filtros con el valor procesado
+                // Si el filtro es resultados, cambiar tipoReporte y agregar codigo
+                if (filtroParsed && filtroParsed.tipo === 'resultados') {
+                    formData.set('tipoReporte', 'resultados');
+                    var codigoResult = codigoInput ? codigoInput.value.trim().toUpperCase() : '';
+                    if (!codigoResult) {
+                        mostrarFeedback('error', 'Debes ingresar un codigo (ej: EVA001)');
+                        return false;
+                    }
+                    filtroVal = JSON.stringify({ codigo: codigoResult });
+                    formData.set('filtros', filtroVal);
+                }
+                formData.set('filtros', filtroVal);
+
+                setLoading(true);
+                mostrarFeedback('success', 'Enviando solicitud...');
+
+                fetch('/api/v1/exportaciones', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        return response.text().then(function(text) {
+                            throw new Error(text || 'Error del servidor');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    setLoading(false);
+                    mostrarFeedback('success',
+                        'Solicitud recibida \u2014 Estado: <span class="badge badge-warning" style="margin-left:0.25rem;">Pendiente</span>');
+                    // Refresh the export list after a short delay
+                    setTimeout(loadExports, 500);
+                    // Iniciar polling para descarga autom\u00e1tica cuando est\u00e9 completado
+                    if (data && data.id) {
+                        iniciarPollingDescarga(data.id);
+                    }
+                })
+                .catch(function(err) {
+                    setLoading(false);
+                    var msg = err.message || 'Error inesperado al solicitar la exportaci\u00f3n';
+                    // Try to extract a cleaner message if it's JSON
+                    try {
+                        var parsed = JSON.parse(msg);
+                        msg = parsed.message || parsed.error || msg;
+                    } catch(e) { /* use raw message */ }
+                    mostrarFeedback('error', 'Error: ' + escapeHtml(msg));
+                });
+
+                return false;
+            };
+
+            function loadExports() {
+                var list = document.getElementById('export-list');
+                var count = document.getElementById('export-count');
+                var btn = document.getElementById('btn-limpiar-historial');
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/exportaciones', true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var data = JSON.parse(xhr.responseText);
+                        count.textContent = data.length + ' exportaciones';
+                        // Mostrar botón "Limpiar historial" solo si hay registros
+                        if (btn) {
+                            btn.style.display = data.length > 0 ? 'inline-flex' : 'none';
+                        }
+                        if (data.length > 0) {
+                            var html = '<div style="overflow-x:auto;"><table class="table-base" style="width:100%;"><thead><tr style="border-bottom:2px solid var(--border-default);">' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Tipo</th>' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Estado</th>' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Descargar</th>' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);display:none;">Fecha</th></tr></thead><tbody>';
+                            data.forEach(function(ex) {
+                                var badgeClass = ex.estado === 'completado'
+                                    ? 'badge-success'
+                                    : ex.estado === 'error'
+                                    ? 'badge-danger'
+                                    : 'badge-warning';
+                                var estadoBadge = '<span class="badge ' + badgeClass + '">' + escapeHtml(ex.estado) + '</span>';
+                                var downloadLink = (ex.estado === 'completado' && ex.urlResultado)
+                                    ? '<a href="' + ex.urlResultado + '" style="display:inline-flex;align-items:center;gap:0.25rem;font-size:var(--font-size-sm);color:var(--color-success);text-decoration:none;font-weight:500;">' +
+                                      '<svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>' +
+                                      'Descargar</a>'
+                                    : '<span style="color:var(--text-muted);font-size:var(--font-size-xs);">\u2014</span>';
+                                html += '<tr style="border-bottom:1px solid var(--border-default);transition:background 0.2s;" onmouseover="this.style.background=\'var(--bg-body)\'" onmouseout="this.style.background=\'transparent\'">' +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);font-weight:500;color:var(--text-primary);font-size:var(--font-size-sm);">' + escapeHtml(ex.nombreReporte || ex.tipoReporte) + '</td>' +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);">' + estadoBadge + '</td>' +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);">' + downloadLink + '</td>' +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-xs);display:none;">' + (ex.createdAt ? new Date(ex.createdAt).toLocaleString('es-CL') : '') + '</td></tr>';
+                            });
+                            html += '</tbody></table></div>';
+                            list.innerHTML = html;
+                        } else {
+                            list.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">' +
+                                '<svg style="width:3rem;height:3rem;margin:0 auto var(--spacing-md);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859M12 3v8.25m0 0l-3-3m3 3l3-3"/></svg>' +
+                                '<p style="font-size:var(--font-size-sm);">No hay exportaciones solicitadas a\u00fan.</p></div>';
+                        }
+                    }
+                };
+                xhr.send();
+            }
+
+            function escapeHtml(t) {
+                if (!t) return '';
+                var d = document.createElement('div');
+                d.appendChild(document.createTextNode(t));
+                return d.innerHTML;
+            }
+
+            /**
+             * Polling: consulta el estado de una exportaci\u00f3n cada 2s.
+             * Cuando estado='completado', dispara la descarga autom\u00e1tica.
+             * M\u00e1ximo 60 intentos (~2 minutos).
+             */
+            function iniciarPollingDescarga(exportacionId) {
+                var intentos = 0;
+                var maxIntentos = 60;
+                var pollInterval = setInterval(function() {
+                    intentos++;
+                    fetch('/api/v1/exportaciones/' + exportacionId + '/status')
+                        .then(function(r) {
+                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                            return r.json();
+                        })
+                        .then(function(data) {
+                            if (data.estado === 'completado' && data.urlResultado) {
+                                clearInterval(pollInterval);
+                                // Disparar descarga autom\u00e1tica creando un <a> temporal
+                                var link = document.createElement('a');
+                                link.href = data.urlResultado;
+                                link.style.display = 'none';
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                mostrarFeedback('success',
+                                    'Exportaci\u00f3n completada \u2014 la descarga deber\u00eda iniciar autom\u00e1ticamente.');
+                                // Refrescar la lista para mostrar el badge actualizado
+                                setTimeout(loadExports, 500);
+                            } else if (data.estado === 'error') {
+                                clearInterval(pollInterval);
+                                mostrarFeedback('error', 'Error en exportaci\u00f3n: ' +
+                                    (data.errorMensaje || 'Error desconocido'));
+                                setTimeout(loadExports, 500);
+                            } else if (intentos >= maxIntentos) {
+                                clearInterval(pollInterval);
+                                mostrarFeedback('error',
+                                    'La exportaci\u00f3n est\u00e1 tardando demasiado. ' +
+                                    '<a href="/dashboard/exportaciones" style="color:inherit;text-decoration:underline;">Revisa la lista</a>');
+                                setTimeout(loadExports, 500);
+                            }
+                        })
+                        .catch(function() {
+                            if (intentos >= maxIntentos) {
+                                clearInterval(pollInterval);
+                            }
+                        });
+                }, 2000);
+            }
+
+            /**
+             * Limpia el historial de exportaciones del usuario (soft-delete).
+             * Muestra confirmaci\u00f3n antes de ejecutar.
+             */
+            window.limpiarHistorial = function() {
+                if (!confirm('\u00bfEst\u00e1s seguro de limpiar el historial de exportaciones? Esta acci\u00f3n no se puede deshacer.')) {
+                    return;
+                }
+                var btn = document.getElementById('btn-limpiar-historial');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = 'Limpiando...';
+                }
+                fetch('/api/v1/exportaciones', {
+                    method: 'DELETE'
+                })
+                .then(function(r) {
+                    if (!r.ok) throw new Error('Error al limpiar historial');
+                    return r.json();
+                })
+                .then(function(data) {
+                    mostrarFeedback('success', data.mensaje || 'Historial limpiado correctamente.');
+                    setTimeout(loadExports, 500);
+                })
+                .catch(function(err) {
+                    mostrarFeedback('error', 'Error: ' + (err.message || 'No se pudo limpiar el historial'));
+                })
+                .finally(function() {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = 'Limpiar historial';
+                    }
+                });
+            };
+
+            // Init filter dropdown on page load
+            actualizarFiltros();
+
+            // Load exports on page load
+            loadExports();
+        })();
+    </script>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

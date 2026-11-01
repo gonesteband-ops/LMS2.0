@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn *)",
+      "Bash(where *)",
+      "Bash(dir *)",
+      "Bash(docker ps)",
+      "Bash(docker logs *)"
+    ]
+  },
+  "$version": 4
+}

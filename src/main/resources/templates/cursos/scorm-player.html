@@ -1,0 +1,455 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head :: head('Reproductor SCORM - LMS LegalTech')">
+    <meta charset="UTF-8">
+    <title>Reproductor SCORM</title>
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" role="navigation" aria-label="Navegación del dashboard">
+            <nav style="flex:1;padding:var(--spacing-lg) var(--spacing-sm);overflow-y:auto;">
+                <a href="/dashboard" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/cursos" class="sidebar-link active">
+                    <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <span>Cursos</span>
+                </a>
+                <a href="/dashboard/documentos" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    <span>Documentos</span>
+                </a>
+                <a href="/consentimiento" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>Consentimiento</span>
+                </a>
+                <a href="/dashboard/firmas" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    <span>Firmas</span>
+                </a>
+                <a href="/dashboard/perfil" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <span>Perfil</span>
+                </a>
+                <a href="/dashboard/exportaciones" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                    <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Exportaciones</span>
+                </a>
+                <div style="padding-top:var(--spacing-lg);margin-top:var(--spacing-lg);border-top:1px solid var(--border-default);" sec:authorize="hasAnyRole('SUPERADMIN')">
+                    <a href="/admin/usuarios" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"/></svg>
+                        <span>Usuarios</span>
+                    </a>
+                    <a href="/admin/roles" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Roles</span>
+                    </a>
+                    <a href="/admin/auditoria" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                        <span>Auditoría</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+
+                <!-- Page Header -->
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-xs);">
+                            <a href="/cursos" class="btn btn-primary btn-sm">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg>
+                                Volver a Cursos
+                            </a>
+                        </div>
+                        <h1 style="font-size:var(--font-size-xl);font-weight:700;margin:var(--spacing-xs) 0 0;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <span><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg></span>
+                            <span th:text="${titulo}">Reproductor SCORM</span>
+                        </h1>
+                        <p style="margin:var(--spacing-xs) 0 0;font-size:var(--font-size-sm);color:var(--text-secondary);">
+                            Versión SCORM: <strong th:text="${versionScorm}">1.2</strong>
+                            <span th:if="${paqueteId}" style="margin-left:var(--spacing-md);font-family:monospace;font-size:var(--font-size-xs);color:var(--text-muted);">
+                                ID: <span th:text="${paqueteId}">---</span>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- SCORM Player -->
+                <div class="card animate-slide-up" style="margin-bottom:var(--spacing-xl);">
+                    <div style="padding:var(--spacing-xl);">
+                        <div id="scorm-player-container" style="position:relative;width:100%;border:1px solid var(--border-default);border-radius:var(--border-radius-lg);overflow:hidden;background:#fff;">
+                            <!-- Loading Overlay -->
+                            <div id="scorm-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.9);z-index:10;">
+                                <div class="spinner" style="width:2rem;height:2rem;border-width:3px;margin-bottom:var(--spacing-md);"></div>
+                                <p style="font-size:var(--font-size-sm);color:var(--text-secondary);">Cargando contenido SCORM...</p>
+                            </div>
+                            <!-- Error Overlay -->
+                            <div id="scorm-error" style="display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);z-index:10;padding:var(--spacing-xl);text-align:center;">
+                                <svg style="width:3rem;height:3rem;color:var(--color-danger);margin-bottom:var(--spacing-md);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                                <h3 style="margin:0 0 var(--spacing-sm);color:var(--text-primary);">Error al cargar el contenido</h3>
+                                <p id="scorm-error-message" style="font-size:var(--font-size-sm);color:var(--text-secondary);margin:0 0 var(--spacing-lg);">No se pudo cargar el contenido SCORM. Verifique que el paquete sea válido.</p>
+                                <a href="/cursos" class="btn btn-primary btn-sm">Volver a Cursos</a>
+                            </div>
+                            <!-- Iframe SCORM -->
+                            <iframe id="scorm-iframe"
+                                    style="width:100%;border:none;display:block;"
+                                    title="Contenido SCORM"
+                                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                                    th:attr="src=${urlIndex}">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información -->
+                <div class="card animate-fade-in" style="margin-bottom:var(--spacing-xl);">
+                    <div style="padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                        <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Información del Paquete
+                        </h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--spacing-lg);">
+                            <div>
+                                <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin:0 0 var(--spacing-xs);">Título</p>
+                                <p style="font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin:0;" th:text="${titulo}">---</p>
+                            </div>
+                            <div>
+                                <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin:0 0 var(--spacing-xs);">Versión SCORM</p>
+                                <p style="font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin:0;" th:text="${versionScorm}">---</p>
+                            </div>
+                            <div>
+                                <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin:0 0 var(--spacing-xs);">Estado</p>
+                                <p id="scorm-status" style="font-size:var(--font-size-sm);font-weight:500;color:var(--color-success);margin:0;">Cargando...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            var iframe = document.getElementById('scorm-iframe');
+            var loadingEl = document.getElementById('scorm-loading');
+            var errorEl = document.getElementById('scorm-error');
+            var errorMsg = document.getElementById('scorm-error-message');
+            var statusEl = document.getElementById('scorm-status');
+
+            // --- SCORM Runtime API (SCORM 1.2) ---
+            var scormData = {
+                initialized: false,
+                finished: false,
+                exitCode: '',
+                sessionTime: 0,
+                scoreRaw: '',
+                scoreMin: '',
+                scoreMax: '',
+                lessonStatus: 'not attempted',
+                suspendData: '',
+                entry: 'ab-initio',
+                exit: '',
+                totalTime: '0000:00:00',
+                lessonLocation: '',
+                comments: '',
+                interactions: []
+            };
+
+            window.API = {
+                LMSInitialize: function(parameter) {
+                    if (scormData.initialized) return 'false';
+                    scormData.initialized = true;
+                    scormData.entry = 'ab-initio';
+                    console.log('[SCORM API] LMSInitialize(\"' + parameter + '\")');
+                    updateStatus('Inicializado');
+                    return 'true';
+                },
+
+                LMSFinish: function(parameter) {
+                    if (!scormData.initialized) return 'false';
+                    scormData.finished = true;
+                    scormData.initialized = false;
+                    console.log('[SCORM API] LMSFinish(\"' + parameter + '\")');
+                    updateStatus('Finalizado');
+                    return 'true';
+                },
+
+                LMSGetValue: function(name) {
+                    console.log('[SCORM API] LMSGetValue(\"' + name + '\")');
+                    var value = getScormValue(name);
+                    return value !== null ? value : '';
+                },
+
+                LMSSetValue: function(name, value) {
+                    if (!scormData.initialized) return 'false';
+                    console.log('[SCORM API] LMSSetValue(\"' + name + '\", \"' + value + '\")');
+                    setScormValue(name, value);
+                    return 'true';
+                },
+
+                LMSCommit: function(parameter) {
+                    if (!scormData.initialized) return 'false';
+                    console.log('[SCORM API] LMSCommit(\"' + parameter + '\")');
+                    // En un entorno real, aquí se enviarían los datos al servidor
+                    persistirDatos();
+                    return 'true';
+                },
+
+                LMSGetLastError: function() {
+                    return scormData.lastError || '0';
+                },
+
+                LMSGetErrorString: function(errorCode) {
+                    var errors = {
+                        '0': 'No error',
+                        '101': 'General exception',
+                        '201': 'Invalid argument error',
+                        '202': 'Element cannot have children',
+                        '203': 'Element not an array',
+                        '301': 'Not initialized',
+                        '401': 'Not implemented error',
+                        '402': 'Invalid set value',
+                        '403': 'Element is read-only',
+                        '404': 'Element is write-only',
+                        '405': 'Incorrect data type'
+                    };
+                    return errors[errorCode] || 'Unknown error: ' + errorCode;
+                },
+
+                LMSGetDiagnostic: function(errorCode) {
+                    return 'Diagnostic info for error: ' + (errorCode || scormData.lastError || '0');
+                }
+            };
+
+            // Soporte para SCORM 2004
+            window.API_1484_11 = {
+                Initialize: function(parameter) {
+                    return window.API.LMSInitialize(parameter);
+                },
+                Terminate: function(parameter) {
+                    return window.API.LMSFinish(parameter);
+                },
+                GetValue: function(name) {
+                    return window.API.LMSGetValue(name);
+                },
+                SetValue: function(name, value) {
+                    return window.API.LMSSetValue(name, value);
+                },
+                Commit: function(parameter) {
+                    return window.API.LMSCommit(parameter);
+                },
+                GetLastError: function() {
+                    return window.API.LMSGetLastError();
+                },
+                GetErrorString: function(errorCode) {
+                    return window.API.LMSGetErrorString(errorCode);
+                },
+                GetDiagnostic: function(errorCode) {
+                    return window.API.LMSGetDiagnostic(errorCode);
+                }
+            };
+
+            function getScormValue(name) {
+                var mapping = {
+                    'cmi.core._children': 'student_id,student_name,lesson_location,credit,lesson_status,entry,score,total_time,lesson_mode,exit,session_time,suspend_data',
+                    'cmi.core.student_id': '',
+                    'cmi.core.student_name': '',
+                    'cmi.core.lesson_location': scormData.lessonLocation,
+                    'cmi.core.credit': 'credit',
+                    'cmi.core.lesson_status': scormData.lessonStatus,
+                    'cmi.core.entry': scormData.entry,
+                    'cmi.core.score.raw': scormData.scoreRaw,
+                    'cmi.core.score.min': scormData.scoreMin,
+                    'cmi.core.score.max': scormData.scoreMax,
+                    'cmi.core.total_time': scormData.totalTime,
+                    'cmi.core.lesson_mode': 'normal',
+                    'cmi.core.exit': scormData.exit,
+                    'cmi.core.session_time': scormData.sessionTime,
+                    'cmi.suspend_data': scormData.suspendData,
+                    'cmi.lesson_location': scormData.lessonLocation,
+                    'cmi.comments': scormData.comments,
+                    'cmi.objectives._count': '0',
+                    'cmi.interactions._count': '0',
+                    'adl.nav.request': ''
+                };
+                return mapping[name] !== undefined ? mapping[name] : '';
+            }
+
+            function setScormValue(name, value) {
+                switch (name) {
+                    case 'cmi.core.lesson_location':
+                    case 'cmi.lesson_location':
+                        scormData.lessonLocation = value;
+                        break;
+                    case 'cmi.core.lesson_status':
+                        scormData.lessonStatus = value;
+                        updateStatus(value);
+                        break;
+                    case 'cmi.core.score.raw':
+                        scormData.scoreRaw = value;
+                        break;
+                    case 'cmi.core.score.min':
+                        scormData.scoreMin = value;
+                        break;
+                    case 'cmi.core.score.max':
+                        scormData.scoreMax = value;
+                        break;
+                    case 'cmi.core.exit':
+                        scormData.exit = value;
+                        break;
+                    case 'cmi.core.session_time':
+                        scormData.sessionTime = value;
+                        scormData.totalTime = agregarTiempo(scormData.totalTime, value);
+                        break;
+                    case 'cmi.suspend_data':
+                        scormData.suspendData = value;
+                        break;
+                    case 'cmi.comments':
+                        scormData.comments = value;
+                        break;
+                    case 'cmi.core.student_id':
+                        // Read-only, ignorar
+                        break;
+                    case 'cmi.core.student_name':
+                        // Read-only, ignorar
+                        break;
+                }
+            }
+
+            function agregarTiempo(tiempoTotal, tiempoSesion) {
+                // Formato esperado: HH:MM:SS o HH:MM:SS.ff
+                try {
+                    var parts1 = (tiempoTotal || '0000:00:00').split(':');
+                    var parts2 = (tiempoSesion || '0000:00:00').split(':');
+                    var h = parseInt(parts1[0] || 0) + parseInt(parts2[0] || 0);
+                    var m = parseInt(parts1[1] || 0) + parseInt(parts2[1] || 0);
+                    var s = parseFloat(parts1[2] || 0) + parseFloat(parts2[2] || 0);
+                    if (s >= 60) { m += Math.floor(s / 60); s = s % 60; }
+                    if (m >= 60) { h += Math.floor(m / 60); m = m % 60; }
+                    return String(h).padStart(4, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+                } catch(e) {
+                    return tiempoTotal;
+                }
+            }
+
+            function updateStatus(status) {
+                if (statusEl) {
+                    var map = {
+                        'not attempted': '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg> No iniciado',
+                        'completed': '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Completado',
+                        'passed': '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Aprobado',
+                        'failed': '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> Reprobado',
+                        'incomplete': '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/></svg> Incompleto',
+                        'browsed': '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><circle cx="12" cy="12" r="3"/></svg>️ Explorado',
+                        'Inicializado': '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/></svg> En progreso...',
+                        'Finalizado': '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Finalizado'
+                    };
+                    var statusContainer = document.getElementById('scorm-status');
+                    if (statusContainer) {
+                        statusContainer.innerHTML = '<span style="display:inline-flex;align-items:center;gap:0.5rem;">' + (map[status] || status) + '</span>';
+                    }
+                    if (status === 'completed' || status === 'passed' || status === 'Finalizado') {
+                        statusEl.style.color = 'var(--color-success)';
+                    } else if (status === 'failed') {
+                        statusEl.style.color = 'var(--color-danger)';
+                    } else {
+                        statusEl.style.color = 'var(--color-warning)';
+                    }
+                }
+            }
+
+            function persistirDatos() {
+                // Evitar re-envío si ya está completado
+                if (scormData.lessonStatus === 'completed' || scormData.lessonStatus === 'passed') {
+                    console.log('[SCORM] Estado ya completado - se omite commit');
+                    return;
+                }
+                // Envío asíncrono de datos al servidor
+                var paqueteId = '[[${paqueteId}]]';
+                if (paqueteId && paqueteId !== '[[${paqueteId}]]') {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/api/v1/scorm/' + paqueteId + '/commit', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.send(JSON.stringify({
+                        lessonStatus: scormData.lessonStatus,
+                        scoreRaw: scormData.scoreRaw,
+                        lessonLocation: scormData.lessonLocation,
+                        suspendData: scormData.suspendData,
+                        totalTime: scormData.totalTime,
+                        sessionTime: scormData.sessionTime
+                    }));
+                }
+            }
+
+            // --- Manejo del iframe ---
+            iframe.onload = function() {
+                loadingEl.style.display = 'none';
+                updateStatus('not attempted');
+
+                // Intentar conectar la API SCORM con el iframe
+                try {
+                    var iframeWin = iframe.contentWindow;
+                    if (iframeWin) {
+                        iframeWin.API = window.API;
+                        iframeWin.API_1484_11 = window.API_1484_11;
+                        console.log('[SCORM] API expuesta al iframe correctamente');
+                    }
+                } catch(e) {
+                    console.warn('[SCORM] No se pudo exponer la API al iframe (posible cross-origin):', e);
+                }
+            };
+
+            iframe.onerror = function() {
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'flex';
+                errorMsg.textContent = 'Error al cargar el contenido SCORM. Verifique que el paquete sea válido y esté correctamente almacenado.';
+            };
+
+            // Timeout de carga
+            setTimeout(function() {
+                if (loadingEl.style.display !== 'none') {
+                    loadingEl.style.display = 'none';
+                    errorEl.style.display = 'flex';
+                    errorMsg.textContent = 'El contenido SCORM tardó demasiado en cargar. Verifique la conexión con el servidor.';
+                }
+            }, 30000);
+
+            // Ajustar altura del iframe
+            function ajustarAltura() {
+                try {
+                    var body = iframe.contentDocument || iframe.contentWindow.document;
+                    if (body) {
+                        var height = body.documentElement.scrollHeight || body.body.scrollHeight || 600;
+                        iframe.style.height = Math.max(height, 400) + 'px';
+                    }
+                } catch(e) {
+                    iframe.style.height = '600px';
+                }
+            }
+
+            iframe.addEventListener('load', function() {
+                setTimeout(ajustarAltura, 1000);
+            });
+
+            window.addEventListener('resize', ajustarAltura);
+
+            console.log('[SCORM] Reproductor SCORM inicializado');
+        })();
+    </script>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

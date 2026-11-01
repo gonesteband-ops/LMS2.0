@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Evaluaciones Pendientes')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='evaluaciones-pendientes')}"></div>
+
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+
+                <!-- Page Header -->
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 class="dashboard-page-title">
+                            <svg style="width:1.5rem;height:1.5rem;display:inline;vertical-align:middle;margin-right:var(--spacing-sm);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                            Evaluaciones Pendientes
+                        </h1>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-top:var(--spacing-xs);">Evaluaciones que aún no has completado</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+                        <a href="/dashboard" class="btn btn-ghost btn-sm">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg>
+                            Volver al inicio
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Lista de evaluaciones pendientes -->
+                <div id="pendientes-container" class="animate-slide-up">
+                    <!-- Loader -->
+                    <div id="pendientes-loader" style="text-align:center;padding:var(--spacing-2xl);">
+                        <div class="spinner" style="width:2rem;height:2rem;margin:0 auto;border-width:3px;"></div>
+                        <p style="margin-top:var(--spacing-md);color:var(--text-muted);font-size:var(--font-size-sm);">Cargando evaluaciones pendientes…</p>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div id="pendientes-empty" class="card" style="display:none;margin-bottom:var(--spacing-xl);">
+                        <div style="text-align:center;padding:var(--spacing-2xl);color:var(--text-muted);">
+                            <div style="font-size:3rem;margin-bottom:var(--spacing-md);">
+                                <svg style="width:3rem;height:3rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <p style="font-size:var(--font-size-sm);font-weight:500;margin-bottom:var(--spacing-xs);">No tienes evaluaciones pendientes</p>
+                            <p style="font-size:var(--font-size-xs);margin-bottom:var(--spacing-lg);">Has completado todas las evaluaciones disponibles.</p>
+                            <a href="/cursos" class="btn btn-accent btn-sm">Ir a mis cursos</a>
+                        </div>
+                    </div>
+
+                    <!-- Error state -->
+                    <div id="pendientes-error" class="card" style="display:none;margin-bottom:var(--spacing-xl);">
+                        <div style="text-align:center;padding:var(--spacing-2xl);color:var(--color-danger);">
+                            <div style="font-size:3rem;margin-bottom:var(--spacing-md);">
+                                <svg style="width:3rem;height:3rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+                            </div>
+                            <p style="font-size:var(--font-size-sm);" id="pendientes-error-msg">Error al cargar evaluaciones pendientes.</p>
+                            <button onclick="location.reload()" class="btn btn-secondary btn-sm" style="margin-top:var(--spacing-md);">Reintentar</button>
+                        </div>
+                    </div>
+
+                    <!-- List -->
+                    <div id="pendientes-list"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            function cargarPendientes() {
+                var loader = document.getElementById('pendientes-loader');
+                var emptyEl = document.getElementById('pendientes-empty');
+                var errorEl = document.getElementById('pendientes-error');
+                var listEl = document.getElementById('pendientes-list');
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/dashboard/evaluaciones-pendientes', true);
+                xhr.onload = function() {
+                    loader.style.display = 'none';
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            if (!data || data.length === 0) {
+                                emptyEl.style.display = 'block';
+                                return;
+                            }
+                            renderizarLista(data);
+                        } catch(e) {
+                            errorEl.style.display = 'block';
+                            document.getElementById('pendientes-error-msg').textContent = 'Error al procesar los datos.';
+                        }
+                    } else {
+                        errorEl.style.display = 'block';
+                    }
+                };
+                xhr.onerror = function() {
+                    loader.style.display = 'none';
+                    errorEl.style.display = 'block';
+                    document.getElementById('pendientes-error-msg').textContent = 'Error de conexión.';
+                };
+                xhr.send();
+            }
+
+            function renderizarLista(items) {
+                var container = document.getElementById('pendientes-list');
+                var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--spacing-lg);align-items:start;">';
+
+                // Agrupar por curso
+                var grupos = {};
+                items.forEach(function(item) {
+                    var cid = item.cursoId || '_sin_curso';
+                    if (!grupos[cid]) {
+                        grupos[cid] = { titulo: item.cursoTitulo || 'Sin curso', items: [] };
+                    }
+                    grupos[cid].items.push(item);
+                });
+
+                var globalIdx = 0;
+                var grupoKeys = Object.keys(grupos);
+                grupoKeys.forEach(function(cid, gIdx) {
+                    var grupo = grupos[cid];
+
+                    // Header del curso ocupa todo el ancho del grid
+                    html += '<div style="grid-column:1/-1;margin-top:' + (gIdx > 0 ? 'var(--spacing-md)' : '0') + ';">' +
+                        '<h2 style="margin:0;font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">' +
+                        '<svg style="width:1rem;height:1rem;color:var(--color-accento);flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>' +
+                        escapeHtml(grupo.titulo) +
+                        ' <span style="font-weight:400;color:var(--text-muted);font-size:var(--font-size-xs);">(' + grupo.items.length + ' evaluaciones)</span>' +
+                        '</h2></div>';
+
+                    grupo.items.forEach(function(item) {
+                        var cursoTitulo = item.cursoTitulo || 'Curso';
+                        var evTitulo = item.evaluacionTitulo || 'Evaluación';
+                        var codigo = item.codigo || '';
+                        var peso = item.pesoTotal || 100;
+                        var tiempo = item.tiempoEstimadoMinutos || '—';
+                        var pregCount = item.preguntasCount || 0;
+                        var cursoId = item.cursoId || '';
+                        var evId = item.evaluacionId || '';
+
+                        html += '<div class="card animate-fade-in" style="animation-delay:' + (globalIdx * 0.08) + 's;">' +
+                            '<div style="padding:var(--spacing-md);">' +
+                                '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--spacing-xs);margin-bottom:var(--spacing-xs);flex-wrap:wrap;">' +
+                                    '<div style="display:flex;align-items:center;gap:0.375rem;">' +
+                                        '<svg style="width:1.5rem;height:1.5rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>' +
+                                        '<div>' +
+                                            '<p style="margin:0;font-size:var(--font-size-xs);color:var(--text-muted);">' + escapeHtml(cursoTitulo) + '</p>' +
+                                            '<h3 style="margin:0;font-size:var(--font-size-md);font-weight:600;">' + escapeHtml(evTitulo) + '</h3>' +
+                                            (codigo ? '<span style="font-size:var(--font-size-xs);color:var(--color-accento);">' + escapeHtml(codigo) + '</span>' : '') +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div style="display:flex;align-items:center;gap:var(--spacing-sm);flex-wrap:wrap;">' +
+                                        '<span class="badge" style="background:rgba(16,185,129,0.08);color:var(--color-success);border-color:rgba(16,185,129,0.2);display:inline-flex;align-items:center;gap:0.25rem;">' +
+                                            '<svg style="width:0.875rem;height:0.875rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>' +
+                                            peso + '%' +
+                                        '</span>' +
+                                        '<span class="badge" style="background:rgba(59,130,246,0.08);color:var(--color-info);border-color:rgba(59,130,246,0.2);display:inline-flex;align-items:center;gap:0.25rem;">' +
+                                            '<svg style="width:0.875rem;height:0.875rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+                                            tiempo + ' min' +
+                                        '</span>' +
+                                        '<span class="badge" style="background:rgba(245,158,11,0.08);color:rgba(180,83,9,1);border-color:rgba(245,158,11,0.2);display:inline-flex;align-items:center;gap:0.25rem;">' +
+                                            '<svg style="width:0.875rem;height:0.875rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>' +
+                                            pregCount + ' preg' +
+                                        '</span>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div style="display:flex;align-items:center;justify-content:flex-end;padding-top:var(--spacing-md);border-top:1px solid var(--border-default);">' +
+                                    '<a href="/cursos/evaluaciones/' + evId + '/rendir?cursoId=' + cursoId + '" class="btn btn-accent btn-sm" style="display:inline-flex;align-items:center;gap:var(--spacing-xs);">' +
+                                        '<svg style="width:1rem;height:1rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>' +
+                                        '<span>Rendir Evaluación</span>' +
+                                    '</a>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+
+                        globalIdx++;
+                    });
+                });
+
+                html += '</div>';
+                container.innerHTML = html;
+            }
+
+            function escapeHtml(t) { if (!t) return ''; var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+
+            cargarPendientes();
+        })();
+    </script>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

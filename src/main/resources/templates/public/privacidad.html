@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(titulo='Politica de Privacidad')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <main style="max-width:48rem;margin:0 auto;padding:calc(var(--header-height) + var(--spacing-xl)) var(--spacing-md) var(--spacing-2xl);">
+        <h1>Política de Privacidad</h1>
+        <p style="color:var(--text-muted);">Última actualización: Julio 2026</p>
+
+        <section style="margin-top:var(--spacing-xl);">
+            <h2>1. Responsable del Tratamiento</h2>
+            <p>LMS LegalTech, en adelante "la Plataforma", es responsable del tratamiento de los datos personales recopilados a través de sus servicios de capacitación y gestión de aprendizaje.</p>
+        </section>
+
+        <section style="margin-top:var(--spacing-lg);">
+            <h2>2. Datos que Recopilamos</h2>
+            <ul>
+                <li><strong>Nombre completo</strong> — para identificar al usuario en certificados y registros</li>
+                <li><strong>Correo electrónico</strong> — para comunicación y notificaciones</li>
+                <li><strong>RUT</strong> (opcional) — para identificación legal cuando sea requerido</li>
+                <li><strong>Fecha de nacimiento</strong> (opcional) — para verificar mayoría de edad</li>
+                <li><strong>Registros de actividad</strong> — participaciones en cursos, evaluaciones y descargas de documentos</li>
+            </ul>
+        </section>
+
+        <section style="margin-top:var(--spacing-lg);">
+            <h2>3. Finalidades del Tratamiento</h2>
+            <ul>
+                <li><strong>Cuenta:</strong> Crear y gestionar tu cuenta de usuario</li>
+                <li><strong>Marketing:</strong> Enviar comunicaciones comerciales sobre nuevos cursos y promociones</li>
+                <li><strong>Análisis:</strong> Analizar el uso de la plataforma para mejorar la experiencia</li>
+                <li><strong>Compartir terceros:</strong> Compartir datos con instituciones educativas asociadas</li>
+            </ul>
+            <p>Cada finalidad requiere consentimiento explícito y separado.</p>
+        </section>
+
+        <section style="margin-top:var(--spacing-lg);">
+            <h2>4. Base Legal</h2>
+            <p>El tratamiento se basa en el consentimiento del usuario (Artículo 12, Ley 21.719) y, cuando corresponda, en la ejecución de una relación contractual o cumplimiento de obligaciones legales (Artículo 13).</p>
+        </section>
+
+        <section style="margin-top:var(--spacing-lg);">
+            <h2>5. Plazo de Conservación</h2>
+            <p>Los datos personales se conservarán mientras dure la relación contractual y, una vez finalizada, por un período máximo de 2 años para cumplir con obligaciones de auditoría interna, salvo que exista una obligación legal que exija un plazo mayor (ej: certificados emitidos).</p>
+        </section>
+
+        <section style="margin-top:var(--spacing-lg);">
+            <h2>6. Derechos del Titular (ARCOP)</h2>
+            <p>Puedes ejercer tus derechos de Acceso, Rectificación, Cancelación, Oposición y Portabilidad de forma gratuita desde tu perfil en la plataforma o contactando a nuestro Delegado de Protección de Datos.</p>
+        </section>
+
+        <section style="margin-top:var(--spacing-lg);">
+            <h2>7. Contacto</h2>
+            <p><strong>Delegado de Protección de Datos (DPO):</strong> dpo@lms.cl</p>
+            <p><strong>Tiempo de respuesta:</strong> 48 horas hábiles</p>
+        </section>
+    </main>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

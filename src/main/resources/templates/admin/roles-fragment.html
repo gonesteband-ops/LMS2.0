@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head>
+    <title>Roles Fragment</title>
+</head>
+<body>
+<div th:fragment="roles-list">
+    <div th:if="${mensajeExito != null}"
+         style="padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-md);border-radius:var(--border-radius-lg);background:rgba(22,101,52,0.06);border:1px solid rgba(22,101,52,0.2);color:#166534;font-size:var(--font-size-xs);font-weight:500;"
+         th:text="${mensajeExito}">Éxito</div>
+    <div th:if="${error != null}"
+         style="padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-md);border-radius:var(--border-radius-lg);background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:var(--color-danger);font-size:var(--font-size-xs);font-weight:500;"
+         th:text="${error}">Error</div>
+    <div th:if="${roles != null && !roles.isEmpty()}"
+         style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:var(--font-size-sm);">
+            <thead>
+                <tr style="background:var(--bg-body);border-bottom:2px solid var(--border-default);">
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Rol</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Descripción</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Sistema</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Permisos</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Usuarios</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Creado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="rol : ${roles}"
+                    style="border-bottom:1px solid var(--border-default);transition:background 0.15s;"
+                    onmouseover="this.style.background='var(--bg-body)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);">
+                        <span style="display:inline-flex;align-items:center;gap:var(--spacing-xs);padding:0.25rem 0.625rem;font-size:var(--font-size-xs);font-weight:600;border-radius:var(--border-radius-xl);"
+                              th:classappend="${rol.esSistema} ? 'badge badge-warning' : 'badge badge-info'">
+                            <span th:text="${rol.nombre}">ROL</span>
+                        </span>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);max-width:16rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"
+                        th:text="${rol.descripcion}">Descripción</td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);text-align:center;">
+                        <span th:if="${rol.esSistema}" style="color:#166534;font-weight:600;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+                        <span th:unless="${rol.esSistema}" style="color:var(--text-muted);">—</span>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);">
+                        <div style="display:flex;flex-wrap:wrap;gap:0.25rem;max-width:18rem;">
+                            <span th:each="permiso : ${rol.permisos}"
+                                  style="display:inline-flex;align-items:center;padding:0.125rem 0.5rem;font-size:var(--font-size-xs);font-weight:500;color:#6b21a8;background:#f3e8ff;border-radius:var(--border-radius-md);white-space:nowrap;"
+                                  th:text="${permiso.nombre}">PERMISO</span>
+                            <span th:if="${rol.permisos == null || rol.permisos.isEmpty()}"
+                                  style="color:var(--text-muted);font-size:var(--font-size-xs);">Sin permisos</span>
+                        </div>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);">
+                        <span style="font-size:var(--font-size-xs);font-weight:500;color:var(--text-primary);"
+                              th:text="${rol.usuarios != null ? #lists.size(rol.usuarios) + ' usuarios' : '0 usuarios'}">0 usuarios</span>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-muted);font-size:var(--font-size-xs);white-space:nowrap;"
+                        th:text="${#temporals.format(rol.createdAt, 'dd/MM/yyyy HH:mm')}">fecha</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${roles == null || roles.isEmpty()}"
+         style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-2xl) 0;color:var(--text-muted);">
+        <svg style="width:3rem;height:3rem;margin-bottom:var(--spacing-lg);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+        <p style="font-size:var(--font-size-sm);font-weight:500;">No hay roles registrados</p>
+    </div>
+</div>
+</body>
+</html>

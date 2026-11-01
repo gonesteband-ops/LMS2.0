@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head(titulo='Consentimiento Informado')}">
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main style="padding-top:calc(var(--header-height) + var(--spacing-xl));padding-bottom:var(--spacing-2xl);padding-left:var(--spacing-md);padding-right:var(--spacing-md);min-height:100vh;display:flex;align-items:center;">
+        <div style="max-width:48rem;margin:0 auto;width:100%;">
+            <!-- Header -->
+            <div style="text-align:center;margin-bottom:var(--spacing-xl);" class="animate-fade-in">
+                <div class="header-logo-icon" style="width:4rem;height:4rem;margin:0 auto var(--spacing-lg);font-size:1.5rem;border-radius:var(--border-radius-xl);background:linear-gradient(135deg,var(--color-accento),var(--color-accento-light));">
+                    <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <h1 style="font-size:var(--font-size-2xl);font-weight:700;color:var(--text-primary);">Preferencias de Privacidad</h1>
+                <p style="color:var(--text-secondary);margin-top:var(--spacing-xs);">Ley 21.719 — Protección de Datos Personales</p>
+            </div>
+
+            <!-- Card -->
+            <div style="background:var(--bg-surface);border-radius:var(--border-radius-xl);box-shadow:var(--shadow-card);border:1px solid var(--border-default);overflow:hidden;" class="animate-slide-up">
+                <!-- Info Banner -->
+                <div style="background:rgba(245,158,11,0.08);border-bottom:1px solid rgba(245,158,11,0.2);padding:var(--spacing-lg) var(--spacing-xl);">
+                    <div style="display:flex;align-items:flex-start;gap:var(--spacing-sm);">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-accento);flex-shrink:0;margin-top:0.125rem;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                        <div>
+                            <p style="font-size:var(--font-size-sm);font-weight:600;color:#92400e;">Ley 21.719 — Protección de Datos Personales</p>
+                            <p style="font-size:var(--font-size-xs);color:#a16207;margin-top:0.125rem;">De acuerdo con la Ley 21.719 de Protección de Datos Personales, requerimos su consentimiento explícito, libre, informado y específico para cada finalidad del tratamiento de sus datos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consent Form (visible solo si NO ha otorgado consentimiento aún) -->
+                <div id="consent-actions" th:if="${consentimientoOtorgado}" style="padding:var(--spacing-2xl);text-align:center;">
+<div style="width:4rem;height:4rem;border-radius:50%;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+<svg width="32" height="32" fill="none" stroke="#16a34a" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+<h2 style="font-size:1.25rem;font-weight:700;margin-bottom:0.5rem;">Preferencias de Privacidad</h2>
+<p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:1.5rem;">Ya tienes tus preferencias guardadas. Puedes editarlas en cualquier momento.</p>
+<div style="display:flex;flex-direction:column;gap:0.5rem;align-items:center;max-width:20rem;margin:0 auto;">
+<a href="/dashboard" class="btn btn-primary" style="width:100%;justify-content:center;">Ir al Panel Principal</a>
+<a href="/dashboard/perfil" class="btn" style="width:100%;justify-content:center;background:#e5e7eb;color:#374151;border:1px solid #d1d5db;">Ver Mi Perfil</a>
+<a href="/consentimiento?editar=true" class="btn btn-accent" style="width:100%;justify-content:center;">Editar Preferencias de Privacidad</a>
+</div></div><div id="consent-form-area" th:if="${!consentimientoOtorgado}" style="display:block;"><div id="consent-form-container" style="padding:var(--spacing-2xl);">
+                     <form id="consent-form"
+                          method="POST"
+                          th:action="@{/consentimiento}">
+                     <input type="hidden" name="versionPolitica" value="1.0" />
+                     <input type="hidden" name="idioma" value="es-CL" />
+
+                        <!-- Policy Text -->
+                        <div style="margin-bottom:var(--spacing-lg);">
+                            <h3 style="font-size:var(--font-size-base);font-weight:700;color:var(--text-primary);margin-bottom:var(--spacing-sm);">Política de Privacidad y Tratamiento de Datos</h3>
+                            <div style="background:var(--bg-body);border-radius:var(--border-radius-lg);padding:var(--spacing-lg);border:1px solid var(--border-default);max-height:16rem;overflow-y:auto;font-size:var(--font-size-sm);color:var(--text-secondary);">
+                                <p style="margin-bottom:var(--spacing-sm);">Al otorgar su consentimiento, usted autoriza a LMS LegalTech a:</p>
+                                <ul style="padding-left:var(--spacing-lg);margin-bottom:var(--spacing-sm);list-style:disc;">
+                                    <li style="margin-bottom:0.25rem;">Almacenar y procesar sus datos personales (nombre, email, registros de actividad)</li>
+                                    <li style="margin-bottom:0.25rem;">Registrar electrónicamente su participación en cursos y evaluaciones</li>
+                                    <li style="margin-bottom:0.25rem;">Emitir certificados digitales de finalización con validez legal</li>
+                                    <li>Mantener un registro de auditoría inmutable de sus actividades</li>
+                                </ul>
+                                <p style="font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-sm);">Sus derechos:</p>
+                                <ul style="padding-left:var(--spacing-lg);margin-bottom:var(--spacing-sm);list-style:disc;">
+                                    <li style="margin-bottom:0.25rem;">Solicitar la eliminación de sus datos (sujeto a retención legal)</li>
+                                    <li style="margin-bottom:0.25rem;">Acceder a todos los datos almacenados sobre usted</li>
+                                    <li style="margin-bottom:0.25rem;">Revocar este consentimiento en cualquier momento</li>
+                                    <li>Solicitar la portabilidad de sus datos</li>
+                                </ul>
+                                <p style="font-size:var(--font-size-xs);color:var(--text-muted);">Versión: 1.0 | Fecha: Julio 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Finalidades: 4 checkboxes desmarcados por defecto -->
+                        <div style="margin-bottom:var(--spacing-lg);">
+                            <p style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-md);">Selecciona las finalidades para las que otorgas tu consentimiento:</p>
+
+                            <script>
+                            function toggleCheckbox(id) {
+                                var cb = document.getElementById(id);
+                                if (cb) {
+                                    cb.checked = !cb.checked;
+                                    cb.dispatchEvent(new Event('change'));
+                                }
+                            }
+                            function updateCheckVisual(cbId, spanId) {
+                                var cb = document.getElementById(cbId);
+                                var span = document.getElementById(spanId);
+                                if (cb && span) {
+                                    if (cb.checked) {
+                                        span.style.background = '#2F4DAA';
+                                        span.style.borderColor = '#2F4DAA';
+                                        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                                        svg.setAttribute('width', '14');
+                                        svg.setAttribute('height', '14');
+                                        svg.setAttribute('fill', 'none');
+                                        svg.setAttribute('stroke', 'white');
+                                        svg.setAttribute('viewBox', '0 0 24 24');
+                                        svg.setAttribute('stroke-width', '3');
+                                        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                                        path.setAttribute('stroke-linecap', 'round');
+                                        path.setAttribute('stroke-linejoin', 'round');
+                                        path.setAttribute('d', 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z');
+                                        svg.appendChild(path);
+                                        span.innerHTML = '';
+                                        span.appendChild(svg);
+                                    } else {
+                                        span.style.background = '#ffffff';
+                                        span.style.borderColor = '#d1d5db';
+                                        span.innerHTML = '';
+                                    }
+                                }
+                            }
+                            document.addEventListener('DOMContentLoaded', function() {
+                                ['fin_CUENTA','fin_MARKETING','fin_ANALISIS','fin_COMPARTIR'].forEach(function(id) {
+                                    var cb = document.getElementById(id);
+                                    if (cb) {
+                                        cb.addEventListener('change', function() { updateCheckVisual(id, id + '_vis'); });
+                                    }
+                                });
+                            });
+                            </script>
+
+                            <div style="display:grid;gap:var(--spacing-sm);">
+
+                                <!-- CUENTA -->
+                                <label onclick="toggleCheckbox('fin_CUENTA');return false;" style="display:flex;align-items:center;gap:0.75rem;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);cursor:pointer;border:1px solid var(--border-default);transition:all 0.15s ease;user-select:none;">
+                                    <input type="checkbox" name="finalidad_CUENTA" id="fin_CUENTA" value="true" th:checked="${consentimientoCUENTA}"
+                                           style="position:absolute;opacity:0;width:0;height:0;margin:0;">
+                                    <span id="fin_CUENTA_vis"
+                                          style="display:inline-flex;align-items:center;justify-content:center;width:1.375rem;height:1.375rem;min-width:1.375rem;border:2px solid #d1d5db;border-radius:4px;background:#ffffff;transition:all 0.15s ease;font-size:0.875rem;font-weight:700;color:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+                                    </span>
+                                    <div>
+                                        <span style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);">Cuenta</span>
+                                        <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin:0;">Crear y gestionar tu cuenta de usuario (requerido para el funcionamiento)</p>
+                                    </div>
+                                </label>
+
+                                <!-- MARKETING -->
+                                <label onclick="toggleCheckbox('fin_MARKETING');return false;" style="display:flex;align-items:center;gap:0.75rem;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);cursor:pointer;border:1px solid var(--border-default);transition:all 0.15s ease;user-select:none;">
+                                    <input type="checkbox" name="finalidad_MARKETING" id="fin_MARKETING" value="true" th:checked="${consentimientoMARKETING}"
+                                           style="position:absolute;opacity:0;width:0;height:0;margin:0;">
+                                    <span id="fin_MARKETING_vis"
+                                          style="display:inline-flex;align-items:center;justify-content:center;width:1.375rem;height:1.375rem;min-width:1.375rem;border:2px solid #d1d5db;border-radius:4px;background:#ffffff;transition:all 0.15s ease;font-size:0.875rem;font-weight:700;color:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+                                    </span>
+                                    <div>
+                                        <span style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);">Marketing</span>
+                                        <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin:0;">Recibir comunicaciones comerciales sobre nuevos cursos y promociones</p>
+                                    </div>
+                                </label>
+
+                                <!-- ANALISIS -->
+                                <label onclick="toggleCheckbox('fin_ANALISIS');return false;" style="display:flex;align-items:center;gap:0.75rem;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);cursor:pointer;border:1px solid var(--border-default);transition:all 0.15s ease;user-select:none;">
+                                    <input type="checkbox" name="finalidad_ANALISIS" id="fin_ANALISIS" value="true" th:checked="${consentimientoANALISIS}"
+                                           style="position:absolute;opacity:0;width:0;height:0;margin:0;">
+                                    <span id="fin_ANALISIS_vis"
+                                          style="display:inline-flex;align-items:center;justify-content:center;width:1.375rem;height:1.375rem;min-width:1.375rem;border:2px solid #d1d5db;border-radius:4px;background:#ffffff;transition:all 0.15s ease;font-size:0.875rem;font-weight:700;color:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+                                    </span>
+                                    <div>
+                                        <span style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);">Análisis</span>
+                                        <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin:0;">Analizar tu uso de la plataforma para mejorar la experiencia</p>
+                                    </div>
+                                </label>
+
+                                <!-- COMPARTIR_TERCEROS -->
+                                <label onclick="toggleCheckbox('fin_COMPARTIR');return false;" style="display:flex;align-items:center;gap:0.75rem;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);cursor:pointer;border:1px solid var(--border-default);transition:all 0.15s ease;user-select:none;">
+                                    <input type="checkbox" name="finalidad_COMPARTIR_TERCEROS" id="fin_COMPARTIR" value="true" th:checked="${consentimientoCOMPARTIR_TERCEROS}"
+                                           style="position:absolute;opacity:0;width:0;height:0;margin:0;">
+                                    <span id="fin_COMPARTIR_vis"
+                                          style="display:inline-flex;align-items:center;justify-content:center;width:1.375rem;height:1.375rem;min-width:1.375rem;border:2px solid #d1d5db;border-radius:4px;background:#ffffff;transition:all 0.15s ease;font-size:0.875rem;font-weight:700;color:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+                                    </span>
+                                    <div>
+                                        <span style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);">Compartir con terceros</span>
+                                        <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin:0;">Compartir datos con instituciones educativas asociadas</p>
+                                    </div>
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div style="display:flex;flex-direction:column;gap:var(--spacing-sm);">
+                            <button id="consent-submit-btn" type="submit" class="btn btn-primary" style="flex:1;justify-content:center;padding:0.875rem;">
+                                Guardar cambios
+                            </button>
+                            <a href="/dashboard" class="btn btn-secondary" style="flex:1;justify-content:center;padding:0.875rem;">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Mensaje cuando el consentimiento YA fue otorgado (al volver a la página) -->
+                <div th:unless="${consentimientoOtorgado == null || !consentimientoOtorgado}"
+                     style="padding:var(--spacing-2xl);text-align:center;">
+                    <div style="width:4rem;height:4rem;border-radius:var(--border-radius-full);background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto var(--spacing-lg);">
+                        <svg style="width:2rem;height:2rem;color:var(--color-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h2 style="font-size:var(--font-size-xl);font-weight:700;color:var(--text-primary);margin-bottom:var(--spacing-sm);">Su consentimiento ha sido registrado</h2>
+                    <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin-bottom:var(--spacing-xl);max-width:400px;margin-left:auto;margin-right:auto;">
+                        Ya ha otorgado su consentimiento informado. Puede gestionar su consentimiento desde su perfil en cualquier momento.
+                    </p>
+                    <div style="display:flex;flex-direction:column;gap:var(--spacing-sm);align-items:center;">
+                        <a href="/dashboard" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:0.875rem 2rem;">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                            Ir al Panel Principal
+                        </a>
+                        <a href="/dashboard/perfil" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                            Ver Mi Perfil
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Success State (shown after hx-post success) -->
+                <div id="consent-success-container" style="display:none;padding:var(--spacing-2xl);text-align:center;">
+                    <div style="width:4rem;height:4rem;border-radius:var(--border-radius-full);background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto var(--spacing-lg);">
+                        <svg style="width:2rem;height:2rem;color:var(--color-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h2 style="font-size:var(--font-size-xl);font-weight:700;color:var(--text-primary);margin-bottom:var(--spacing-sm);">¡Consentimiento firmado exitosamente!</h2>
+                    <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin-bottom:var(--spacing-xl);max-width:400px;margin-left:auto;margin-right:auto;">
+                        Su consentimiento ha sido registrado con firma electrónica conforme a la Ley 19.799. Puede gestionar su consentimiento desde su perfil en cualquier momento.
+                    </p>
+                    <div style="display:flex;flex-direction:column;gap:var(--spacing-sm);align-items:center;">
+                        <a href="/dashboard" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:0.875rem 2rem;">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                            Ir al Panel Principal
+                        </a>
+                        <a href="/dashboard/perfil" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                            Ver Mi Perfil
+                        </a>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div></main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

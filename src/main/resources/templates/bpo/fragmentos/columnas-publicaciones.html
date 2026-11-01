@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="columnas" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;align-items:start;">
+    <div th:each="grupo : ${agrupado}" class="bpo-columna">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:2px solid var(--color-accento);">
+            <h2 style="font-size:1rem;font-weight:600;color:var(--color-primary);margin:0;" th:text="${grupo.subservicioNombre}">Subcarpeta</h2>
+            <span style="font-size:0.75rem;color:var(--text-muted);background:var(--bg-body);padding:0.125rem 0.5rem;border-radius:0.75rem;" th:text="'(' + ${grupo.total} + ')'">(0)</span>
+        </div>
+
+        <div th:if="${#lists.isEmpty(grupo.contenidos)}" style="text-align:center;padding:1rem;color:var(--text-muted);font-size:0.8125rem;">
+            Sin publicaciones
+        </div>
+
+        <div th:each="c : ${grupo.contenidos}" class="bpo-publicacion-card"
+             style="background:var(--bg-surface);border:1px solid var(--border-default);border-radius:0.5rem;padding:0.75rem;margin-bottom:0.5rem;cursor:pointer;transition:box-shadow 0.15s;"
+             th:attr="hx-get=@{/bpo/publicaciones/{id}(id=${c.id})}"
+             hx-trigger="click"
+             hx-target="#modal-publicacion-container"
+             hx-swap="innerHTML">
+            <div style="display:flex;align-items:flex-start;gap:0.5rem;">
+                <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;margin-top:0.125rem;color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                </svg>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:500;font-size:0.875rem;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" th:text="${c.titulo}">Titulo</div>
+                    <div th:if="${c.archivoNombre != null and !c.archivoNombre.isEmpty()}" style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem;">
+                        <svg style="width:0.75rem;height:0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"/></svg>
+                        <span th:text="${c.archivoNombre}">archivo.pdf</span>
+                    </div>
+                    <div style="font-size:0.6875rem;color:var(--text-muted);margin-top:0.25rem;" th:text="${c.createdAt}">fecha</div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${grupo.total > 5}" style="text-align:center;margin-top:0.5rem;">
+            <a th:href="@{/bpo/subcarpetas/{id}(id=${grupo.subservicioId})}" style="font-size:0.8125rem;color:var(--color-accento);text-decoration:none;font-weight:500;">
+                Ver las <span th:text="${grupo.total - 5}">N</span> restantes
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="lista-contenidos" class="bpo-lista-contenidos">
+    <div th:if="${#lists.isEmpty(contenidos)}" class="bpo-sin-resultados">
+        <p>No se encontraron contenidos</p>
+        <p class="bpo-sugerencia">Intenta ampliar tu búsqueda o cambiar los filtros</p>
+    </div>
+    <div th:each="c : ${contenidos}" class="bpo-item-contenido"
+         hx-get="/bpo/contenidos/{id}"
+         hx-vals='{"id": "__${c.id}__"}'
+         hx-trigger="click"
+         hx-target="#bpo-modal-detalle"
+         hx-swap="innerHTML">
+        <div class="bpo-item-header">
+            <span class="bpo-item-tipo" th:text="${c.tipo}">tipo</span>
+            <span class="bpo-item-estado" th:text="${c.estado}">estado</span>
+        </div>
+        <h3 class="bpo-item-titulo" th:text="${c.titulo}">titulo</h3>
+        <p class="bpo-item-descripcion" th:text="${c.descripcionCorta}">descripcion</p>
+        <span class="bpo-item-cuenta" th:text="${c.cuentaNombre}">cuenta</span>
+    </div>
+</div>
+</body>
+</html>

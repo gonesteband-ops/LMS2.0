@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='')}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-bpo-contenidos')}"></div>
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;padding:var(--spacing-lg);">
+                <div style="margin-bottom:1.5rem;font-size:0.875rem;color:var(--text-muted);">
+                    <a href="/admin/bpo/gestores" th:href="@{/admin/bpo/gestores}" style="color:var(--color-accento);text-decoration:none;">Gestores</a>
+                    / <a th:href="@{/admin/bpo/gestores/{id}(id=${gestor.codigo})}" style="color:var(--color-accento);text-decoration:none;" th:text="${gestor.nombre}">Gestor</a>
+                    / <span>Subcarpeta</span>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem;">
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <a th:href="@{/admin/bpo/gestores/{id}(id=${gestor.codigo})}" class="btn btn-secondary" style="display:flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"/></svg>
+                            Volver
+                        </a>
+                        <h1 style="font-size:1.5rem;font-weight:600;" th:text="${subcarpeta.nombre}">Subcarpeta</h1>
+                    </div>
+                    <a th:href="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}/nuevo(gid=${gestor.codigo},sid=${subcarpeta.codigo})}"
+                       class="btn btn-primary">+ Nueva Publicación</a>
+                </div>
+
+                <div th:if="${#lists.isEmpty(contenidos)}" style="text-align:center;padding:2rem;color:var(--text-muted);">
+                    <p>No hay publicaciones en esta subcarpeta.</p>
+                    <a th:href="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}/nuevo(gid=${gestor.codigo},sid=${subcarpeta.codigo})}" style="color:var(--color-accento);">Crear la primera</a>
+                </div>
+
+                <div th:each="c : ${contenidos}" style="background:var(--bg-surface);border:1px solid var(--border-default);border-radius:0.75rem;padding:1rem;margin-bottom:0.75rem;display:flex;flex-direction:column;gap:0.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <div style="font-weight:600;font-size:1rem;color:var(--text-primary);" th:text="${c.titulo}">Titulo</div>
+                            <div style="font-size:0.875rem;color:var(--text-secondary);margin-top:0.25rem;line-height:1.4;" th:text="${c.descripcionCorta}">Descripcion</div>
+                            <div th:if="${c.archivoNombre != null && !c.archivoNombre.isEmpty()}" style="display:flex;align-items:center;gap:0.375rem;font-size:0.8125rem;color:var(--text-muted);margin-top:0.375rem;">
+                                <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                                <span th:text="${c.archivoNombre}">archivo.pdf</span>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:0.5rem;flex-shrink:0;">
+                            <a th:href="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}/publicaciones/{pid}/editar(gid=${gestor.codigo},sid=${subcarpeta.codigo},pid=${c.id})}" 
+                               style="background:none;border:1px solid var(--text-secondary);color:var(--text-secondary);border-radius:0.375rem;padding:0.25rem 0.625rem;cursor:pointer;font-size:0.75rem;font-weight:500;text-decoration:none;display:inline-block;">Editar</a>
+                            <form th:action="@{/admin/bpo/publicaciones/{id}/eliminar(id=${c.id})}" method="post" style="display:inline;">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <input type="hidden" name="gestorId" th:value="${gestor.codigo}" />
+                                <input type="hidden" name="subId" th:value="${subcarpeta.codigo}" />
+                                <button type="submit" style="background:none;border:1px solid var(--color-danger);color:var(--color-danger);border-radius:0.375rem;padding:0.25rem 0.625rem;cursor:pointer;font-size:0.75rem;font-weight:500;">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
+

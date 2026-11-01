@@ -1,0 +1,452 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head :: head('Subir Paquete SCORM')">
+    <meta charset="UTF-8">
+    <title>Subir Paquete SCORM</title>
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" role="navigation" aria-label="Navegación del dashboard">
+            <nav style="flex:1;padding:var(--spacing-lg) var(--spacing-sm);overflow-y:auto;">
+                <a href="/dashboard" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    Dashboard
+                </a>
+                <a href="/cursos" class="sidebar-link active">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    Cursos
+                </a>
+                <a href="/dashboard/documentos" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Documentos
+                </a>
+                <a href="/consentimiento" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    Consentimiento
+                </a>
+                <a href="/dashboard/firmas" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                    Firmas
+                </a>
+                <a href="/dashboard/perfil" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Perfil
+                </a>
+                <a href="/dashboard/exportaciones" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Exportaciones
+                </a>
+                <div style="padding-top:var(--spacing-lg);margin-top:var(--spacing-lg);border-top:1px solid var(--border-default);" sec:authorize="hasAnyRole('SUPERADMIN')">
+                    <a href="/admin/usuarios" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+                        Usuarios
+                    </a>
+                    <a href="/admin/roles" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        Roles
+                    </a>
+                    <a href="/admin/auditoria" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                        Auditoría
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 style="font-size:var(--font-size-xl);font-weight:700;margin:var(--spacing-xs) 0 0;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);" sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-accento);">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                            </svg>
+                            Subir Paquete SCORM
+                        </h1>
+                        <p style="color:var(--text-muted);font-size:var(--font-size-sm);margin:var(--spacing-xs) 0 0;" sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')">
+                            Sube un archivo ZIP con contenido SCORM 1.2 o SCORM 2004
+                        </p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);flex-wrap:wrap;">
+                        <a th:href="@{/cursos}" class="btn btn-primary btn-sm">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg>
+                            Volver a Cursos
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Drop Zone (solo ADMIN/INSTRUCTOR/SUPERADMIN) -->
+                <div class="card animate-slide-up" style="margin-bottom:var(--spacing-xl);" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                    <div style="padding:var(--spacing-xl);">
+                        <div id="drop-zone"
+                             style="border:2px dashed var(--border-default);border-radius:var(--border-radius-xl);padding:var(--spacing-2xl);text-align:center;cursor:pointer;transition:all 0.3s;background:var(--bg-body);"
+                             ondragover="event.preventDefault();this.style.borderColor='var(--color-accento)';this.style.background='rgba(245,158,11,0.03)';"
+                             ondragleave="this.style.borderColor='var(--border-default)';this.style.background='var(--bg-body)';"
+                             ondrop="handleDrop(event)"
+                             onclick="document.getElementById('file-input').click()">
+                            <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--text-muted);margin-bottom:var(--spacing-md);">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <h3 style="font-size:var(--font-size-base);font-weight:600;color:var(--text-primary);margin:0 0 var(--spacing-xs);">
+                                Arrastra el archivo ZIP aquí
+                            </h3>
+                            <p style="font-size:var(--font-size-sm);color:var(--text-muted);margin:0;">
+                                o haz clic para seleccionar — Solo archivos .zip con imsmanifest.xml
+                            </p>
+                        </div>
+                        <input type="file" id="file-input" accept=".zip" style="display:none;" onchange="handleFileSelect(this.files[0])">
+
+                        <!-- Barra de progreso -->
+                        <div id="progress-container" style="display:none;margin-top:var(--spacing-lg);">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--spacing-sm);">
+                                <span id="progress-text" style="font-size:var(--font-size-sm);color:var(--text-secondary);">Subiendo...</span>
+                                <span id="progress-percent" style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-accento);">0%</span>
+                            </div>
+                            <div style="width:100%;height:6px;background:var(--border-default);border-radius:99px;overflow:hidden;">
+                                <div id="progress-bar" style="width:0%;height:100%;background:linear-gradient(90deg,var(--color-accento),var(--color-accento-light));border-radius:99px;transition:width 0.3s;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Resultado -->
+                        <div id="upload-result" style="display:none;margin-top:var(--spacing-lg);padding:var(--spacing-lg);border-radius:var(--border-radius-xl);background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);">
+                            <div style="display:flex;align-items:flex-start;gap:var(--spacing-sm);">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#22c55e;flex-shrink:0;margin-top:2px;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <p style="font-weight:600;color:#166534;margin:0 0 var(--spacing-xs);">Paquete SCORM subido exitosamente</p>
+                                    <p id="result-details" style="font-size:var(--font-size-sm);color:#166534;margin:0;"></p>
+                                    <div style="margin-top:var(--spacing-md);">
+                                        <a id="btn-reproducir-scorm" href="#" class="btn btn-accent btn-sm" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            Reproducir SCORM
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error -->
+                        <div id="upload-error" style="display:none;margin-top:var(--spacing-lg);padding:var(--spacing-lg);border-radius:var(--border-radius-xl);background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);">
+                            <div style="display:flex;align-items:flex-start;gap:var(--spacing-sm);">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#ef4444;flex-shrink:0;margin-top:2px;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <p id="error-message" style="font-size:var(--font-size-sm);color:#991b1b;margin:0;font-weight:500;"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del Paquete y <span sec:authorize="!hasAnyRole('SUPERADMIN','INSTRUCTOR')" style="font-size:1.1rem;font-weight:700;">Mis Lecciones</span>
+                        <span sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')">Acerca de SCORM</span> -->
+                <div class="card animate-fade-in">
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-accento);">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span style="font-weight:600;font-size:var(--font-size-sm);color:var(--text-primary);"><span sec:authorize="!hasAnyRole('SUPERADMIN','INSTRUCTOR')" style="font-size:1.1rem;font-weight:700;">Mis Lecciones</span>
+                        <span sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')">Acerca de SCORM</span></span>
+                    </div>
+
+                    <!-- Hidden role indicator for JavaScript -->
+                    <span id="user-role-admin-scorm" style="display:none" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')"></span>
+                    <!-- Información del Paquete: listado dinámico de paquetes SCORM cargados -->
+                    <div style="padding:var(--spacing-lg) var(--spacing-xl) 0;">
+                        <h3 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);margin:0 0 var(--spacing-md);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--color-accento);">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                                                        <span id="scorm-count" style="font-weight:400;font-size:var(--font-size-xs);color:var(--text-muted);margin-left:auto;"></span>
+                        </h3>
+                        <div id="scorm-package-list" style="min-height:4rem;">
+                            <div id="scorm-loading-msg" style="text-align:center;padding:var(--spacing-lg) 0;color:var(--text-muted);font-size:var(--font-size-sm);">
+                                <span class="spinner"></span> <span sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')">Cargando paquetes SCORM...</span><span sec:authorize="!hasAnyRole('SUPERADMIN','INSTRUCTOR')">Cargando lecciones...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información estática sobre SCORM -->
+                    <div sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')" style="padding:var(--spacing-lg) var(--spacing-xl) var(--spacing-xl);border-top:1px solid var(--border-default);margin-top:var(--spacing-lg);">
+                        <h4 style="font-size:var(--font-size-xs);font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 var(--spacing-md);">Acerca del formato</h4>
+                        <ul style="margin:0;padding-left:var(--spacing-lg);font-size:var(--font-size-sm);color:var(--text-secondary);line-height:1.8;">
+                            <li><strong>SCORM 1.2</strong> — Estándar ampliamente soportado por la mayoría de herramientas de autoría.</li>
+                            <li><strong>SCORM 2004</strong> — Versión más reciente con soporte para secuenciación y navegación.</li>
+                            <li>El archivo ZIP debe contener un archivo <code>imsmanifest.xml</code> en la raíz.</li>
+                            <li>Tamaño máximo permitido: <strong>50 MB</strong>.</li>
+                            <li>Los contenidos se almacenan de forma segura en el sistema de archivos interno.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script>
+        console.log('[SCORM] Página cargada, window.location.search =', window.location.search);
+        const cursoId = new URLSearchParams(window.location.search).get('cursoId') || '[[${param.cursoId}]]';
+        console.log('[SCORM] cursoId =', cursoId);
+        console.log('[SCORM] Tipo cursoId =', typeof cursoId, '| length =', cursoId ? cursoId.length : 0);
+
+        function handleDrop(event) {
+            event.preventDefault();
+            const file = event.dataTransfer.files[0];
+            if (file) handleFileSelect(file);
+        }
+
+        function handleFileSelect(file) {
+            if (!file) return;
+
+            // Validar extensión
+            if (!file.name.toLowerCase().endsWith('.zip')) {
+                showError('El archivo debe tener extensión .zip');
+                return;
+            }
+
+            // Validar tamaño (50MB)
+            if (file.size > 50 * 1024 * 1024) {
+                showError('El archivo excede el tamaño máximo de 50 MB');
+                return;
+            }
+
+            // Mostrar progreso
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('drop-zone').style.borderColor = 'var(--color-accento)';
+            document.getElementById('progress-text').textContent = 'Validando archivo ZIP...';
+            document.getElementById('progress-bar').style.width = '10%';
+            document.getElementById('progress-percent').textContent = '10%';
+
+            document.getElementById('upload-result').style.display = 'none';
+            document.getElementById('upload-error').style.display = 'none';
+
+            // Subir con fetch y seguimiento de progreso
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 90) + 10;
+                    document.getElementById('progress-bar').style.width = percent + '%';
+                    document.getElementById('progress-percent').textContent = percent + '%';
+                    document.getElementById('progress-text').textContent = 'Subiendo paquete SCORM...';
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    const response = JSON.parse(xhr.responseText);
+                    document.getElementById('progress-bar').style.width = '100%';
+                    document.getElementById('progress-percent').textContent = '100%';
+                    document.getElementById('progress-text').textContent = '¡Completado!';
+
+                    document.getElementById('result-details').innerHTML =
+                        '<strong>Código:</strong> <span style="font-family:monospace;font-weight:700;color:var(--color-accento);">' + escapeHtml(response.codigo || '—') + '</span><br>' +
+                        '<strong>Título:</strong> ' + escapeHtml(response.titulo) + '<br>' +
+                        '<strong>Versión SCORM:</strong> ' + escapeHtml(response.versionScorm) + '<br>' +
+                        '<strong>ID:</strong> ' + escapeHtml(response.id);
+
+                    // Configurar enlace "Reproducir SCORM"
+                    var playBtn = document.getElementById('btn-reproducir-scorm');
+                    if (playBtn) {
+                        playBtn.href = '/cursos/scorm/' + response.id + '/play';
+                    }
+
+                    document.getElementById('upload-result').style.display = 'block';
+                    document.getElementById('drop-zone').style.borderColor = 'var(--border-default)';
+
+                    // Refrescar listado de paquetes SCORM después de subir
+                    if (!cursoId || cursoId === '${param.cursoId}' || cursoId === 'null') {
+                        document.getElementById('scorm-package-list').innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">Selecciona un curso para ver sus paquetes SCORM.</div>';
+                    } else {
+                        cargarPaquetesScorm(cursoId);
+                    }
+                } else {
+                    let errorMsg = 'Error al subir el paquete SCORM';
+                    try {
+                        const errResp = JSON.parse(xhr.responseText);
+                        errorMsg = errResp.message || errResp.error || errorMsg;
+                    } catch(e) {}
+                    showError(errorMsg);
+                }
+            };
+
+            xhr.onerror = function() {
+                showError('Error de conexión. Verifica que el servidor esté funcionando.');
+            };
+
+            const uploadUrl = cursoId && cursoId !== '${param.cursoId}'
+                ? '/api/v1/cursos/' + cursoId + '/scorm/upload'
+                : '/api/v1/cursos/[[${cursoId}]]/scorm/upload';
+
+            xhr.open('POST', uploadUrl, true);
+            xhr.send(formData);
+        }
+
+        function showError(message) {
+            document.getElementById('progress-container').style.display = 'none';
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('upload-error').style.display = 'block';
+            document.getElementById('drop-zone').style.borderColor = 'var(--border-default)';
+        }
+
+        // ========== Carga dinámica de paquetes SCORM ==========
+
+        function cargarPaquetesScorm(cursoId) {
+            console.log('[SCORM] cargarPaquetesScorm() called with cursoId =', cursoId);
+            const listContainer = document.getElementById('scorm-package-list');
+            const countSpan = document.getElementById('scorm-count');
+            if (!listContainer) {
+                console.warn('[SCORM] listContainer NOT FOUND');
+                return;
+            }
+            console.log('[SCORM] listContainer found, sending XHR...');
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/v1/cursos/' + cursoId + '/scorm', true);
+
+            // Timeout de 15 segundos
+            xhr.timeout = 15000;
+            xhr.ontimeout = function() {
+                console.error('[SCORM] XHR TIMEOUT after 15s');
+                listContainer.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--color-danger);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg> La solicitud tardó demasiado. Verifica tu conexión o recarga la página.</div>';
+            };
+
+            xhr.onload = function() {
+                console.log('[SCORM] XHR onload, status =', xhr.status);
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        if (countSpan) {
+                            if (esAdminScorm) { countSpan.textContent = data.length + ' paquete(s)'; } else { countSpan.textContent = data.length + ' lección(es)'; }
+                        }
+                        if (data.length > 0) {
+                            var esAdminScorm = document.getElementById('user-role-admin-scorm');
+                            let html = '<div style="overflow-x:auto;"><table class="table-base" style="width:100%;">' +
+                                '<thead><tr style="border-bottom:2px solid var(--border-default);">' +
+                                (esAdminScorm ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Código</th>' : '') +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Título</th>' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Estado</th>' +
+                                (esAdminScorm ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Versión</th>' : '') +
+                                (esAdminScorm ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Tamaño</th>' : '') +
+                                (esAdminScorm ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Subido</th>' : '') +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Acciones</th></tr></thead><tbody>';
+                            data.forEach(function(p) {
+                                // Para estudiantes: ocultar paquetes deshabilitados
+                                if (!esAdminScorm && (p.habilitado === false)) return;
+                                const fecha = p.createdAt ? new Date(p.createdAt).toLocaleDateString('es-CL', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+                                var habilitado = p.habilitado !== false;
+                                if (esAdminScorm) {
+                                    var estadoBadge = habilitado
+                                        ? '<span class="badge badge-success" style="font-size:var(--font-size-xs);"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Habilitado</span>'
+                                        : '<span class="badge badge-danger" style="font-size:var(--font-size-xs);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M4.93 4.93l14.14 14.14"/></svg> Deshabilitado</span>';
+                                } else {
+                                    var completado = p.completadoPorAlumno === true;
+                                    var estadoBadge = completado
+                                        ? '<span class="badge badge-success" style="font-size:var(--font-size-xs);"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Realizado</span>'
+                                        : '<span class="badge badge-secondary" style="font-size:var(--font-size-xs);">Pendiente</span>';
+                                }
+                                var acciones = '<a href="/cursos/scorm/' + p.id + '/play" class="btn btn-accent btn-sm" style="display:inline-flex;align-items:center;gap:0.25rem;text-decoration:none;">' +
+                                    '<svg style="width:0.875rem;height:0.875rem;" fill="currentColor" viewBox="0 0 24 24"><path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>' +
+                                    ' Reproducir' +
+                                '</a>';
+                                if (esAdminScorm) {
+                                    var toggleLabel = habilitado ? 'Deshabilitar' : 'Habilitar';
+                                    var toggleClass = habilitado ? 'btn-outline' : 'btn-primary';
+                                    acciones += ' <button type="button" class="btn ' + toggleClass + ' btn-sm btn-toggle-scorm" style="font-size:var(--font-size-xs);padding:0.25rem 0.5rem;" data-id="' + (p.id || '') + '" data-habilitado="' + habilitado + '">' + toggleLabel + '</button>';
+                                }
+                                html += '<tr style="border-bottom:1px solid var(--border-default);transition:background 0.2s;" onmouseover="this.style.background=\'var(--bg-body)\'" onmouseout="this.style.background=\'transparent\'">' +
+                                    (esAdminScorm ? '<td style="padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--color-accento);font-size:var(--font-size-xs);font-family:monospace;">' + escapeHtml(p.codigo || '—') + '</td>' : '') +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);font-weight:500;color:var(--text-primary);font-size:var(--font-size-sm);">' + escapeHtml(p.titulo || '—') + '</td>' +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);">' + estadoBadge + '</td>' +
+                                    (esAdminScorm ? '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-xs);">' + escapeHtml(p.versionScorm || '—') + '</td>' : '') +
+                                    (esAdminScorm ? '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-sm);">' + formatBytes(p.tamanoBytes || 0) + '</td>' : '') +
+                                    (esAdminScorm ? '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-xs);">' + fecha + '</td>' : '') +
+                                    '<td style="padding:var(--spacing-sm) var(--spacing-md);white-space:nowrap;">' + acciones + '</td></tr>';
+                            });
+                            html += '</tbody></table></div>';
+                            listContainer.innerHTML = html;
+                            // Delegación de eventos para botones toggle-habilitado SCORM
+                            listContainer.querySelectorAll('.btn-toggle-scorm').forEach(function(btn) {
+                                btn.addEventListener('click', function(e) {
+                                    e.stopPropagation();
+                                    var scormId = this.getAttribute('data-id');
+                                    if (!scormId) return;
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.open('PATCH', '/api/v1/scorm/' + scormId + '/toggle-habilitado', true);
+                                    xhr.onload = function() {
+                                        if (xhr.status === 200) {
+                                            showToast('Estado del paquete SCORM actualizado', 'success');
+                                            cargarPaquetesScorm(cursoId);
+                                        } else {
+                                            showToast('Error al cambiar estado del paquete SCORM', 'error');
+                                        }
+                                    };
+                                    xhr.onerror = function() {
+                                        showToast('Error de conexión', 'error');
+                                    };
+                                    xhr.send();
+                                });
+                            });
+                        } else {
+                            listContainer.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">' +
+                                '<svg style="width:3rem;height:3rem;margin:0 auto var(--spacing-md);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>' +
+                                '<p style="font-size:var(--font-size-sm);">' + (esAdminScorm ? 'No hay paquetes SCORM cargados.' : 'No hay lecciones disponibles para este curso.') + '</p></div>';
+                        }
+                    } catch(e) {
+                        listContainer.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--color-danger);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg> Error al cargar los paquetes SCORM</div>';
+                    }
+                } else {
+                    listContainer.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--color-danger);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg> Error al cargar los paquetes SCORM (HTTP ' + xhr.status + ')</div>';
+                }
+            };
+            xhr.onerror = function() {
+                console.error('[SCORM] XHR onerror');
+                const listContainer = document.getElementById('scorm-package-list');
+                if (listContainer) {
+                    listContainer.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--color-danger);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg> Error de conexión al cargar paquetes SCORM</div>';
+                }
+            };
+            console.log('[SCORM] Sending XHR to:', '/api/v1/cursos/' + cursoId + '/scorm');
+            xhr.send();
+            console.log('[SCORM] XHR sent');
+        }
+
+        function formatBytes(bytes) {
+            if (!bytes || bytes === 0) return '0 B';
+            var k = 1024, sizes = ['B', 'KB', 'MB', 'GB'], i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function escapeHtml(t) {
+            if (!t) return '';
+            var d = document.createElement('div');
+            d.appendChild(document.createTextNode(t));
+            return d.innerHTML;
+        }
+
+        // Cargar paquetes SCORM al iniciar la página
+        if (cursoId && cursoId !== '${param.cursoId}' && cursoId !== 'null') {
+            console.log('[SCORM] Calling cargarPaquetesScorm on page load');
+            cargarPaquetesScorm(cursoId);
+        } else {
+            var scormList = document.getElementById('scorm-package-list');
+            if (scormList) scormList.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">Selecciona un curso para ver sus paquetes SCORM.</div>';
+        }
+    </script>
+</body>
+</html>

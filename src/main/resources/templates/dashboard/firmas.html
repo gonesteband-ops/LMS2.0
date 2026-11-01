@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Firmas Electrónicas')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='firmas')}"></div>
+
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 class="dashboard-page-title">Mis Firmas Electrónicas</h1>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-top:var(--spacing-xs);">Firma electrónica avanzada con trazabilidad y hash SHA-256</p>
+                    </div>
+                </div>
+
+                <!-- Firma Form -->
+                <div class="card animate-slide-up">
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                        <svg style="width:1rem;height:1rem;color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                        <span id="user-role-admin-firma" style="display:none" sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')"></span>
+                        <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);margin:0;">Historial de Firmas</h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <div id="firma-response"></div>
+                        <div id="firmas-table" style="overflow-x:auto;">
+                                    <table class="table-base" style="width:100%;">
+                                        <thead><tr style="border-bottom:2px solid var(--border-default);">
+                                            <th sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')" style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Codigo</th>
+                                            <th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Documento</th>
+                                            <th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Fecha</th>
+                                            <th sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')" style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">IP</th><th sec:authorize="hasAnyRole('SUPERADMIN','INSTRUCTOR')" style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Hash SHA-256</th>
+                                        </tr></thead>
+                                        <tbody id="firmas-body">
+                                            <tr><td style="text-align:center;padding:var(--spacing-xl);color:var(--text-muted);" colspan="' + (esAdminFirma ? '5' : '2') + '">Cargando...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--spacing-md);">Para firmar documentos, usa el boton Firmar en la seccion Documentos.</p>
+                    </div>
+                </div>
+
+                <!-- Info Card -->
+                <div style="margin-top:var(--spacing-xl);padding:var(--spacing-lg);background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:var(--border-radius-xl);box-shadow:var(--shadow-sm);" class="animate-fade-in">
+                    <div style="display:flex;align-items:flex-start;gap:var(--spacing-sm);">
+                        <svg style="width:1.25rem;height:1.25rem;color:var(--color-accento);flex-shrink:0;margin-top:2px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                        <div style="font-size:var(--font-size-sm);color:rgba(180,83,9,1);">
+                            <p style="font-weight:600;margin:0 0 var(--spacing-xs);">Marco Legal — Ley N° 19.799</p>
+                            <p style="margin:0;line-height:1.6;">Las firmas registradas cumplen con la Ley de Documentos Electrónicos, Firma Electrónica y Servicios de Certificación. Cada firma incluye: hash SHA-256 del documento, geolocalización opcional y timestamp del servidor.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+<script>
+
+        var esAdminFirma = document.getElementById('user-role-admin-firma');
+
+        // Cargar historial de firmas
+        fetch('/api/v1/firmas')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var tbody = document.getElementById('firmas-body');
+                if (!data || !data.length) {
+                    tbody.innerHTML = '<tr><td style="text-align:center;padding:var(--spacing-xl);color:var(--text-muted);" colspan="' + (esAdminFirma ? '5' : '2') + '">No hay firmas registradas.</td></tr>';
+                    return;
+                }
+                var html = '';
+                data.forEach(function(f) {
+                    var fecha = f.fechaFirma ? new Date(f.fechaFirma).toLocaleDateString('es-CL') + ' ' + new Date(f.fechaFirma).toLocaleTimeString('es-CL', {hour:'2-digit',minute:'2-digit'}) : '—';
+                    html += '<tr style="border-bottom:1px solid var(--border-default);">';
+                    if (esAdminFirma) html += '<td style="padding:var(--spacing-sm) var(--spacing-md);font-family:monospace;font-weight:600;color:var(--color-accento);">' + (f.codigoDocumento || '—') + '</td>';
+                    html += '<td style="padding:var(--spacing-sm) var(--spacing-md);">' + (f.nombreDocumento || '—') + '</td>';
+                    html += '<td style="padding:var(--spacing-sm) var(--spacing-md);font-size:var(--font-size-xs);color:var(--text-secondary);">' + fecha + '</td>';
+                    if (esAdminFirma) html += '<td style="padding:var(--spacing-sm) var(--spacing-md);font-size:var(--font-size-xs);font-family:monospace;color:var(--text-muted);">' + (f.ipOrigen || '—') + '</td>';
+                    if (esAdminFirma) html += '<td style="padding:var(--spacing-sm) var(--spacing-md);font-size:0.6rem;font-family:monospace;color:var(--text-muted);word-break:break-all;">' + (f.hashSha256 ? f.hashSha256.substring(0,16) + '...' : '—') + '</td>';
+                    html += '</tr>';
+                });
+                tbody.innerHTML = html;
+            })
+            .catch(function() {
+                document.getElementById('firmas-body').innerHTML = '<tr><td colspan="' + (esAdminFirma ? '5' : '2') + '" style="text-align:center;padding:var(--spacing-xl);color:var(--text-muted);">Error al cargar el historial.</td></tr>';
+            });
+
+</script>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

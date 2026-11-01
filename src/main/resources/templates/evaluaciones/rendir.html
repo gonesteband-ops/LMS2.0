@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Rendir Evaluación')}">
+    <title>Rendir Evaluación - LMS LegalTech</title>
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" role="navigation" aria-label="Navegación del dashboard">
+            <nav style="flex:1;padding:var(--spacing-lg) var(--spacing-sm);overflow-y:auto;">
+                <a href="/dashboard" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                    <span>Panel Principal</span>
+                </a>
+                <a href="/cursos" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                    <span>Mis Cursos</span>
+                </a>
+                <a href="/dashboard/documentos" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                    <span>Documentos</span>
+                </a>
+                <a href="/consentimiento" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                    <span>Consentimiento</span>
+                </a>
+                <a href="/dashboard/firmas" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                    <span>Mis Firmas</span>
+                </a>
+                <a href="/dashboard/perfil" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                    <span>Mi Perfil</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Contenido principal -->
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+
+                <!-- === ENCABEZADO === -->
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 style="font-size:var(--font-size-2xl);font-weight:700;margin:0;display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1.5rem;height:1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+                            <span id="eva-titulo">Cargando evaluación…</span>
+                        </h1>
+                        <p style="margin:var(--spacing-xs) 0 0;color:var(--text-secondary);font-size:var(--font-size-sm);">
+                            <span id="eva-descripcion"></span>
+                        </p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);flex-wrap:wrap;">
+                        <a id="btn-volver" href="#" class="btn btn-primary btn-sm">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg>
+                            Volver a evaluaciones
+                        </a>
+                    </div>
+                </div>
+
+                <!-- === INFO DE LA EVALUACIÓN === -->
+                <div id="eva-info" class="card animate-slide-up" style="margin-bottom:var(--spacing-xl);display:none;">
+                    <div style="padding:var(--spacing-lg) var(--spacing-xl);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--spacing-md);">
+                        <div style="display:flex;align-items:center;gap:var(--spacing-md);flex-wrap:wrap;">
+                            <span class="badge" style="background:rgba(59,130,246,0.08);color:var(--color-info);border-color:rgba(59,130,246,0.2);display:inline-flex;align-items:center;gap:0.25rem;font-size:var(--font-size-sm);padding:0.375rem 0.75rem;">
+                                <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span id="eva-tiempo">—</span>
+                            </span>
+                            <span class="badge" style="background:rgba(16,185,129,0.08);color:var(--color-success);border-color:rgba(16,185,129,0.2);display:inline-flex;align-items:center;gap:0.25rem;font-size:var(--font-size-sm);padding:0.375rem 0.75rem;">
+                                <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>
+                                <span id="eva-peso">—</span>
+                            </span>
+                            <span class="badge" style="background:rgba(245,158,11,0.08);color:rgba(180,83,9,1);border-color:rgba(245,158,11,0.2);display:inline-flex;align-items:center;gap:0.25rem;font-size:var(--font-size-sm);padding:0.375rem 0.75rem;">
+                                <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
+                                <span id="eva-preg-count">—</span>
+                            </span>
+                        </div>
+                        <div id="timer-container" style="display:none;font-size:var(--font-size-lg);font-weight:700;color:var(--color-info);font-variant-numeric:tabular-nums;">
+                            <span id="timer-display">00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === FORMULARIO DE PREGUNTAS === -->
+                <form id="rendir-form" style="display:none;">
+                    <div id="preguntas-container"></div>
+
+                    <!-- Botón enviar -->
+                    <div style="display:flex;align-items:center;justify-content:center;gap:var(--spacing-md);padding:var(--spacing-xl) 0;margin-top:var(--spacing-lg);border-top:1px solid var(--border-default);">
+                        <button type="button" id="btn-enviar" class="btn btn-accent"
+                                style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:0.75rem 2rem;font-size:var(--font-size-base);font-weight:600;">
+                            <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>Enviar respuestas</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Loader -->
+                <div id="rendir-loader" style="text-align:center;padding:var(--spacing-3xl);">
+                    <div class="spinner" style="width:2.5rem;height:2.5rem;margin:0 auto;border-width:3px;"></div>
+                    <p style="margin-top:var(--spacing-lg);color:var(--text-muted);font-size:var(--font-size-sm);">
+                        Cargando evaluación…
+                    </p>
+                </div>
+
+                <!-- Estado de éxito después de enviar -->
+                <div id="rendir-exito" style="display:none;">
+                    <div class="card" style="margin-bottom:var(--spacing-xl);">
+                        <div style="text-align:center;padding:var(--spacing-3xl);">
+                            <div style="width:4rem;height:4rem;border-radius:50%;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto var(--spacing-lg);">
+                                <svg style="width:2rem;height:2rem;color:var(--color-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <h2 style="margin:0 0 var(--spacing-sm);font-size:var(--font-size-xl);font-weight:600;" id="txt-resultado-titulo">Respuesta registrada</h2>
+                            <div id="txt-resultado-nota" style="font-size:var(--font-size-3xl);font-weight:800;margin-bottom:var(--spacing-xs);">—</div>
+                            <div id="txt-resultado-estado" style="font-size:var(--font-size-sm);margin-bottom:var(--spacing-sm);">—</div>
+                            <div id="detalle-preguntas" style="margin-top:var(--spacing-lg);display:none;"></div>
+                            <a id="btn-volver-exito" href="#" class="btn btn-primary btn-sm">
+                                Volver a evaluaciones
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+
+        var CURSO_ID = null;
+        var EVALUACION_ID = null;
+        var API_BASE = null;
+        var preguntas = [];
+        var timerInterval = null;
+        var tiempoRestanteSegundos = 0;
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        function init() {
+            var params = new URLSearchParams(window.location.search);
+            CURSO_ID = params.get('cursoId');
+
+            // Extraer evaluacionId de la URL: /cursos/evaluaciones/{id}/rendir
+            var pathParts = window.location.pathname.split('/');
+            var rendirIdx = pathParts.indexOf('rendir');
+            if (rendirIdx > 0) {
+                EVALUACION_ID = pathParts[rendirIdx - 1];
+            }
+
+            if (!CURSO_ID || !EVALUACION_ID) {
+                mostrarError('Faltan parámetros: cursoId y evaluacionId son requeridos.');
+                return;
+            }
+
+            API_BASE = '/api/v1/cursos/' + CURSO_ID + '/evaluaciones';
+
+            // Configurar botón volver
+            var volverUrl = '/cursos/evaluaciones?cursoId=' + CURSO_ID;
+            document.getElementById('btn-volver').href = volverUrl;
+            document.getElementById('btn-volver-exito').href = volverUrl;
+
+            cargarEvaluacion();
+        }
+
+        // ============================================================
+        // CARGAR EVALUACIÓN
+        // ============================================================
+        function cargarEvaluacion() {
+            var url = API_BASE + '/' + EVALUACION_ID + '/rendir';
+
+            fetch(url)
+                .then(function (res) {
+                    if (!res.ok) {
+                        if (res.status === 403) throw new Error('No tienes acceso a esta evaluación');
+                        throw new Error('Error al cargar la evaluación (status ' + res.status + ')');
+                    }
+                    return res.json();
+                })
+                .then(function (data) {
+                    mostrarEvaluacion(data);
+                })
+                .catch(function (err) {
+                    console.error('[Rendir] Error:', err.message);
+                    mostrarError(err.message);
+                });
+        }
+
+        // ============================================================
+        // MOSTRAR EVALUACIÓN
+        // ============================================================
+        function mostrarEvaluacion(data) {
+            var evaluacion = data.evaluacion || {};
+            preguntas = data.preguntas || [];
+
+            // Título y descripción
+            document.getElementById('eva-titulo').textContent = evaluacion.titulo || 'Evaluación';
+            document.getElementById('eva-descripcion').textContent = evaluacion.descripcion || '';
+
+            // Info badges
+            var tiempoMin = evaluacion.tiempoEstimadoMinutos;
+            document.getElementById('eva-tiempo').textContent = tiempoMin ? tiempoMin + ' min' : 'Sin tiempo';
+            document.getElementById('eva-peso').textContent = (evaluacion.pesoTotal || 100) + '%';
+            document.getElementById('eva-preg-count').textContent = preguntas.length + ' preguntas';
+
+            // Mostrar info
+            document.getElementById('eva-info').style.display = 'block';
+
+            // Timer
+            if (tiempoMin && tiempoMin > 0) {
+                iniciarTimer(tiempoMin * 60);
+            }
+
+            // Renderizar preguntas
+            renderizarPreguntas();
+
+            // Ocultar loader, mostrar formulario
+            document.getElementById('rendir-loader').style.display = 'none';
+            document.getElementById('rendir-form').style.display = 'block';
+        }
+
+        // ============================================================
+        // TIMER
+        // ============================================================
+        function iniciarTimer(segundos) {
+            tiempoRestanteSegundos = segundos;
+            var container = document.getElementById('timer-container');
+            var display = document.getElementById('timer-display');
+            container.style.display = 'block';
+            actualizarTimerDisplay();
+
+            timerInterval = setInterval(function () {
+                tiempoRestanteSegundos--;
+                actualizarTimerDisplay();
+
+                if (tiempoRestanteSegundos <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    alert('<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 2v2"/></svg> El tiempo ha terminado. Tus respuestas serán enviadas automáticamente.');
+                    enviarRespuestas();
+                }
+
+                // Cambiar color cuando quede poco tiempo
+                if (tiempoRestanteSegundos <= 60) {
+                    display.style.color = 'var(--color-danger)';
+                }
+            }, 1000);
+        }
+
+        function actualizarTimerDisplay() {
+            var mins = Math.floor(tiempoRestanteSegundos / 60);
+            var secs = tiempoRestanteSegundos % 60;
+            document.getElementById('timer-display').textContent =
+                String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        }
+
+        // ============================================================
+        // RENDERIZAR PREGUNTAS
+        // ============================================================
+        function renderizarPreguntas() {
+            var container = document.getElementById('preguntas-container');
+            container.innerHTML = '';
+
+            if (!preguntas || preguntas.length === 0) {
+                container.innerHTML =
+                    '<div class="card" style="margin-bottom:var(--spacing-xl);">' +
+                        '<div style="text-align:center;padding:var(--spacing-2xl);color:var(--text-muted);">' +
+                            '<p>Esta evaluación no tiene preguntas.</p>' +
+                        '</div>' +
+                    '</div>';
+                return;
+            }
+
+            preguntas.forEach(function (p, idx) {
+                var card = document.createElement('div');
+                card.className = 'card animate-fade-in';
+                card.style.marginBottom = 'var(--spacing-xl)';
+                card.style.animationDelay = (idx * 0.08) + 's';
+
+                var preguntaHtml = '';
+                var tipo = p.tipo || 'opcion_unica';
+
+                // Parsear opciones
+                var opciones = [];
+                if (p.opciones) {
+                    try {
+                        opciones = typeof p.opciones === 'string' ? JSON.parse(p.opciones) : p.opciones;
+                    } catch (e) {
+                        opciones = [];
+                    }
+                }
+
+                if (tipo === 'opcion_unica') {
+                    preguntaHtml = renderOpcionUnica(p, idx, opciones);
+                } else if (tipo === 'opcion_multiple') {
+                    preguntaHtml = renderOpcionMultiple(p, idx, opciones);
+                } else if (tipo === 'verdadero_falso') {
+                    preguntaHtml = renderVerdaderoFalso(p, idx);
+                } else if (tipo === 'respuesta_corta') {
+                    preguntaHtml = renderRespuestaCorta(p, idx);
+                } else if (tipo === 'desarrollo') {
+                    preguntaHtml = renderDesarrollo(p, idx);
+                } else {
+                    preguntaHtml = '<p style="color:var(--text-muted);font-style:italic;">Tipo de pregunta no soportado: ' + escapeHtml(tipo) + '</p>';
+                }
+
+                card.innerHTML =
+                    '<div style="padding:var(--spacing-xl);">' +
+                        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--spacing-sm);margin-bottom:var(--spacing-md);">' +
+                            '<div style="display:flex;align-items:center;gap:var(--spacing-sm);">' +
+                                '<span style="width:1.75rem;height:1.75rem;border-radius:50%;background:var(--color-accento);color:#fff;display:flex;align-items:center;justify-content:center;font-size:var(--font-size-xs);font-weight:700;flex-shrink:0;">' + (idx + 1) + '</span>' +
+                                '<h3 style="margin:0;font-size:var(--font-size-base);font-weight:600;">' +
+                                    tipoLabel(tipo) +
+                                '</h3>' +
+                            '</div>' +
+                            '<span style="font-size:var(--font-size-xs);color:var(--text-muted);font-weight:500;">' + (p.peso || 0) + '%</span>' +
+                        '</div>' +
+                        '<div class="ql-renderizado" style="font-size:var(--font-size-sm);margin-bottom:var(--spacing-md);padding:var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);border:1px solid var(--border-default);">' +
+                            (p.contenido || '<em style="color:var(--text-muted);">Sin contenido</em>') +
+                        '</div>' +
+                        preguntaHtml +
+                    '</div>';
+
+                container.appendChild(card);
+                forzarVisibilidadInputs(card);
+            });
+
+            // Configurar botón enviar
+            document.getElementById('btn-enviar').addEventListener('click', function () {
+                if (confirm('¿Estás seguro de que deseas enviar tus respuestas?')) {
+                    enviarRespuestas();
+                }
+            });
+        }
+
+        // ============================================================
+        // RENDERIZAR POR TIPO
+        // ============================================================
+        function renderOpcionUnica(p, idx, opciones) {
+            var name = 'p_' + p.id;
+            var html = '<div style="display:flex;flex-direction:column;gap:var(--spacing-sm);">';
+            (opciones || []).forEach(function (op, oi) {
+                var val = op.texto || 'opcion_' + oi;
+                html +=
+                    '<label style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);cursor:pointer;transition:all 0.15s ease;background:var(--bg-surface);" ' +
+                           'onmouseover="this.style.borderColor=\'var(--color-accento)\';this.style.background=\'rgba(99,102,241,0.03)\';" ' +
+                           'onmouseout="this.style.borderColor=\'var(--border-default)\';this.style.background=\'var(--bg-surface)\';">' +
+                        '<input type="radio" name="' + name + '" value="' + escapeHtml(val) + '" style="accent-color:var(--color-accento);width:1rem!important;height:1rem!important;min-width:1rem!important;min-height:1rem!important;opacity:1!important;position:relative!important;">' +
+                        '<span style="font-size:var(--font-size-sm);">' + escapeHtml(op.texto || '') + '</span>' +
+                    '</label>';
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function renderOpcionMultiple(p, idx, opciones) {
+            var name = 'p_' + p.id;
+            var html = '<div class="opciones-multiple" data-pregunta-id="' + p.id + '" style="display:flex;flex-direction:column;gap:var(--spacing-sm);">';
+            (opciones || []).forEach(function (op, oi) {
+                var val = op.texto || 'opcion_' + oi;
+                var inputId = name + '_' + oi;
+                html +=
+                    '<label for="' + inputId + '" style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);cursor:pointer;transition:all 0.15s ease;background:var(--bg-surface);" ' +
+                           'onmouseover="this.style.borderColor=\'var(--color-accento)\';this.style.background=\'rgba(99,102,241,0.03)\';" ' +
+                           'onmouseout="this.style.borderColor=\'var(--border-default)\';this.style.background=\'var(--bg-surface)\';">' +
+                        '<input type="checkbox" id="' + inputId + '" name="' + name + '" value="' + escapeHtml(val) + '" style="accent-color:var(--color-accento);width:1rem!important;height:1rem!important;min-width:1rem!important;min-height:1rem!important;opacity:1!important;position:relative!important;">' +
+                        '<span style="font-size:var(--font-size-sm);">' + escapeHtml(op.texto || '') + '</span>' +
+                    '</label>';
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function renderVerdaderoFalso(p, idx) {
+            var name = 'p_' + p.id;
+            return '<div style="display:flex;gap:var(--spacing-md);">' +
+                        '<label style="flex:1;display:flex;align-items:center;justify-content:center;gap:var(--spacing-sm);padding:var(--spacing-md);border:2px solid var(--border-default);border-radius:var(--border-radius-lg);cursor:pointer;transition:all 0.15s ease;background:var(--bg-surface);font-weight:500;font-size:var(--font-size-sm);" ' +
+                               'onmouseover="this.style.borderColor=\'var(--color-success)\';this.style.background=\'rgba(16,185,129,0.04)\';" ' +
+                               'onmouseout="this.style.borderColor=\'var(--border-default)\';this.style.background=\'var(--bg-surface)\';">' +
+                            '<input type="radio" name="' + name + '" value="true" style="accent-color:var(--color-success);width:1rem!important;height:1rem!important;min-width:1rem!important;min-height:1rem!important;opacity:1!important;position:relative!important;">' +
+                            '<span>Verdadero</span>' +
+                        '</label>' +
+                        '<label style="flex:1;display:flex;align-items:center;justify-content:center;gap:var(--spacing-sm);padding:var(--spacing-md);border:2px solid var(--border-default);border-radius:var(--border-radius-lg);cursor:pointer;transition:all 0.15s ease;background:var(--bg-surface);font-weight:500;font-size:var(--font-size-sm);" ' +
+                               'onmouseover="this.style.borderColor=\'var(--color-danger)\';this.style.background=\'rgba(239,68,68,0.04)\';" ' +
+                               'onmouseout="this.style.borderColor=\'var(--border-default)\';this.style.background=\'var(--bg-surface)\';">' +
+                            '<input type="radio" name="' + name + '" value="false" style="accent-color:var(--color-danger);width:1rem!important;height:1rem!important;min-width:1rem!important;min-height:1rem!important;opacity:1!important;position:relative!important;">' +
+                            '<span>Falso</span>' +
+                        '</label>' +
+                    '</div>';
+        }
+
+        function renderRespuestaCorta(p, idx) {
+            return '<div>' +
+                        '<input type="text" name="p_' + p.id + '" class="form-input" ' +
+                               'placeholder="Escribe tu respuesta aquí…" ' +
+                               'style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);">' +
+                    '</div>';
+        }
+
+        function renderDesarrollo(p, idx) {
+            return '<div>' +
+                        '<textarea name="p_' + p.id + '" class="form-input" ' +
+                                  'placeholder="Desarrolla tu respuesta aquí…" ' +
+                                  'rows="5" ' +
+                                  'style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);resize:vertical;"></textarea>' +
+                    '</div>';
+        }
+
+        // ============================================================
+        // ENVIAR RESPUESTAS
+        // ============================================================
+        function enviarRespuestas() {
+            // Detener timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+
+            var btn = document.getElementById('btn-enviar');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner" style="width:1.25rem;height:1.25rem;border-width:2px;margin:0;"></div> Enviando…';
+
+            // Recopilar respuestas
+            var respuestas = {};
+            preguntas.forEach(function (p) {
+                var name = 'p_' + p.id;
+                var inputs = document.querySelectorAll('[name="' + name + '"]');
+                if (!inputs || inputs.length === 0) return;
+
+                var tipo = p.tipo || 'opcion_unica';
+
+                if (tipo === 'opcion_unica' || tipo === 'verdadero_falso') {
+                    var checked = document.querySelector('[name="' + name + '"]:checked');
+                    if (checked) {
+                        respuestas[p.id] = checked.value;
+                    }
+                } else if (tipo === 'opcion_multiple') {
+                    var checkedBoxes = document.querySelectorAll('[name="' + name + '"]:checked');
+                    respuestas[p.id] = Array.from(checkedBoxes).map(function (cb) { return cb.value; });
+                } else if (tipo === 'respuesta_corta' || tipo === 'desarrollo') {
+                    var input = document.querySelector('[name="' + name + '"]');
+                    if (input) {
+                        respuestas[p.id] = input.value;
+                    }
+                }
+            });
+
+            // Validar que todas las preguntas tengan respuesta
+            var preguntaSinRespuesta = null;
+            preguntas.forEach(function (p) {
+                var tipo = p.tipo || 'opcion_unica';
+                var respuesta = respuestas[p.id];
+                if (tipo === 'opcion_multiple') {
+                    if (!Array.isArray(respuesta) || respuesta.length === 0) {
+                        preguntaSinRespuesta = p;
+                    }
+                } else {
+                    if (respuesta === undefined || respuesta === null || respuesta.toString().trim() === "") {
+                        preguntaSinRespuesta = p;
+                    }
+                }
+            });
+            if (preguntaSinRespuesta) {
+                btn.disabled = false;
+            var btn = document.getElementById('btn-enviar');
+            if (!btn) return;
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner" style="width:1rem;height:1rem;margin:0 auto;"></div> Enviando...';
+                alert('Debes responder todas las preguntas antes de enviar');
+                return;
+            }
+
+            // Enviar al servidor
+            console.log('[Rendir] Respuestas a enviar:', JSON.stringify(respuestas));
+            console.log('[Rendir] Tipos de claves:', Object.keys(respuestas).map(function(k) { return typeof k + ': ' + k; }));
+            var url = API_BASE + '/' + EVALUACION_ID + '/responder';
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(respuestas)
+            })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Error al enviar respuestas (status ' + res.status + ')');
+                return res.json();
+            })
+            .then(function (data) {
+                // Mostrar pantalla de éxito
+                document.getElementById('rendir-form').style.display = 'none';
+                document.getElementById('rendir-exito').style.display = 'block';
+                // Cargar detalle por pregunta
+                var xhrDetalle = new XMLHttpRequest();
+                xhrDetalle.open('GET', API_BASE + '/' + EVALUACION_ID + '/resultado-detalle', true);
+                xhrDetalle.onload = function() {
+                    if (xhrDetalle.status >= 200 && xhrDetalle.status < 300) {
+                        try {
+                            var detalleData = JSON.parse(xhrDetalle.responseText);
+                            if (detalleData.detalle && Array.isArray(detalleData.detalle)) {
+                                var detalleHtml = '';
+                                detalleData.detalle.forEach(function(q) {
+                                    var icon = q.correcta ? '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' : '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>';
+                                    var color = q.correcta ? 'var(--color-success)' : 'var(--color-danger)';
+                                    detalleHtml += '<div style="display:flex;align-items:flex-start;gap:var(--spacing-sm);padding:var(--spacing-sm);margin-bottom:var(--spacing-xs);border-radius:6px;background:' + (q.correcta ? 'rgba(16,185,129,0.04)' : 'rgba(239,68,68,0.04)') + ';">';
+                                    detalleHtml += '<span style="font-size:1.5rem;">' + icon + '</span>';
+                                    detalleHtml += '<div style="flex:1;">';
+                                    detalleHtml += '<span style="font-size:var(--font-size-xs);font-weight:700;color:' + color + ';">' + (q.correcta ? 'CORRECTA' : 'INCORRECTA') + ' — Peso: ' + q.peso + '%</span>';
+                                    detalleHtml += '<span style="font-size:var(--font-size-xs);color:var(--text-muted);display:block;">Tu respuesta: ' + (q.respuestaAlumno || '—') + '</span></div>';
+                                    detalleHtml += '</div>';
+                                });
+                                document.getElementById('detalle-preguntas').innerHTML = detalleHtml;
+                                document.getElementById('detalle-preguntas').style.display = 'block';
+                            }
+                        } catch(e) {}
+                    }
+                };
+                xhrDetalle.send();
+                document.getElementById('txt-resultado-titulo').innerHTML = data.aprobado ? '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Aprobado con ' + (data.nota != null ? Math.round(data.nota) + '%' : '—') : '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> Reprobado con ' + (data.nota != null ? Math.round(data.nota) + '%' : '—');
+                document.getElementById('txt-resultado-nota').textContent = '';
+                document.getElementById('txt-resultado-estado').textContent = data.aprobado ? '' : '(Nota minima: consulta con tu instructor)';
+            })
+            .catch(function (err) {
+                console.error('[Rendir] Error al enviar:', err.message);
+                btn.disabled = false;
+                btn.innerHTML = '<svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Enviar respuestas</span>';
+                alert('Error: ' + err.message);
+            });
+        }
+
+        // ============================================================
+        // UTILIDADES
+        // ============================================================
+        function escapeHtml(text) {
+            if (!text) return '';
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function tipoLabel(tipo) {
+            var labels = {
+                'opcion_unica': 'Opción Única',
+                'opcion_multiple': 'Opción Múltiple',
+                'verdadero_falso': 'Verdadero / Falso',
+                'respuesta_corta': 'Respuesta Corta',
+                'desarrollo': 'Desarrollo',
+                'relacionar': 'Relacionar'
+            };
+            return labels[tipo] || tipo;
+        }
+
+        function mostrarError(mensaje) {
+            document.getElementById('rendir-loader').style.display = 'none';
+            var container = document.getElementById('preguntas-container');
+            container.innerHTML =
+                '<div class="card" style="margin-bottom:var(--spacing-xl);">' +
+                    '<div style="text-align:center;padding:var(--spacing-2xl);color:var(--color-danger);">' +
+                        '<div style="font-size:3rem;margin-bottom:var(--spacing-md);">' +
+                            '<svg style="width:3rem;height:3rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>' +
+                        '</div>' +
+                        '<p style="font-size:var(--font-size-sm);">' + escapeHtml(mensaje) + '</p>' +
+                    '</div>' +
+                '</div>';
+        }
+
+        function forzarVisibilidadInputs(contenedor) {
+            var inputs = contenedor.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+            inputs.forEach(function(inp) {
+                inp.style.setProperty('position', 'relative', 'important');
+                inp.style.setProperty('opacity', '1', 'important');
+                inp.style.setProperty('width', '1rem', 'important');
+                inp.style.setProperty('height', '1rem', 'important');
+                inp.style.setProperty('pointer-events', 'auto', 'important');
+            });
+        }
+
+        // ============================================================
+        // INICIAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', init);
+    })();
+    </script>
+</body>
+</html>

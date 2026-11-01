@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Gestor de Contenidos')}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='bpo-gestores')}"></div>
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;padding:var(--spacing-lg);">
+                <!-- Breadcrumb -->
+                <div style="margin-bottom:1rem;font-size:0.875rem;color:var(--text-muted);">
+                    <a href="/bpo/gestores" th:href="@{/bpo/gestores}" style="color:var(--color-accento);text-decoration:none;">Gestor de Contenidos</a>
+                    / <span th:text="${gestor.nombre}">Gestor</span>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem;">
+                    <h1 style="font-size:1.5rem;font-weight:600;">
+                        <span th:text="${gestor.nombre}">Gestor</span>
+                        <span sec:authorize="hasAnyRole('SUPERADMIN', 'ADMIN')" th:if="${gestor.activa}" style="font-size:0.75rem;color:var(--color-success);margin-left:0.75rem;display:inline-flex;align-items:center;gap:0.25rem;vertical-align:middle;">
+                            <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:var(--color-success);display:inline-block;"></span>
+                            Activo
+                        </span>
+                        <span sec:authorize="hasAnyRole('SUPERADMIN', 'ADMIN')" th:unless="${gestor.activa}" style="font-size:0.75rem;color:var(--text-muted);margin-left:0.75rem;display:inline-flex;align-items:center;gap:0.25rem;vertical-align:middle;">
+                            <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:var(--text-muted);display:inline-block;"></span>
+                            Inactivo
+                        </span>
+                    </h1>
+                    <div sec:authorize="hasAnyRole('SUPERADMIN', 'ADMIN')" style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+                        <a th:href="@{/admin/bpo/gestores/{id}/subcarpetas/nuevo(id=${gestor.codigo})}" class="btn btn-primary" style="display:flex;align-items:center;gap:0.5rem;">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            Crear nueva carpeta
+                        </a>
+                        <a th:href="@{/admin/bpo/gestores/{id}/editar(id=${gestor.codigo})}" class="btn btn-secondary" style="display:flex;align-items:center;gap:0.5rem;">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                            Editar
+                        </a>
+                    </div>
+                    <a href="/bpo/gestores" th:href="@{/bpo/gestores}" class="btn btn-secondary" style="display:flex;align-items:center;gap:0.375rem;">
+                        <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"/></svg>
+                        Volver
+                    </a>
+                </div>
+
+                <!-- Google-like search bar -->
+                <div style="max-width:640px;margin:0 auto 2rem;position:relative;">
+                    <form th:action="@{/bpo/gestores/{id}/buscar(id=${gestor.id})}" method="get" style="display:flex;gap:0.5rem;align-items:center;" id="bpo-search-form">
+                        <div style="position:relative;flex:1;">
+                            <input type="text" id="bpo-search" name="q" autocomplete="off"
+                                   style="width:100%;padding:0.75rem 1rem 0.75rem 2.75rem;border:2px solid var(--border-default);border-radius:2rem;font-size:1rem;background:var(--bg-surface);color:var(--text-primary);outline:none;transition:border-color 0.2s;"
+                                   th:placeholder="'Buscar en ' + ${gestor.nombre} + '...'"
+                                   th:attr="hx-get=@{/bpo/gestores/{id}/buscar(id=${gestor.id})}"
+                                   hx-trigger="keyup changed delay:400ms, search"
+                                   hx-target="#columnas-contenidos"
+                                   hx-swap="innerHTML"
+                                   hx-indicator="#search-spinner">
+                            <svg style="position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);width:1.25rem;height:1.25rem;color:var(--text-muted);pointer-events:none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                            </svg>
+                            <span id="search-spinner" class="htmx-indicator" style="position:absolute;right:0.875rem;top:50%;transform:translateY(-50%);width:1rem;height:1rem;border:2px solid var(--border-default);border-top-color:var(--color-accento);border-radius:50%;animation:spin 0.6s linear infinite;"></span>
+                        </div>
+                        <button type="submit" class="btn btn-accent" style="border-radius:2rem;padding:0.75rem 1.25rem;white-space:nowrap;">Buscar</button>
+                    </form>
+                </div>
+
+                <!-- Subcarpetas list (admin only) -->
+                <div sec:authorize="hasAnyRole('SUPERADMIN', 'ADMIN')" class="card animate-slide-up" style="margin-bottom:var(--spacing-xl);">
+                    <div style="padding:var(--spacing-xl);">
+                        <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem;">Subcarpetas</h3>
+                        <div th:if="${#lists.isEmpty(subcarpetas)}" style="text-align:center;padding:1rem;color:var(--text-muted);font-size:0.875rem;">
+                            No hay subcarpetas en este gestor.
+                        </div>
+                        <div th:unless="${#lists.isEmpty(subcarpetas)}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:0.75rem;">
+                            <div th:each="s : ${subcarpetas}"
+                                 style="display:flex;flex-direction:column;gap:0.5rem;background:var(--bg-body);border:1px solid var(--border-default);border-radius:0.5rem;padding:0.75rem 1rem;">
+                                <div style="display:flex;align-items:center;gap:0.75rem;">
+                                    <div style="min-width:0;flex:1;">
+                                        <a th:href="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}(gid=${gestor.id},sid=${s.codigo})}"
+                                           style="font-weight:500;font-size:0.875rem;color:var(--color-accento);text-decoration:none;" th:text="${s.nombre}">Subcarpeta</a>
+                                    </div>
+                                    <div style="display:flex;gap:0.375rem;flex-shrink:0;">
+                                        <a th:href="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}/editar(gid=${gestor.id},sid=${s.codigo})}"
+                                           style="background:none;border:1px solid var(--text-secondary);color:var(--text-secondary);border-radius:0.375rem;padding:0.25rem 0.5rem;cursor:pointer;font-size:0.75rem;font-weight:500;text-decoration:none;">Editar</a>
+                                        <form th:action="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}/eliminar(gid=${gestor.id},sid=${s.codigo})}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar carpeta \'' + '${s.nombre}' + '\'?');">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                            <button type="submit" style="background:none;border:1px solid var(--color-danger);color:var(--color-danger);border-radius:0.375rem;padding:0.25rem 0.5rem;cursor:pointer;font-size:0.75rem;font-weight:500;">Eliminar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <a th:href="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}/nuevo(gid=${gestor.id},sid=${s.codigo})}"
+                                   style="display:flex;align-items:center;gap:0.375rem;font-size:0.8125rem;color:var(--color-accento);text-decoration:none;padding-top:0.375rem;border-top:1px solid var(--border-default);">
+                                    <svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                                    Nueva Publicación
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columns with publications grouped by subcarpeta -->
+                <div id="columnas-contenidos">
+                    <div th:replace="~{bpo/fragmentos/columnas-publicaciones :: columnas}"></div>
+                </div>
+                <!-- Modal container for publication detail -->
+                <div id="modal-publicacion-container"></div>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

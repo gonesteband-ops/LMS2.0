@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head>
+    <title>Auditoría Fragment</title>
+</head>
+<body>
+<div th:fragment="opciones-tipos">
+    <select id="tipo-evento-select"
+            style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);font-size:var(--font-size-sm);color:var(--text-primary);transition:all 0.2s;outline:none;appearance:none;"
+            onchange="if(this.value) htmx.ajax('GET', '/hx/admin/auditoria/tipo/' + this.value, {target: '#audit-list', swap: 'innerHTML'}); else { var cat = document.getElementById('categoria-evento').value; htmx.ajax('GET', '/hx/admin/auditoria/categoria/' + cat, {target: '#audit-list', swap: 'innerHTML'}); }"
+            onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+            onblur="this.style.borderColor='var(--border-default)';this.style.boxShadow='none'">
+        <option value="">Todos los tipos</option>
+        <option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo}">TIPO</option>
+    </select>
+</div>
+
+<div th:fragment="audit-list">
+    <div th:if="${eventos != null && !eventos.isEmpty()}"
+         style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:var(--font-size-sm);">
+            <thead>
+                <tr style="background:var(--bg-body);border-bottom:2px solid var(--border-default);">
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Tipo</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Acción</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Actor</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Recurso</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Metadata</th>
+                    <th style="padding:var(--spacing-sm) var(--spacing-md);text-align:left;font-weight:600;color:var(--text-secondary);white-space:nowrap;">Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="evento : ${eventos}"
+                    style="border-bottom:1px solid var(--border-default);transition:background 0.15s;"
+                    onmouseover="this.style.background='var(--bg-body)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);">
+                        <span style="display:inline-flex;align-items:center;padding:0.125rem 0.5rem;font-size:var(--font-size-xs);font-weight:600;border-radius:var(--border-radius-md);white-space:nowrap;"
+                              th:classappend="${evento.tipoEvento == 'LOGIN' or evento.tipoEvento == 'LOGOUT'} ? 'badge badge-info' : (evento.tipoEvento == 'CONSENTIMIENTO' ? 'badge badge-success' : (evento.tipoEvento == 'FIRMA' ? 'badge badge-warning' : 'badge badge-default'))"
+                              th:text="${evento.tipoEvento}">TIPO</span>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-primary);font-weight:500;"
+                        th:text="${evento.accion}">ACCIÓN</td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);">
+                        <div>
+                            <!-- Mostrar RUT si está disponible en el mapa, sino mostrar UUID corto -->
+                            <span th:if="${rutsActores != null && rutsActores.containsKey(evento.actorId)}"
+                                  style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);font-family:monospace;"
+                                  th:text="${rutsActores.get(evento.actorId)}">12.345.678-9</span>
+                            <code th:if="${rutsActores == null || !rutsActores.containsKey(evento.actorId) || evento.actorId == null}"
+                                  style="font-size:var(--font-size-xs);color:var(--text-muted);font-family:monospace;"
+                                  th:text="${evento.actorId != null ? #strings.substring(evento.actorId.toString(), 0, 8) + '...' : '—'}">6ebc4ec8</code>
+                        </div>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);">
+                        <div>
+                            <span style="font-size:var(--font-size-xs);font-weight:500;color:var(--text-primary);"
+                                  th:text="${evento.recursoTipo}">TIPO</span>
+                            <!-- Si es USUARIO, mostrar RUT desde el mapa -->
+                            <span th:if="${evento.recursoTipo == 'USUARIO' && rutsRecursos != null && rutsRecursos.containsKey(evento.recursoId)}"
+                                  style="display:block;font-size:var(--font-size-sm);font-weight:600;color:var(--color-accento);font-family:monospace;margin-top:0.125rem;"
+                                  th:text="${rutsRecursos.get(evento.recursoId)}">12.345.678-9</span>
+                            <!-- Para DOCUMENTO, SCORM, EVALUACION mostrar codigo -->
+                            <code th:if="${evento.recursoTipo != 'USUARIO' && evento.metadata != null && evento.metadata.containsKey('codigo')}"
+                                  style="display:block;font-size:0.625rem;color:var(--color-accento);font-family:monospace;margin-top:0.125rem;font-weight:600;"
+                                  th:text="${evento.metadata.codigo}">codigo</code>
+                            <!-- Fallback: titulo o nombreOriginal -->
+                            <span th:if="${evento.recursoTipo != 'USUARIO' && evento.metadata != null && !evento.metadata.containsKey('codigo') && (evento.metadata.containsKey('titulo') || evento.metadata.containsKey('nombreOriginal'))}"
+                                  style="display:block;font-size:0.625rem;color:var(--text-muted);margin-top:0.125rem;"
+                                  th:text="${evento.metadata.containsKey('titulo') ? evento.metadata.titulo : evento.metadata.nombreOriginal}">fallback</span>
+                            <!-- Ultimo fallback: UUID corto (solo cuando NO hay codigo ni RUT) -->
+                            <th:block th:if="${evento.recursoTipo == 'USUARIO'}">
+                                <code th:if="${rutsRecursos == null || !rutsRecursos.containsKey(evento.recursoId)}"
+                                      th:text="${evento.recursoId != null ? evento.recursoId.toString().substring(0, 8) + '...' : '—'}"
+                                      style="display:block;font-size:0.625rem;color:var(--text-muted);font-family:monospace;margin-top:0.125rem;">short-uuid</code>
+                            </th:block>
+                            <th:block th:if="${evento.recursoTipo != 'USUARIO'}">
+                                <code th:if="${evento.metadata == null || (!evento.metadata.containsKey('codigo') && !evento.metadata.containsKey('titulo') && !evento.metadata.containsKey('nombreOriginal'))}"
+                                      th:text="${evento.recursoId != null ? evento.recursoId.toString().substring(0, 8) + '...' : '—'}"
+                                      style="display:block;font-size:0.625rem;color:var(--text-muted);font-family:monospace;margin-top:0.125rem;">short-uuid</code>
+                            </th:block>
+                            <!-- Subtitulo nombreOriginal para documentos (solo si se muestra codigo) -->
+                            <span th:if="${evento.recursoTipo != 'USUARIO' && evento.metadata != null && evento.metadata.containsKey('nombreOriginal') && evento.metadata.containsKey('codigo')}"
+                                  style="display:block;font-size:0.5rem;color:var(--text-muted);margin-top:0.0625rem;"
+                                  th:text="${evento.metadata.nombreOriginal}">filename</span>
+                        </div>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);max-width:12rem;">
+                        <div th:if="${evento.metadata != null && !evento.metadata.isEmpty()}"
+                             style="font-size:var(--font-size-xs);color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                            <span th:text="${evento.metadata}">metadata</span>
+                        </div>
+                        <span th:unless="${evento.metadata != null && !evento.metadata.isEmpty()}"
+                              style="color:var(--text-muted);font-size:var(--font-size-xs);">—</span>
+                    </td>
+                    <td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-muted);font-size:var(--font-size-xs);white-space:nowrap;"
+                        th:text="${#temporals.format(evento.createdAt, 'dd/MM/yyyy HH:mm:ss')}">fecha</td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- Paginación -->
+        <div th:if="${eventos.totalPages > 1}"
+             style="display:flex;align-items:center;justify-content:center;gap:var(--spacing-sm);padding:var(--spacing-lg) 0 0;border-top:1px solid var(--border-default);margin-top:var(--spacing-lg);">
+            <span style="font-size:var(--font-size-xs);color:var(--text-muted);"
+                  th:text="'Página ' + (eventos.number + 1) + ' de ' + eventos.totalPages + ' (' + eventos.totalElements + ' eventos)'">
+                Paginación
+            </span>
+        </div>
+    </div>
+    <div th:if="${eventos == null || eventos.isEmpty()}"
+         style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-2xl) 0;color:var(--text-muted);">
+        <svg style="width:3rem;height:3rem;margin-bottom:var(--spacing-lg);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+        <p style="font-size:var(--font-size-sm);font-weight:500;">No se encontraron eventos de auditoría</p>
+    </div>
+</div>
+</body>
+</html>

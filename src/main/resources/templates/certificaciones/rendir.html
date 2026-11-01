@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Rendir Certificación')}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='certificaciones')}"></div>
+        <main class="dashboard-content">
+            <div style="max-width:720px;margin:0 auto;padding:var(--spacing-lg);">
+                <div style="margin-bottom:1.5rem;font-size:0.875rem;color:var(--text-muted);">
+                    <a href="/certificaciones" th:href="@{/certificaciones}" style="color:var(--color-accento);text-decoration:none;">Mis Certificaciones</a>
+                    / <span th:text="${certificacion.titulo}">Certificación</span>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem;">
+                    <div>
+                        <h1 style="font-size:1.5rem;font-weight:600;" th:text="${certificacion.titulo}">Certificación</h1>
+                        <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:0.25rem;" th:text="${certificacion.descripcion}">Descripción</p>
+                    </div>
+                    <div id="timer" style="font-size:1.25rem;font-weight:700;color:var(--color-accento);font-variant-numeric:tabular-nums;" th:if="${certificacion.tiempoEstimadoMinutos != null}">
+                        <span id="timer-min">00</span>:<span id="timer-sec">00</span>
+                    </div>
+                </div>
+
+                <div th:if="${intento != null and intento.estado == 'COMPLETADO'}" style="padding:1rem;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:0.5rem;margin-bottom:1.5rem;text-align:center;">
+                    <p style="font-size:1.125rem;font-weight:600;color:#15803d;margin-bottom:0.5rem;" th:text="'Nota: ' + ${#numbers.formatDecimal(intento.nota, 1, 1)} + ' - ' + (intento.aprobado ? 'APROBADO' : 'REPROBADO')">Nota</p>
+                </div>
+
+                <div id="preguntas-area" th:if="${intento == null or intento.estado != 'COMPLETADO'}">
+                    <form id="respuestas-form">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <div th:each="p : ${preguntas}" style="background:var(--bg-surface);border:1px solid var(--border-default);border-radius:0.75rem;padding:1.25rem;margin-bottom:1rem;">
+                            <div style="display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:0.75rem;">
+                                <span style="display:inline-flex;align-items:center;justify-content:center;width:1.75rem;height:1.75rem;border-radius:50%;background:rgba(99,102,241,0.1);color:#6366f1;font-size:0.75rem;font-weight:700;flex-shrink:0;" th:text="${p.orden + 1}">1</span>
+                                <div style="flex:1;font-weight:500;color:var(--text-primary);line-height:1.5;" th:text="${p.contenido}">Pregunta</div>
+                            </div>
+
+                            <div th:if="${p.tipo == 'verdadero_falso'}" style="display:flex;gap:1rem;padding-left:2.5rem;">
+                                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:0.5rem 1rem;border:1px solid var(--border-default);border-radius:0.5rem;transition:all 0.15s;">
+                                    <input type="radio" th:name="${p.id}" value="true" style="width:1rem;height:1rem;opacity:1;position:static;" onchange="marcarLabel(this)">
+                                    Verdadero
+                                </label>
+                                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:0.5rem 1rem;border:1px solid var(--border-default);border-radius:0.5rem;transition:all 0.15s;">
+                                    <input type="radio" th:name="${p.id}" value="false" style="width:1rem;height:1rem;opacity:1;position:static;" onchange="marcarLabel(this)">
+                                    Falso
+                                </label>
+                            </div>
+
+                            <div th:if="${p.tipo == 'opcion_unica' or p.tipo == 'opcion_multiple'}" style="display:flex;flex-direction:column;gap:0.5rem;padding-left:2.5rem;">
+                                <div th:id="'opts-' + ${p.id}"></div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;">
+                        <button type="button" onclick="iniciarYEntregar()" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:0.5rem;">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Entregar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <input type="hidden" id="rendir-cert-id" th:value="${certificacion.id}">
+    <input type="hidden" id="rendir-tiempo" th:value="${certificacion.tiempoEstimadoMinutos}">
+    <textarea id="preguntas-json" style="display:none;" th:text="${preguntasJson}">[]</textarea>
+    <script>
+        var certificacionId = document.getElementById('rendir-cert-id').value;
+        var tiempoLimite = parseInt(document.getElementById('rendir-tiempo').value) || null;
+        var preguntasData = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var jsonEl = document.getElementById('preguntas-json');
+            if (jsonEl) {
+                try { preguntasData = JSON.parse(jsonEl.value); } catch(e) { preguntasData = []; }
+            }
+            preguntasData.forEach(function(p) {
+                var container = document.getElementById('opts-' + p.id);
+                if (!container || !p.opciones) return;
+                var opciones = [];
+                try { opciones = JSON.parse(p.opciones); } catch(e) { return; }
+                if (!Array.isArray(opciones) || opciones.length === 0) return;
+                var inputType = p.tipo === 'opcion_unica' ? 'radio' : 'checkbox';
+                opciones.forEach(function(o) {
+                    var label = document.createElement('label');
+                    label.style.cssText = 'display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:0.5rem 0.75rem;border:1px solid var(--border-default);border-radius:0.5rem;transition:all 0.15s;';
+                    var input = document.createElement('input');
+                    input.type = inputType;
+                    input.name = p.id;
+                    input.value = o.texto || '';
+                    input.style.cssText = 'width:1rem;height:1rem;opacity:1;position:static;';
+                    input.onchange = function() { marcarLabel(this); };
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(' ' + (o.texto || '')));
+                    container.appendChild(label);
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (tiempoLimite && document.getElementById('preguntas-area')) {
+                iniciarTemporizador(tiempoLimite * 60);
+            }
+        });
+
+        function iniciarTemporizador(segundos) {
+            var total = segundos;
+            var interval = setInterval(function() {
+                total--;
+                if (total <= 0) {
+                    clearInterval(interval);
+                    entregar();
+                    return;
+                }
+                var min = Math.floor(total / 60);
+                var sec = total % 60;
+                document.getElementById('timer-min').textContent = String(min).padStart(2, '0');
+                document.getElementById('timer-sec').textContent = String(sec).padStart(2, '0');
+            }, 1000);
+        }
+
+        function marcarLabel(input) {
+            var label = input.closest('label');
+            if (input.type === 'checkbox' || input.type === 'radio') {
+                if (input.checked) {
+                    label.style.borderColor = '#6366f1';
+                    label.style.background = 'rgba(99,102,241,0.05)';
+                } else {
+                    label.style.borderColor = '';
+                    label.style.background = '';
+                }
+            }
+        }
+
+        function iniciarYEntregar() {
+            var csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            var csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            fetch('/api/v1/certificaciones/' + certificacionId + '/iniciar', {
+                method: 'POST',
+                headers: { [csrfHeader]: csrfToken }
+            }).then(function(r) { return r.json(); })
+              .then(function(intento) {
+                  entregarConIntento(intento.id);
+              }).catch(function(e) {
+                  entregar();
+              });
+        }
+
+        function entregarConIntento(intentoId) {
+            var respuestas = {};
+            document.querySelectorAll('#preguntas-area input[type="radio"]:checked, #preguntas-area input[type="checkbox"]:checked').forEach(function(input) {
+                var name = input.name;
+                if (respuestas[name]) {
+                    if (Array.isArray(respuestas[name])) respuestas[name].push(input.value);
+                    else respuestas[name] = [respuestas[name], input.value];
+                } else {
+                    respuestas[name] = input.value;
+                }
+            });
+
+            var csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            var csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            fetch('/api/v1/certificaciones/' + certificacionId + '/responder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(respuestas)
+            }).then(function(r) { return r.json(); })
+              .then(function(resultado) {
+                  var area = document.getElementById('preguntas-area');
+                  if (area) {
+                      var nota = resultado.nota ? resultado.nota.toFixed(1) : '0.0';
+                      var aprobado = resultado.aprobado ? 'APROBADO' : 'REPROBADO';
+                      var color = resultado.aprobado ? '#15803d' : '#b91c1c';
+                      area.innerHTML = '<div style="text-align:center;padding:2rem;">' +
+                          '<div style="font-size:3rem;font-weight:800;color:' + color + ';" th:text="' + nota + '">' + nota + '</div>' +
+                          '<div style="font-size:1.25rem;font-weight:600;color:' + color + ';margin-top:0.5rem;">' + aprobado + '</div>' +
+                          '<a href="/certificaciones" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:0.5rem;margin-top:1.5rem;">Volver a Mis Certificaciones</a>' +
+                          '</div>';
+                  }
+              }).catch(function(e) { alert('Error: ' + e.message); });
+        }
+
+        function entregar() {
+            iniciarYEntregar();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,700 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Evaluaciones')}">
+    <title>Evaluaciones - LMS LegalTech</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+
+    <link rel="stylesheet" th:href="@{/css/quill-custom.css}">
+
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='evaluaciones')}"></div>
+
+        <!-- Contenido principal -->
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+
+                <!-- === ENCABEZADO === -->
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <div style="display:none;" class="mobile-nav-pills">
+                            <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);">
+                                <a href="/dashboard" class="pills-link"><svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg> Panel</a>
+                                <a href="/cursos" class="pills-link"><svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg> Cursos</a>
+                                <a href="/dashboard/documentos" class="pills-link"><svg style="width:0.875rem;height:0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5"/></svg> Docs</a>
+                            </div>
+                        </div>
+                        <h1 style="font-size:var(--font-size-2xl);font-weight:700;margin:0;display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1.5rem;height:1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                            <span>Evaluaciones del Curso</span>
+                        </h1>
+                        <p style="margin:var(--spacing-xs) 0 0;color:var(--text-secondary);font-size:var(--font-size-sm);">
+                            <span id="curso-info">Cargando información del curso…</span>
+                        </p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);flex-wrap:wrap;">
+                        <a href="/cursos" class="btn btn-primary btn-sm">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg>
+                            Volver a cursos
+                        </a>
+                        <a id="btn-crear-evaluacion" href="#"
+                           class="btn btn-accent btn-sm"
+                           sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')"
+                           style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                            <span><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg></span>
+                            <span>Nueva evaluación</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- === LISTADO DE EVALUACIONES === -->
+                <div id="evaluaciones-container" class="animate-slide-up">
+                    <!-- Estado vacío (JS lo oculta si hay datos) -->
+                    <div id="evaluaciones-empty" class="card" style="margin-bottom:var(--spacing-xl);">
+                        <div style="text-align:center;padding:var(--spacing-2xl);color:var(--text-muted);">
+                            <div style="font-size:3rem;margin-bottom:var(--spacing-md);">
+                                <svg style="width:3rem;height:3rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                            </div>
+                            <p style="font-size:var(--font-size-sm);font-weight:500;margin-bottom:var(--spacing-xs);">
+                                No hay evaluaciones para este curso
+                            </p>
+                            <p style="font-size:var(--font-size-xs);margin-bottom:var(--spacing-lg);">
+                                Crea la primera evaluación para medir el progreso de los estudiantes.
+                            </p>
+                            <a id="btn-crear-desde-vacio" href="#"
+                               class="btn btn-accent btn-sm"
+                               sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')"
+                               style="display:inline-flex;align-items:center;gap:var(--spacing-xs);">
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg></span>
+                                <span>Crear evaluación</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Evaluaciones se renderizan aquí -->
+                    <div id="evaluaciones-list"></div>
+
+                    <!-- Loader -->
+                    <div id="evaluaciones-loader" style="display:none;text-align:center;padding:var(--spacing-2xl);">
+                        <div class="spinner" style="width:2rem;height:2rem;margin:0 auto;border-width:3px;"></div>
+                        <p style="margin-top:var(--spacing-md);color:var(--text-muted);font-size:var(--font-size-sm);">
+                            Cargando evaluaciones…
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Hidden role data for JavaScript (desde el controlador, más confiable) -->
+    <span id="user-role-data"
+          style="display:none"
+          th:data-es-estudiante="${esEstudiante}"
+          data-es-admin="false"></span>
+
+    <!-- ============================================================
+         MODAL DE CONFIRMACIÓN PARA ELIMINAR EVALUACIÓN
+         ============================================================ -->
+    <div id="modal-eliminar-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;"
+         onclick="if(event.target===this)cerrarModalEliminar()">
+        <div style="background:var(--bg-surface, #fff);border-radius:var(--border-radius-xl, 12px);padding:var(--spacing-2xl, 32px);max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;">
+            <div style="font-size:3rem;margin-bottom:var(--spacing-md);">
+                <svg style="width:3rem;height:3rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+            </div>
+            <h3 style="margin:0 0 var(--spacing-xs);font-size:var(--font-size-lg);font-weight:600;">¿Eliminar evaluación?</h3>
+            <p style="margin:0 0 var(--spacing-lg);color:var(--text-secondary);font-size:var(--font-size-sm);">
+                Esta acción no se puede deshacer. La evaluación y todas sus preguntas serán eliminadas.
+            </p>
+            <div style="display:flex;gap:var(--spacing-sm);justify-content:center;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalEliminar()" style="min-width:100px;">Cancelar</button>
+                <button type="button" id="btn-confirmar-eliminar" class="btn btn-danger" style="min-width:100px;display:inline-flex;align-items:center;gap:var(--spacing-xs);justify-content:center;">
+                    <span id="delete-spinner" style="display:none;width:1rem;height:1rem;border-width:2px;" class="spinner"></span>
+                    <span id="delete-text">Eliminar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+
+        var CURSO_ID = null;
+        var EVALUACIONES_API = null;
+        var CURSOS_API = null;
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        function init() {
+            console.log('[Evaluaciones] init() called');
+            var params = new URLSearchParams(window.location.search);
+            CURSO_ID = params.get('cursoId');
+            console.log('[Evaluaciones] CURSO_ID:', CURSO_ID);
+
+            if (!CURSO_ID) {
+                document.getElementById('curso-info').textContent =
+                    'Error: No se especificó un curso.';
+                document.getElementById('evaluaciones-empty').style.display = 'block';
+                document.querySelector('#evaluaciones-empty p').textContent =
+                    'No se ha especificado un curso válido.';
+                return;
+            }
+
+            EVALUACIONES_API = '/api/v1/cursos/' + CURSO_ID + '/evaluaciones';
+            CURSOS_API = '/api/v1/cursos/' + CURSO_ID;
+            console.log('[Evaluaciones] EVALUACIONES_API:', EVALUACIONES_API);
+            console.log('[Evaluaciones] CURSOS_API:', CURSOS_API);
+
+            // Configurar botones de crear evaluación (pueden no existir para estudiantes)
+            var crearUrl = '/cursos/evaluaciones/crear?cursoId=' + CURSO_ID;
+            var btnCrear = document.getElementById('btn-crear-evaluacion');
+            if (btnCrear) btnCrear.href = crearUrl;
+            var btnCrearVacio = document.getElementById('btn-crear-desde-vacio');
+            if (btnCrearVacio) btnCrearVacio.href = crearUrl;
+
+            // Diágnóstico: probar fetch a un endpoint conocido
+            testEndpoint('/api/v1/cursos', '/api/v1/cursos');
+            cargarCursoInfo();
+            cargarEvaluaciones();
+            configurarBotonesEliminar();
+        }
+
+        // ============================================================
+        // DIAGNÓSTICO: probar fetch a endpoint conocido
+        // ============================================================
+        function testEndpoint(url, label) {
+            console.log('[Evaluaciones] TEST fetch to:', label, 'URL:', url);
+            fetch(url)
+                .then(function(r) {
+                    console.log('[Evaluaciones] TEST OK:', label, 'status:', r.status);
+                    return r.json();
+                })
+                .then(function(d) {
+                    console.log('[Evaluaciones] TEST DATA:', label, 'type:', typeof d, Array.isArray(d) ? 'count:' + d.length : 'keys:' + Object.keys(d).join(','));
+                })
+                .catch(function(err) {
+                    console.error('[Evaluaciones] TEST ERROR:', label, err.message);
+                });
+        }
+
+        // ============================================================
+        // CARGAR INFO DEL CURSO
+        // ============================================================
+        function cargarCursoInfo() {
+            console.log('[Evaluaciones] cargarCursoInfo() - fetching:', CURSOS_API);
+            fetch(CURSOS_API)
+                .then(function (res) {
+                    console.log('[Evaluaciones] cargarCursoInfo response status:', res.status);
+                    if (!res.ok) throw new Error('Curso no encontrado (status ' + res.status + ')');
+                    return res.json();
+                })
+                .then(function (curso) {
+                    console.log('[Evaluaciones] cargarCursoInfo data received:', curso.titulo);
+                    var info = document.getElementById('curso-info');
+                    info.textContent = 'Curso: ' + (curso.titulo || 'Sin título');
+                    info.style.fontWeight = '500';
+                })
+                .catch(function (err) {
+                    console.error('[Evaluaciones] cargarCursoInfo error:', err.message);
+                    document.getElementById('curso-info').textContent =
+                        'Curso ID: ' + CURSO_ID;
+                    console.warn('[Evaluaciones] Error al cargar curso:', err);
+                });
+        }
+
+        // ============================================================
+        // CARGAR EVALUACIONES
+        // ============================================================
+        function cargarEvaluaciones() {
+            console.log('[Evaluaciones] cargarEvaluaciones() - fetching:', EVALUACIONES_API);
+            mostrarLoader(true);
+
+            // Usar XHR en lugar de fetch para mejor diagnóstico
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', EVALUACIONES_API, true);
+            // Intentar SIN withCredentials para diagnóstico
+            // xhr.withCredentials = true;
+            xhr.timeout = 10000; // 10 segundos timeout
+
+            xhr.onloadstart = function() { console.log('[Evaluaciones] XHR started'); };
+            xhr.onprogress = function(e) { console.log('[Evaluaciones] XHR progress:', e.loaded); };
+            xhr.onerror = function(e) { console.error('[Evaluaciones] XHR error:', e); mostrarLoader(false); mostrarError('Error de red'); };
+            xhr.ontimeout = function(e) { console.error('[Evaluaciones] XHR TIMEOUT after 10s'); mostrarLoader(false); mostrarError('Timeout del servidor'); };
+            xhr.onabort = function(e) { console.log('[Evaluaciones] XHR aborted'); };
+            xhr.onreadystatechange = function() {
+                console.log('[Evaluaciones] XHR readyState:', xhr.readyState, 'status:', xhr.status);
+            };
+
+            xhr.onload = function() {
+                console.log('[Evaluaciones] XHR loaded. Status:', xhr.status, 'Type:', typeof xhr.response);
+                console.log('[Evaluaciones] XHR raw response (first 500 chars):', xhr.responseText.substring(0, 500));
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        var evaluaciones = JSON.parse(xhr.responseText);
+                        console.log('[Evaluaciones] Response parsed:', evaluaciones.length, 'items');
+                        console.log('[Evaluaciones] Response JSON:', JSON.stringify(evaluaciones, null, 2));
+                        mostrarLoader(false);
+                        renderizarEvaluaciones(evaluaciones);
+                        // Cargar resultados completados
+                        cargarResultados();
+                    } catch(e) {
+                        console.error('[Evaluaciones] JSON parse error:', e, 'Response:', xhr.responseText.substring(0, 200));
+                        mostrarLoader(false);
+                        mostrarError('Error al procesar respuesta');
+                    }
+                } else {
+                    console.error('[Evaluaciones] XHR error status:', xhr.status, xhr.statusText, 'Response:', xhr.responseText.substring(0, 200));
+                    mostrarLoader(false);
+                    mostrarError('Error del servidor: ' + xhr.status);
+                }
+            };
+
+            xhr.send();
+            console.log('[Evaluaciones] XHR sent');
+        }
+
+        // ============================================================
+        // RENDERIZAR EVALUACIONES
+        // ============================================================
+        // Marca evaluaciones ya completadas con badge en vez de boton
+        function marcarEvaluacionesCompletadas(resultados) {
+            if (!resultados || !resultados.length) return;
+            var map = {};
+            resultados.forEach(function(r) { map[r.evaluacionId] = r; });
+            document.querySelectorAll('.btn-rendir-ev').forEach(function(btn) {
+                var evId = btn.getAttribute('data-evaluacion-id');
+                if (evId && map[evId] && map[evId].completado) {
+                    var nota = map[evId].nota != null ? Math.round(map[evId].nota) : 0;
+                    var badge = document.createElement('span');
+                    badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:6px;font-size:0.8rem;font-weight:600;color:var(--color-success);';
+                    badge.style.cursor = 'pointer';
+                    badge.title = 'Click para ver detalle';
+                    badge.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Completado - ' + nota + '%';
+                    badge.addEventListener('click', function() { cargarDetalleEvaluacion(evId, badge); });
+                    btn.parentElement.replaceChild(badge, btn);
+                }
+            });
+        }
+
+        function cargarResultados() {
+            fetch(EVALUACIONES_API + '/resultados')
+                .then(function(r) { return r.ok ? r.json() : []; })
+                .then(function(r) { marcarEvaluacionesCompletadas(r); })
+                .catch(function() {});
+        }
+
+        function cargarDetalleEvaluacion(evId, btnParent) {
+            var detailDiv = document.getElementById('detalle-eval-' + evId);
+            if (detailDiv) {
+                detailDiv.style.display = detailDiv.style.display === 'none' ? 'block' : 'none';
+                return;
+            }
+            var fetchUrl = EVALUACIONES_API + '/' + evId + '/resultado-detalle';
+            fetch(fetchUrl).then(function(r) { return r.json(); }).then(function(data) {
+                if (!data.detalle || !Array.isArray(data.detalle)) return;
+                var div = document.createElement('div');
+                div.id = 'detalle-eval-' + evId;
+                div.style.cssText = 'margin-top:8px;padding:8px;background:var(--bg-body);border-radius:6px;font-size:0.75rem;';
+                var html = '';
+                data.detalle.forEach(function(q) {
+                    var icon = q.correcta ? '\u2705' : '\u274c';
+                    var color = q.correcta ? 'var(--color-success)' : 'var(--color-danger)';
+                    var texto = q.correcta ? 'CORRECTA' : 'INCORRECTA';
+                    html += '<div style="display:flex;align-items:center;gap:4px;padding:3px 0;">';
+                    html += '<span style="font-size:0.9rem;">' + icon + '</span>';
+                    html += '<span style="font-weight:600;color:' + color + ';">' + texto + '</span>';
+                    html += '<span style="color:var(--text-muted);">Peso: ' + q.peso + '% | Respuesta: ' + (q.respuestaAlumno || '—') + '</span>';
+                    html += '</div>';
+                });
+                div.innerHTML = html;
+                btnParent.parentElement.appendChild(div);
+            }).catch(function() {});
+        }
+
+        function renderizarEvaluaciones(evaluaciones) {
+            console.log('[Evaluaciones] renderizarEvaluaciones() called, count:', evaluaciones ? evaluaciones.length : 0);
+            var container = document.getElementById('evaluaciones-list');
+            var emptyEl = document.getElementById('evaluaciones-empty');
+
+            // Limpiar contenedor
+            container.innerHTML = '';
+
+            if (!evaluaciones || evaluaciones.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+
+            emptyEl.style.display = 'none';
+
+            // Renderizar cada evaluación
+            evaluaciones.forEach(function (ev, idx) {
+                var card = document.createElement('div');
+                card.className = 'card animate-fade-in';
+                card.style.marginBottom = 'var(--spacing-xl)';
+                // Stagger animation
+                card.style.animationDelay = (idx * 0.08) + 's';
+
+                var preguntasCount = (ev.preguntas && ev.preguntas.length) || 0;
+
+                var roleData = document.getElementById('user-role-data');
+                var esEstudiante = roleData ? roleData.getAttribute('data-es-estudiante') === 'true' : false;
+                console.log('[Evaluaciones] ev.id:', ev.id, 'esEstudiante:', esEstudiante);
+
+                card.innerHTML =
+                    '<div style="padding:var(--spacing-xl);">' +
+                        '<!-- Encabezado de la evaluación -->' +
+                        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--spacing-md);margin-bottom:var(--spacing-md);flex-wrap:wrap;">' +
+                            '<div style="display:flex;align-items:center;gap:var(--spacing-sm);">' +
+                                '<svg style="width:1.5rem;height:1.5rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>' +
+                                '<div>' +
+                                    '<h3 style="margin:0;font-size:var(--font-size-lg);font-weight:600;">' +
+                                        escapeHtml(ev.titulo || 'Sin título') +
+                                    '</h3>' +
+                                    '<span style="font-size:var(--font-size-xs);color:var(--text-muted);">' +
+                                        (ev.codigo ? '<strong style="color:var(--color-accento);">' + escapeHtml(ev.codigo) + '</strong>' : 'ID: ' + (ev.id ? ev.id.substring(0, 8) + '…' : '—')) +
+                                    '</span>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div style="display:flex;align-items:center;gap:var(--spacing-sm);flex-wrap:wrap;">' +
+                                '<span class="badge" style="background:rgba(16,185,129,0.08);color:var(--color-success);border-color:rgba(16,185,129,0.2);display:inline-flex;align-items:center;gap:0.25rem;">' +
+                                    '<svg style="width:0.875rem;height:0.875rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>' +
+                                    (ev.pesoTotal || 100) + '%' +
+                                '</span>' +
+                                '<span class="badge" style="background:rgba(59,130,246,0.08);color:var(--color-info);border-color:rgba(59,130,246,0.2);display:inline-flex;align-items:center;gap:0.25rem;">' +
+                                    '<svg style="width:0.875rem;height:0.875rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+                                    (ev.tiempoEstimadoMinutos || '—') + ' min' +
+                                '</span>' +
+                                '<span class="badge" style="background:rgba(245,158,11,0.08);color:rgba(180,83,9,1);border-color:rgba(245,158,11,0.2);display:inline-flex;align-items:center;gap:0.25rem;">' +
+                                    '<svg style="width:0.875rem;height:0.875rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>' +
+                                    preguntasCount + ' preg' +
+                                '</span>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<!-- Descripción renderizada (contenido HTML) -->' +
+                        (ev.descripcion
+                            ? '<div style="margin-bottom:var(--spacing-md);padding:var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);border:1px solid var(--border-default);">' +
+                                '<div class="ql-renderizado" style="font-size:var(--font-size-sm);">' +
+                                    ev.descripcion +
+                                '</div>' +
+                              '</div>'
+                            : '') +
+
+                        '<!-- Preguntas (solo para admin/instructor, estudiantes no ven preview) -->' +
+                        (!esEstudiante
+                            ? (preguntasCount > 0
+                                ? '<div style="margin-bottom:var(--spacing-md);">' +
+                                    '<details style="cursor:pointer;">' +
+                                        '<summary style="font-size:var(--font-size-sm);font-weight:500;color:var(--text-secondary);padding:var(--spacing-sm) 0;display:flex;align-items:center;gap:0.375rem;">' +
+                                            '<svg style="width:1rem;height:1rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>' +
+                                            'Ver ' + preguntasCount + ' pregunta' + (preguntasCount > 1 ? 's' : '') +
+                                        '</summary>' +
+                                        '<div style="margin-top:var(--spacing-sm);display:flex;flex-direction:column;gap:var(--spacing-sm);">' +
+                                            ev.preguntas.map(function (p, i) {
+                                                return '<div style="padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-md);border:1px solid var(--border-default);">' +
+                                                            '<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-sm);margin-bottom:var(--spacing-xs);">' +
+                                                                '<span style="font-size:var(--font-size-xs);font-weight:600;color:var(--text-secondary);">' +
+                                                                    'Pregunta #' + (i + 1) +
+                                                                '</span>' +
+                                                                '<div style="display:flex;align-items:center;gap:var(--spacing-xs);">' +
+                                                                    '<span class="badge" style="font-size:10px;padding:2px 6px;background:rgba(245,158,11,0.08);color:rgba(180,83,9,1);border-color:rgba(245,158,11,0.2);">' +
+                                                                        tipoLabel(p.tipo || '—') +
+                                                                    '</span>' +
+                                                                    '<span style="font-size:var(--font-size-xs);color:var(--text-muted);">' +
+                                                                        p.peso + '%' +
+                                                                    '</span>' +
+                                                                '</div>' +
+                                                            '</div>' +
+                                                            '<div class="ql-renderizado" style="font-size:var(--font-size-sm);">' +
+                                                                (p.contenido || '<em style="color:var(--text-muted);">Sin contenido</em>') +
+                                                            '</div>' +
+                                                            renderOpcionesVisuales(p.opciones, p.tipo) +
+                                                        '</div>';
+                                            }).join('') +
+                                        '</div>' +
+                                    '</details>' +
+                                  '</div>'
+                                : '<p style="font-size:var(--font-size-sm);color:var(--text-muted);font-style:italic;margin-bottom:var(--spacing-md);">' +
+                                    'Esta evaluación no tiene preguntas configuradas.' +
+                                  '</p>'
+                              )
+                            : ''
+                        ) +
+
+                        (esEstudiante
+                            ? '<!-- Acciones para estudiante -->' +
+                              '<div style="display:flex;align-items:center;justify-content:flex-end;gap:var(--spacing-sm);padding-top:var(--spacing-md);border-top:1px solid var(--border-default);">' +
+                                  '<button type="button" class="btn btn-accent btn-sm btn-rendir-ev" ' +
+                                     'style="display:inline-flex;align-items:center;gap:var(--spacing-xs);" ' +
+                                     'data-evaluacion-id="' + ev.id + '" ' +
+                                     'data-curso-id="' + CURSO_ID + '">' +
+                                      '<svg style="width:1rem;height:1rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>' +
+                                      '<span>Rendir Evaluación</span>' +
+                                  '</button>' +
+                              '</div>'
+                            : '<!-- Acciones Admin/Instructor -->' +
+                              '<div style="display:flex;align-items:center;justify-content:flex-end;gap:var(--spacing-sm);padding-top:var(--spacing-md);border-top:1px solid var(--border-default);">' +
+                                  '<a href="/cursos/evaluaciones/crear?cursoId=' + CURSO_ID + '&id=' + ev.id + '" ' +
+                                     'class="btn btn-ghost btn-sm" ' +
+                                     'style="display:inline-flex;align-items:center;gap:var(--spacing-xs);">' +
+                                      '<svg style="width:1rem;height:1rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>' +
+                                      '<span>Editar</span>' +
+                                  '</a>' +
+                                  '<button type="button" class="btn btn-ghost btn-sm btn-eliminar-ev" ' +
+                                     'style="display:inline-flex;align-items:center;gap:var(--spacing-xs);color:var(--color-danger);" ' +
+                                     'data-evaluacion-id="' + ev.id + '">' +
+                                      '<svg style="width:1rem;height:1rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>' +
+                                      '<span>Eliminar</span>' +
+                                  '</button>' +
+                              '</div>'
+                        ) +
+                    '</div>';
+
+                container.appendChild(card);
+            });
+        }
+
+        // ============================================================
+        // UTILIDADES
+        // ============================================================
+        function escapeHtml(text) {
+            if (!text) return '';
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function renderOpcionesVisuales(opcionesJson, tipo) {
+            if (!opcionesJson) return '';
+            var opciones;
+            try {
+                opciones = typeof opcionesJson === 'string' ? JSON.parse(opcionesJson) : opcionesJson;
+            } catch (e) {
+                return '';
+            }
+            if (!Array.isArray(opciones) || opciones.length === 0) return '';
+            var isSingle = (tipo === 'opcion_unica');
+            var html = '<div style="display:flex;flex-direction:column;gap:0.25rem;margin-top:var(--spacing-xs);padding-left:var(--spacing-sm);border-left:2px solid var(--border-default);">';
+            opciones.forEach(function (op) {
+                var iconSvg = isSingle
+                    ? '<svg style="width:0.75rem;height:0.75rem;flex-shrink:0;" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm0 8.625a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM12 8.625a3.375 3.375 0 100 6.75 3.375 3.375 0 000-6.75z"/></svg>'
+                    : '<svg style="width:0.75rem;height:0.75rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                var color = op.correcta ? 'var(--color-success)' : 'var(--text-secondary)';
+                var bg = op.correcta ? 'rgba(16,185,129,0.06)' : 'transparent';
+                html += '<span style="font-size:var(--font-size-xs);color:' + color + ';background:' + bg + ';padding:0.125rem 0.375rem;border-radius:var(--border-radius-sm);display:inline-flex;align-items:center;gap:0.25rem;">' +
+                            '<span>' + iconSvg + '</span>' +
+                            '<span>' + escapeHtml(op.texto || '') + '</span>' +
+                        '</span>';
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function tipoLabel(tipo) {
+            var iconMap = {
+                'opcion_unica': '<svg style="width:0.75rem;height:0.75rem;flex-shrink:0;" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm0 8.625a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM12 8.625a3.375 3.375 0 100 6.75 3.375 3.375 0 000-6.75z"/></svg> Única',
+                'opcion_multiple': '<svg style="width:0.75rem;height:0.75rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Múltiple',
+                'verdadero_falso': '<svg style="width:0.75rem;height:0.75rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> V/F',
+                'respuesta_corta': '<svg style="width:0.75rem;height:0.75rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg> Corta',
+                'desarrollo': '<svg style="width:0.75rem;height:0.75rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg> Desarrollo',
+                'relacionar': '<svg style="width:0.75rem;height:0.75rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg> Relacionar'
+            };
+            return iconMap[tipo] || tipo;
+        }
+
+        function mostrarLoader(visible) {
+            var loader = document.getElementById('evaluaciones-loader');
+            loader.style.display = visible ? 'block' : 'none';
+        }
+
+        function mostrarError(mensaje) {
+            var container = document.getElementById('evaluaciones-list');
+            container.innerHTML =
+                '<div class="card" style="margin-bottom:var(--spacing-xl);">' +
+                    '<div style="text-align:center;padding:var(--spacing-2xl);color:var(--color-danger);">' +
+                        '<div style="font-size:3rem;margin-bottom:var(--spacing-md);">' +
+                            '<svg style="width:3rem;height:3rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>' +
+                        '</div>' +
+                        '<p style="font-size:var(--font-size-sm);">' + escapeHtml(mensaje) + '</p>' +
+                    '</div>' +
+                '</div>';
+        }
+
+        // ============================================================
+        // ELIMINAR EVALUACIÓN (expuesto globalmente para onclick)
+        // ============================================================
+        window.eliminarEvaluacion = function(evaluacionId, btnElement) {
+            var overlay = document.getElementById('modal-eliminar-overlay');
+            overlay.style.display = 'flex';
+
+            var btnConfirmar = document.getElementById('btn-confirmar-eliminar');
+            var spinner = document.getElementById('delete-spinner');
+            var text = document.getElementById('delete-text');
+
+            // Remover event listeners previos clonando el botón
+            var nuevoBtn = btnConfirmar.cloneNode(true);
+            btnConfirmar.parentNode.replaceChild(nuevoBtn, btnConfirmar);
+
+            nuevoBtn.addEventListener('click', function() {
+                // UI: mostrar spinner
+                spinner.style.display = 'inline-block';
+                text.textContent = 'Eliminando…';
+                nuevoBtn.disabled = true;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('DELETE', '/api/v1/cursos/' + CURSO_ID + '/evaluaciones/' + evaluacionId, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        // Cerrar modal
+                        overlay.style.display = 'none';
+                        // Eliminar la tarjeta del DOM
+                        var card = buscarTarjetaEvaluacion(evaluacionId);
+                        if (card) {
+                            card.style.transition = 'all 0.3s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.95)';
+                            setTimeout(function() {
+                                if (card.parentNode) {
+                                    card.parentNode.removeChild(card);
+                                }
+                                // Verificar si quedan evaluaciones
+                                var container = document.getElementById('evaluaciones-list');
+                                if (container && container.children.length === 0) {
+                                    document.getElementById('evaluaciones-empty').style.display = 'block';
+                                }
+                            }, 300);
+                        }
+                        mostrarToast('<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Evaluación eliminada correctamente', 'success');
+                    } else {
+                        var msg = 'Error al eliminar evaluación';
+                        try {
+                            var d = JSON.parse(xhr.responseText);
+                            if (d.mensaje) msg = d.mensaje;
+                            else if (d.message) msg = d.message;
+                        } catch(e) {}
+                        spinner.style.display = 'none';
+                        text.textContent = 'Eliminar';
+                        nuevoBtn.disabled = false;
+                        mostrarToast('<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> ' + msg, 'danger');
+                    }
+                };
+
+                xhr.onerror = function() {
+                    spinner.style.display = 'none';
+                    text.textContent = 'Eliminar';
+                    nuevoBtn.disabled = false;
+                    mostrarToast('<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> Error de conexión', 'danger');
+                };
+
+                xhr.send();
+            });
+        };
+
+        window.cerrarModalEliminar = function() {
+            document.getElementById('modal-eliminar-overlay').style.display = 'none';
+            var btnConfirmar = document.getElementById('btn-confirmar-eliminar');
+            var spinner = document.getElementById('delete-spinner');
+            var text = document.getElementById('delete-text');
+            spinner.style.display = 'none';
+            text.textContent = 'Eliminar';
+            btnConfirmar.disabled = false;
+        };
+
+        function buscarTarjetaEvaluacion(evaluacionId) {
+            var container = document.getElementById('evaluaciones-list');
+            if (!container) return null;
+            var cards = container.querySelectorAll('.card');
+            for (var i = 0; i < cards.length; i++) {
+                if (cards[i].querySelector('[data-evaluacion-id="' + evaluacionId + '"]')) {
+                    return cards[i];
+                }
+            }
+            return null;
+        }
+
+        // ============================================================
+        // TOAST NOTIFICATION
+        // ============================================================
+        function mostrarToast(mensaje, tipo) {
+            var container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:10000;display:flex;flex-direction:column;gap:0.5rem;max-width:360px;';
+                document.body.appendChild(container);
+            }
+
+            var toast = document.createElement('div');
+            toast.style.cssText =
+                'padding:0.75rem 1rem;border-radius:var(--border-radius-lg, 8px);' +
+                'background:' + (tipo === 'success' ? 'var(--color-success, #10b981)' : 'var(--color-danger, #ef4444)') + ';' +
+                'color:#fff;font-size:var(--font-size-sm, 0.875rem);font-weight:500;' +
+                'box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:slideIn 0.3s ease;' +
+                'display:flex;align-items:center;gap:0.5rem;';
+            toast.textContent = mensaje;
+
+            container.appendChild(toast);
+
+            setTimeout(function() {
+                toast.style.transition = 'opacity 0.3s ease';
+                toast.style.opacity = '0';
+                setTimeout(function() {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 300);
+            }, 3500);
+        }
+
+        // ============================================================
+        // CONFIGURAR BOTONES ELIMINAR (event delegation)
+        // ============================================================
+        function configurarBotonesEliminar() {
+            var container = document.getElementById('evaluaciones-list');
+            if (!container) return;
+            container.addEventListener('click', function(e) {
+                var btn = e.target.closest('.btn-eliminar-ev');
+                if (btn) {
+                    var evaluacionId = btn.getAttribute('data-evaluacion-id');
+                    if (evaluacionId) {
+                        window.eliminarEvaluacion(evaluacionId, btn);
+                    }
+                }
+            });
+        }
+
+        // ============================================================
+        // EVENT DELEGATION: Botón "Rendir Evaluación"
+        // ============================================================
+        document.addEventListener('click', function(e) {
+            var btn = e.target.closest('.btn-rendir-ev');
+            if (btn) {
+                var evaluacionId = btn.getAttribute('data-evaluacion-id');
+                var cursoId = btn.getAttribute('data-curso-id');
+                if (evaluacionId && cursoId) {
+                    var overlay = document.createElement('div');
+                    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.35);z-index:99999;display:flex;align-items:center;justify-content:center;';
+                    overlay.innerHTML = '<div style="background:var(--bg-surface);border-radius:12px;padding:2rem;text-align:center;"><div class="spinner" style="width:2rem;height:2rem;margin:0 auto 1rem;"></div><p style="font-size:0.9rem;">Cargando evaluación...</p></div>';
+                    document.body.appendChild(overlay);
+                    window.location.href = '/cursos/evaluaciones/' + evaluacionId + '/rendir?cursoId=' + cursoId;
+                }
+            }
+        });
+
+        // ============================================================
+        // INICIAR
+        // ============================================================
+        init();
+    })();
+    </script>
+</body>
+</html>

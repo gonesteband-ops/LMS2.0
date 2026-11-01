@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Nueva Publicación')}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-bpo-contenidos')}"></div>
+        <main class="dashboard-content">
+            <div style="max-width:720px;margin:0 auto;padding:var(--spacing-lg);">
+                <div style="margin-bottom:1.5rem;font-size:0.875rem;color:var(--text-muted);">
+                    <a href="/admin/bpo/gestores" th:href="@{/admin/bpo/gestores}" style="color:var(--color-accento);text-decoration:none;">Gestores</a>
+                    / <a th:href="@{/admin/bpo/gestores/{id}(id=${gestor.codigo})}" style="color:var(--color-accento);text-decoration:none;" th:text="${gestor.nombre}">Gestor</a>
+                    / <a th:href="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}(gid=${gestor.codigo},sid=${subcarpeta.codigo})}" style="color:var(--color-accento);text-decoration:none;" th:text="${subcarpeta.nombre}">Subcarpeta</a>
+                    / <span th:text="${publicacionId != null ? 'Editar Publicación' : 'Nueva Publicación'}">Nueva Publicación</span>
+                </div>
+
+                <h1 style="font-size:1.5rem;font-weight:600;margin-bottom:1.5rem;" th:text="${publicacionId != null ? 'Editar Publicación' : 'Nueva Publicación'}">Nueva Publicación</h1>
+
+                <div class="card">
+                    <div style="padding:var(--spacing-xl);">
+                        <form th:action="${publicacionId != null}
+                              ? @{/admin/bpo/gestores/{gid}/subcarpetas/{sid}/publicaciones/{pubId}(gid=${gestor.codigo},sid=${subcarpeta.codigo},pubId=${publicacionId})}
+                              : @{/admin/bpo/gestores/{gid}/subcarpetas/{sid}(gid=${gestor.codigo},sid=${subcarpeta.codigo})}"
+                              th:object="${publicacion}" method="post" enctype="multipart/form-data"
+                              style="display:flex;flex-direction:column;gap:1.25rem;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <input type="hidden" th:if="${publicacionId != null}" name="publicacionId" th:value="${publicacionId}" />
+
+                            <div th:if="${#fields.hasErrors('*')}" style="padding:0.75rem 1rem;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:0.375rem;color:#b91c1c;font-size:0.875rem;">
+                                <ul style="margin:0;padding-left:1.25rem;">
+                                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}">Error</li>
+                                </ul>
+                            </div>
+
+                            <div style="display:flex;flex-direction:column;gap:0.375rem;">
+                                <label style="font-weight:500;font-size:0.875rem;">Título</label>
+                                <input type="text" th:field="*{titulo}" required
+                                       style="padding:0.5rem 0.75rem;border:1px solid var(--border-default);border-radius:0.375rem;font-size:0.9375rem;">
+                            </div>
+
+                            <div style="display:flex;flex-direction:column;gap:0.375rem;">
+                                <label style="font-weight:500;font-size:0.875rem;">Descripción corta</label>
+                                <input type="text" th:field="*{descripcionCorta}"
+                                       style="padding:0.5rem 0.75rem;border:1px solid var(--border-default);border-radius:0.375rem;font-size:0.9375rem;">
+                            </div>
+
+                            <div style="display:flex;flex-direction:column;gap:0.375rem;">
+                                <label style="font-weight:500;font-size:0.875rem;">Contenido</label>
+                                <textarea th:field="*{contenidoHtml}" rows="8" required
+                                          style="padding:0.5rem 0.75rem;border:1px solid var(--border-default);border-radius:0.375rem;font-size:0.9375rem;font-family:monospace;min-height:150px;"></textarea>
+                            </div>
+
+                            <div style="display:flex;flex-direction:column;gap:0.375rem;">
+                                <label style="font-weight:500;font-size:0.875rem;">Vigencia desde</label>
+                                <input type="datetime-local" th:field="*{vigenciaDesde}" min="2024-01-01T00:00" max="2100-12-31T23:59"
+                                       style="padding:0.5rem 0.75rem;border:1px solid var(--border-default);border-radius:0.375rem;font-size:0.9375rem;">
+                            </div>
+
+                            <div style="display:flex;flex-direction:column;gap:0.375rem;">
+                                <label style="font-weight:500;font-size:0.875rem;">Vigencia hasta</label>
+                                <input type="datetime-local" th:field="*{vigenciaHasta}" min="2024-01-01T00:00" max="2100-12-31T23:59"
+                                       style="padding:0.5rem 0.75rem;border:1px solid var(--border-default);border-radius:0.375rem;font-size:0.9375rem;">
+                            </div>
+
+                            <div style="display:flex;flex-direction:column;gap:0.375rem;">
+                                <label style="font-weight:500;font-size:0.875rem;">Archivo adjunto (PDF, Word, PPT, Excel)</label>
+                                <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;border:2px dashed var(--border-default);border-radius:0.5rem;background:var(--bg-body);">
+                                    <svg style="width:1.5rem;height:1.5rem;color:var(--text-muted);flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                                    <input type="file" name="archivo" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+                                           style="flex:1;font-size:0.875rem;">
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:0.75rem;margin-top:0.5rem;padding-top:1rem;border-top:1px solid var(--border-default);">
+                                <button type="submit" class="btn btn-primary">Publicar</button>
+                                <a th:href="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}(gid=${gestor.codigo},sid=${subcarpeta.codigo})}" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
+

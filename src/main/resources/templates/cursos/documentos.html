@@ -1,0 +1,390 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Documentos del Curso')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <aside class="dashboard-sidebar" role="navigation" aria-label="Navegación del dashboard">
+            <nav style="flex:1;padding:var(--spacing-lg) var(--spacing-sm);overflow-y:auto;">
+                <a href="/dashboard" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                    <span>Panel Principal</span>
+                </a>
+                <a href="/cursos" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                    <span>Mis Cursos</span>
+                </a>
+                <a href="/dashboard/documentos" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                    <span>Documentos</span>
+                </a>
+                <a href="/consentimiento" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                    <span>Consentimiento</span>
+                </a>
+                <a href="/dashboard/firmas" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                    <span>Mis Firmas</span>
+                </a>
+                <a href="/dashboard/perfil" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                    <span>Mi Perfil</span>
+                </a>
+                <a href="/dashboard/exportaciones" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                    <span>Exportaciones</span>
+                </a>
+
+                <div style="padding-top:var(--spacing-lg);margin-top:var(--spacing-lg);border-top:1px solid var(--border-default);" sec:authorize="hasAnyRole('SUPERADMIN')">
+                    <p style="padding:0 var(--spacing-sm);margin-bottom:var(--spacing-sm);font-size:var(--font-size-xs);font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Administración</p>
+                    <a href="/admin/usuarios" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                        <span>Usuarios</span>
+                    </a>
+                    <a href="/admin/roles" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                        <span>Roles</span>
+                    </a>
+                    <a href="/admin/auditoria" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                        <span>Auditoría</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 class="dashboard-page-title" id="page-title"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg> Documentos del Curso</h1>
+                        <p style="margin-top:var(--spacing-xs);font-size:var(--font-size-sm);color:var(--text-secondary);" id="page-subtitle">Biblioteca de documentos asociados al curso.</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);flex-wrap:wrap;">
+                        <a href="/cursos" class="btn btn-primary btn-sm">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg>
+                            Volver a cursos
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hidden curso-id para JS (visible para todos los roles) -->
+                <input type="hidden" id="curso-id" name="cursoId" value="">
+
+                <!-- Upload Section (solo ADMIN/INSTRUCTOR/SUPERADMIN) -->
+                <div class="card animate-slide-up" style="margin-bottom:var(--spacing-xl);" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                    <div style="padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                        <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                            Subir y Vincular Documento
+                        </h2>
+                    </div>
+                    <div style="padding:var(--spacing-xl);">
+                        <div id="upload-response" style="display:none;margin-bottom:var(--spacing-lg);padding:var(--spacing-md);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);"></div>
+                        <form id="upload-form" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:var(--spacing-lg);">
+                            <div>
+                                <label for="file-input" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">Seleccionar archivo</label>
+                                <div style="border:2px dashed var(--border-default);border-radius:var(--border-radius-xl);padding:var(--spacing-xl);text-align:center;transition:all 0.2s;cursor:pointer;"
+                                     ondragover="event.preventDefault();this.style.borderColor='var(--color-accento)';this.style.background='rgba(245,158,11,0.04)';"
+                                     ondragleave="this.style.borderColor='var(--border-default)';this.style.background='transparent';"
+                                     ondrop="event.preventDefault();document.getElementById('file-input').files=event.dataTransfer.files;document.getElementById('file-name').textContent=event.dataTransfer.files[0].name;this.style.borderColor='var(--border-default)';this.style.background='transparent';"
+                                     onclick="document.getElementById('file-input').click();">
+                                    <input type="file" id="file-input" name="file" style="display:none;"
+                                           onchange="document.getElementById('file-name').textContent=this.files.length ? this.files[0].name : 'Ningún archivo seleccionado';">
+                                    <svg style="width:2rem;height:2rem;margin:0 auto var(--spacing-sm);color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                    <p id="file-name" style="font-size:var(--font-size-sm);color:var(--text-secondary);font-weight:500;margin:0;">Arrastra o selecciona un archivo</p>
+                                    <p style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--spacing-xs);">PDF, DOC, DOCX, XLSX, JPG, PNG — Máx 50 MB</p>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+                                <button type="submit" class="btn btn-accent" style="display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-sm);">
+                                    <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                    Subir y Vincular
+                                </button>
+                                <div id="upload-indicator" style="display:none;">
+                                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+                                        <div class="spinner"></div>
+                                        <span style="font-size:var(--font-size-sm);color:var(--color-accento);font-weight:500;">Subiendo...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Document List -->
+                <div class="card animate-fade-in">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                        <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                            Documentos Vinculados
+                        </h2>
+                        <span style="font-size:var(--font-size-xs);color:var(--text-muted);" id="doc-count">Cargando...</span>
+                    </div>
+                    <div style="padding:var(--spacing-xl);" id="document-list">
+                        <div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">
+                            <div class="spinner" style="margin:0 auto var(--spacing-sm);"></div>
+                            <p style="font-size:var(--font-size-sm);">Cargando documentos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Hidden role indicators for JavaScript -->
+    <span id="user-role-estudiante" style="display:none" sec:authorize="hasRole('ESTUDIANTE')"></span>
+    <span id="user-role-admin" style="display:none" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')"></span>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var cursoId = params.get('cursoId');
+
+            if (!cursoId) {
+                document.getElementById('page-title').innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> Error: Curso no especificado';
+                document.getElementById('page-subtitle').textContent = 'Seleccione un curso desde el listado de cursos.';
+                return;
+            }
+
+            var hiddenCursoId = document.getElementById('curso-id');
+            if (hiddenCursoId) {
+                hiddenCursoId.value = cursoId;
+            }
+
+            // Cargar nombre del curso
+            var xhrCurso = new XMLHttpRequest();
+            xhrCurso.open('GET', '/api/v1/cursos/' + cursoId, true);
+            xhrCurso.onload = function() {
+                if (xhrCurso.status === 200) {
+                    try {
+                        var curso = JSON.parse(xhrCurso.responseText);
+                        document.getElementById('page-title').innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg> Documentos: ' + (curso.titulo || 'Sin título') + '</span></span>';
+                        document.getElementById('page-subtitle').textContent = 'Biblioteca de documentos asociados al curso.';
+                    } catch(e) {}
+                }
+            };
+            xhrCurso.send();
+
+            // Subir documento (solo si el formulario existe — visible solo para ADMIN/INSTRUCTOR/SUPERADMIN)
+            var uploadForm = document.getElementById('upload-form');
+            if (uploadForm) {
+                uploadForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var input = document.getElementById('file-input');
+                    if (!input.files.length) {
+                        showToast('Seleccione un archivo para subir', 'warning');
+                        return;
+                    }
+
+                    var indicator = document.getElementById('upload-indicator');
+                    var responseDiv = document.getElementById('upload-response');
+                    indicator.style.display = 'block';
+                    responseDiv.style.display = 'none';
+
+                    var formData = new FormData();
+                    formData.append('file', input.files[0]);
+                    formData.append('cursoId', cursoId);
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/api/v1/documentos/upload-curso', true);
+                    xhr.onload = function() {
+                        indicator.style.display = 'none';
+                        if (xhr.status === 200 || xhr.status === 201) {
+                            showToast('Documento subido y vinculado exitosamente', 'success');
+                            input.value = '';
+                            var fileName = document.getElementById('file-name');
+                            if (fileName) fileName.textContent = 'Ningún archivo seleccionado';
+                            cargarDocumentos();
+                        } else {
+                            var msg = 'Error al subir el documento';
+                            try {
+                                var d = JSON.parse(xhr.responseText);
+                                if (d.mensaje) msg = d.mensaje;
+                                else if (d.message) msg = d.message;
+                            } catch(e) {
+                                try {
+                                    responseDiv.textContent = xhr.responseText || 'Error desconocido';
+                                    responseDiv.style.display = 'block';
+                                    responseDiv.style.background = 'rgba(239,68,68,0.08)';
+                                    responseDiv.style.color = 'var(--color-danger)';
+                                } catch(e2) {}
+                            }
+                            showToast(msg, 'error');
+                        }
+                    };
+                    xhr.onerror = function() {
+                        indicator.style.display = 'none';
+                        showToast('Error de conexión al subir el documento', 'error');
+                    };
+                    xhr.send(formData);
+                });
+            }
+
+            // Cargar documentos vinculados al curso
+            function cargarDocumentos() {
+                var list = document.getElementById('document-list');
+                var count = document.getElementById('doc-count');
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/documentos/curso/' + cursoId, true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            count.textContent = data.length + ' documento(s)';
+                            if (data.length > 0) {
+                                var esAdmin = document.getElementById('user-role-admin');
+                                var mostrarTodos = esAdmin; // Admin/Instructor ve todos; Estudiante solo habilitados
+                                var html = '<div style="overflow-x:auto;"><table class="table-base" style="width:100%;">' +
+                                    '<thead><tr style="border-bottom:2px solid var(--border-default);">' +
+                                    (esAdmin ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Código</th>' : '') +
+                                    '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Nombre</th>' +
+                                    (esAdmin ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Estado</th>' : '') +
+                                    (esAdmin ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Tamaño</th>' : '') +
+                                    (esAdmin ? '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Tipo</th>' : '') +
+                                    '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Acciones</th></tr></thead><tbody>';
+                                data.forEach(function(doc) {
+                                    // Para estudiantes: saltar documentos deshabilitados
+                                    if (!esAdmin && (doc.habilitado === false)) return;
+                                    var codigo = doc.codigo || '—';
+                                    var mt = (doc.mimeType || '').toLowerCase();
+                                    var habilitado = doc.habilitado !== false; // default true
+                                    var estadoBadge = habilitado
+                                        ? '<span class="badge badge-success" style="font-size:var(--font-size-xs);"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Habilitado</span>'
+                                        : '<span class="badge badge-danger" style="font-size:var(--font-size-xs);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M4.93 4.93l14.14 14.14"/></svg> Deshabilitado</span>';
+                                    var icono = mt.indexOf('pdf') >= 0 ? '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>' :
+                                                mt.indexOf('image') >= 0 ? '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21"/></svg>️' :
+                                                mt.indexOf('video') >= 0 ? '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9.75A2.25 2.25 0 0016.5 16.5V7.5A2.25 2.25 0 0014.25 5.25H4.5A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>' :
+                                                mt.indexOf('sheet') >= 0 || mt.indexOf('excel') >= 0 ? '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>' :
+                                                mt.indexOf('document') >= 0 || mt.indexOf('word') >= 0 ? '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>' : '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>';
+                                    var esVideo = mt.indexOf('video/') === 0;
+                                    var acciones = '<button type="button" class="btn-firmar-doc" data-doc-id="' + (doc.id || '') + '" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;margin-right:8px;background:var(--color-accento);color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:500;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>Firmar</button> <a href="/api/v1/documentos/' + (doc.id || '') + '/stream" class="btn btn-ghost btn-sm" style="text-decoration:none;" target="_blank"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg> Descargar</a>';
+                                    if (esVideo) {
+                                        acciones += ' <a href="/cursos/reproductor?documentoId=' + (doc.id || '') + '" class="btn btn-accent btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;">' +
+                                            '<svg style="width:0.875rem;height:0.875rem;" fill="currentColor" viewBox="0 0 24 24"><path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg> Ver Video</a>';
+                                    }
+                                    if (esAdmin) {
+                                        var toggleLabel = habilitado ? 'Deshabilitar' : 'Habilitar';
+                                        var toggleClass = habilitado ? 'btn-outline' : 'btn-primary';
+                                        acciones += ' <button type="button" class="btn ' + toggleClass + ' btn-sm btn-toggle-doc" style="font-size:var(--font-size-xs);padding:0.25rem 0.5rem;" data-id="' + (doc.id || '') + '" data-habilitado="' + habilitado + '">' + toggleLabel + '</button>';
+                                    }
+                                    html += '<tr style="border-bottom:1px solid var(--border-default);transition:background 0.2s;" onmouseover="this.style.background=\'var(--bg-body)\'" onmouseout="this.style.background=\'transparent\'">' +
+                                        (esAdmin ? '<td style="padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--color-accento);font-size:var(--font-size-xs);font-family:monospace;">' + escapeHtml(codigo) + '</td>' : '') +
+                                        '<td style="padding:var(--spacing-sm) var(--spacing-md);font-weight:500;color:var(--text-primary);font-size:var(--font-size-sm);">' +
+                                            icono + ' ' + escapeHtml(doc.nombreOriginal || '—') + '</td>' +
+                                        (esAdmin ? '<td style="padding:var(--spacing-sm) var(--spacing-md);">' + estadoBadge + '</td>' : '') +
+                                        (esAdmin ? '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-sm);">' + formatBytes(doc.tamanoBytes || 0) + '</td>' : '') +
+                                        (esAdmin ? '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-xs);">' + escapeHtml(doc.mimeType || '—') + '</td>' : '') +
+                                        '<td style="padding:var(--spacing-sm) var(--spacing-md);white-space:nowrap;">' + acciones + '</td></tr>';
+                                });
+                                html += '</tbody></table></div>';
+                                list.innerHTML = html;
+                                // Delegación de eventos para botones toggle-habilitado
+                                
+                                // Verificar firmas existentes y marcar como Firmado
+                                list.querySelectorAll('.btn-firmar-doc').forEach(function(btn) {
+                                    var docId = btn.getAttribute('data-doc-id');
+                                    fetch('/api/v1/documentos/' + docId + '/firmado')
+                                        .then(function(r) { return r.json(); })
+                                        .then(function(data) {
+                                            if (data.firmado) {
+                                                btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Firmado';
+                                                btn.style.background = 'var(--color-success)';
+                                                btn.disabled = false;
+                                                btn.classList.remove('btn-firmar-doc');
+                                            }
+                                        })
+                                        .catch(function() {});
+                                });
+
+                                list.querySelectorAll('.btn-toggle-doc').forEach(function(btn) {
+                                    btn.addEventListener('click', function(e) {
+                                        e.stopPropagation();
+                                        var docId = this.getAttribute('data-id');
+                                        if (!docId) return;
+                                        var xhr = new XMLHttpRequest();
+                                        xhr.open('PATCH', '/api/v1/documentos/' + docId + '/toggle-habilitado', true);
+                                        xhr.onload = function() {
+                                            if (xhr.status === 200) {
+                                                showToast('Estado de documento actualizado', 'success');
+                                                cargarDocumentos(); // Refrescar lista
+                                            } else {
+                                                showToast('Error al cambiar estado del documento', 'error');
+                                            }
+                                        };
+                                        xhr.onerror = function() {
+                                            showToast('Error de conexión', 'error');
+                                        };
+                                        xhr.send();
+                                    });
+                                });
+                            } else {
+                                var emptyMsg = document.getElementById('user-role-estudiante')
+                                    ? 'No hay documentos disponibles para este curso.'
+                                    : 'No hay documentos vinculados a este curso. Suba un documento para comenzar.';
+                                list.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">' +
+                                    '<svg style="width:3rem;height:3rem;margin:0 auto var(--spacing-md);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>' +
+                                    '<p style="font-size:var(--font-size-sm);">' + emptyMsg + '</p></div>';
+                            }
+                        } catch(e) {
+                            list.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--color-danger);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg> Error al cargar documentos</div>';
+                        }
+                    } else {
+                        list.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--color-danger);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg> Error al cargar documentos (HTTP ' + xhr.status + ')</div>';
+                    }
+                };
+                xhr.send();
+            }
+
+            function formatBytes(bytes) {
+                if (!bytes || bytes === 0) return '0 B';
+                var k = 1024, sizes = ['B', 'KB', 'MB', 'GB'], i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            }
+
+            function escapeHtml(t) { if (!t) return ''; var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+
+            cargarDocumentos();
+        })();
+    
+        // Handler para boton Firmar documento
+        document.addEventListener('click', function(e) {
+            var btn = e.target.closest('.btn-firmar-doc');
+            if (!btn) return;
+            e.preventDefault();
+            var docId = btn.getAttribute('data-doc-id');
+            if (!docId) return;
+            btn.disabled = true;
+            btn.innerHTML = 'Firmando...';
+            fetch('/api/v1/documentos/' + docId + '/hash')
+                .then(function(r) { if (!r.ok) throw new Error('Error al obtener hash'); return r.json(); })
+                .then(function(data) {
+                    return fetch('/api/v1/firmas', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ documentoId: docId, hashDocumento: data.hashDocumento })
+                    });
+                })
+                .then(function(r) { if (!r.ok) throw new Error('Error al firmar'); return r.json(); })
+                .then(function() {
+                    btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Firmado';
+                    btn.style.background = 'var(--color-success)';
+                    btn.disabled = false;
+                    btn.classList.remove('btn-firmar-doc');
+                })
+                .catch(function(err) {
+                    alert('Error al firmar: ' + err.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg> Firmar';
+                });
+        });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+# ============================================================
+# Dockerfile para Desarrollo LMS LegalTech (Hot Reload)
+# ============================================================
+# Usa Maven en runtime para permitir compilación en caliente
+# con spring-boot-devtools al editar código fuente local.
+# Incluye inotify-tools para monitorear cambios en src/
+# ============================================================
+
+FROM maven:3.9.6-eclipse-temurin-17
+
+# Instalar herramientas para hot-reload
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    inotify-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Pre-descargar dependencias para acelerar el startup
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copiar fuente inicial (será sobrescrita por bind mount)
+COPY src ./src
+
+# Copiar script de hot reload
+COPY docker/hot-reload.sh /usr/local/bin/hot-reload.sh
+RUN chmod +x /usr/local/bin/hot-reload.sh
+
+# Puerto de la aplicación
+EXPOSE 8080
+EXPOSE 35729
+
+# Hot Reload con spring-boot-devtools + inotify watcher
+# Cualquier cambio en .java se compila automáticamente
+# y devtools reinicia la aplicación en ~2-3 segundos
+CMD ["/usr/local/bin/hot-reload.sh"]

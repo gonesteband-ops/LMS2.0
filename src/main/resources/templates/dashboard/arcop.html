@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Mis Datos ARCOP')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='arcop')}"></div>
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <h1>Mis Datos (ARCOP)</h1>
+                <p style="color:var(--text-secondary);">Ejerce tus derechos de Acceso, Rectificación, Cancelación, Oposición y Portabilidad.</p>
+
+                <div id="acceso-result" style="margin-top:var(--spacing-lg);padding:var(--spacing-md);background:var(--bg-surface);border-radius:var(--border-radius-lg);border:1px solid var(--border-default);">
+                    <button class="btn btn-primary" hx-get="/api/v1/arcop/acceso" hx-target="#acceso-data" hx-swap="innerHTML" style="margin-bottom:var(--spacing-md);">Ver mis datos</button>
+                    <div id="acceso-data" style="font-size:var(--font-size-sm);"></div>
+                </div>
+
+                <div class="card" style="margin-top:var(--spacing-lg);">
+                    <h2>Rectificar datos</h2>
+                    <form hx-put="/api/v1/arcop/rectificar" hx-target="#rectificar-msg" hx-swap="innerHTML">
+                        <input type="text" name="nombre" placeholder="Nuevo nombre" style="display:block;width:100%;margin-bottom:var(--spacing-sm);padding:0.5rem;">
+                        <input type="email" name="email" placeholder="Nuevo email" style="display:block;width:100%;margin-bottom:var(--spacing-sm);padding:0.5rem;">
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </form>
+                    <div id="rectificar-msg"></div>
+                </div>
+
+                <div class="card" style="margin-top:var(--spacing-lg);border-color:#fecaca;">
+                    <h2 style="color:#dc2626;">Solicitar eliminación de cuenta</h2>
+                    <p style="font-size:var(--font-size-sm);color:var(--text-secondary);">Periodo de gracia de 30 días. Puedes cancelar la solicitud en cualquier momento.</p>
+                    <button class="btn btn-danger" hx-delete="/api/v1/arcop/suprimir" hx-target="#supresion-msg" hx-swap="innerHTML" hx-confirm="Confirma la eliminacion de tu cuenta? Se anonimizaran tus datos personales. Tienes 30 dias para cancelar.">Solicitar eliminación</button>
+                    <button class="btn btn-secondary" hx-post="/api/v1/arcop/cancelar-supresion" hx-target="#supresion-msg" hx-swap="innerHTML">Cancelar solicitud</button>
+                    <div id="supresion-msg"></div>
+                </div>
+
+                <div class="card" style="margin-top:var(--spacing-lg);">
+                    <h2>Portabilidad</h2>
+                    <a href="/api/v1/arcop/portabilidad" class="btn btn-primary" download>Descargar mis datos (JSON)</a>
+                </div>
+
+                <div class="card" style="margin-top:var(--spacing-lg);">
+                    <h2>Bloquear cuenta</h2>
+                    <p style="font-size:var(--font-size-sm);color:var(--text-secondary);">Bloquea tu cuenta temporalmente. Puedes reactivarla iniciando sesión.</p>
+                    <button class="btn btn-secondary" hx-post="/api/v1/arcop/bloquear" hx-target="#bloqueo-msg" hx-swap="innerHTML">Bloquear cuenta</button>
+                    <div id="bloqueo-msg"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

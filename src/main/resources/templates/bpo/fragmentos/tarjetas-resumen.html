@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="tarjetas-resumen" class="bpo-tarjetas-resumen">
+    <div class="bpo-tarjeta">
+        <span class="bpo-tarjeta-numero" th:text="${resumen.procedimientosVigentes}">0</span>
+        <span class="bpo-tarjeta-etiqueta">Procedimientos Vigentes</span>
+    </div>
+    <div class="bpo-tarjeta">
+        <span class="bpo-tarjeta-numero" th:text="${resumen.noticiasRecientes}">0</span>
+        <span class="bpo-tarjeta-etiqueta">Noticias Recientes</span>
+    </div>
+    <div class="bpo-tarjeta">
+        <span class="bpo-tarjeta-numero" th:text="${resumen.ofertasActivas}">0</span>
+        <span class="bpo-tarjeta-etiqueta">Ofertas Activas</span>
+    </div>
+</div>
+</body>
+</html>

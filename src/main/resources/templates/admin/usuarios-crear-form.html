@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Usuario - Fragmento</title>
+</head>
+<body>
+<div th:fragment="crear-usuario-form">
+    <script>
+        function togglePasswordVisibilidad(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            const eyeOpen = btn.querySelector('.eye-open');
+            const eyeClosed = btn.querySelector('.eye-closed');
+            if (eyeOpen) eyeOpen.style.display = isPassword ? 'none' : '';
+            if (eyeClosed) eyeClosed.style.display = isPassword ? '' : 'none';
+        }
+    </script>
+    <div style="padding:var(--spacing-xl);">
+        <form hx-post="/hx/admin/usuarios"
+              hx-target="#usuarios-list"
+              hx-swap="innerHTML"
+              hx-on::after-request="if(event.detail.successful) this.reset()"
+              style="display:flex;flex-direction:column;gap:var(--spacing-md);">
+
+            <!-- CSRF Token oculto -->
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+            <!-- Mensaje de error -->
+            <div th:if="${error != null}"
+                 style="padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--border-radius-lg);background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:var(--color-danger);font-size:var(--font-size-xs);font-weight:500;">
+                <span th:text="${error}">Error</span>
+            </div>
+
+            <div style="display:grid;gap:var(--spacing-md);grid-template-columns:1fr 2fr 2fr;">
+                <!-- RUT -->
+                <div>
+                    <label for="rut" style="display:block;font-size:var(--font-size-xs);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-xs);">
+                        RUT <span style="color:var(--color-danger);">*</span>
+                    </label>
+                    <div style="position:relative;">
+                        <input type="text"
+                               id="rut"
+                               name="rut"
+                               th:value="${request?.rut}"
+                               required
+                               minlength="8"
+                               maxlength="20"
+                               placeholder="Ej: 12.345.678-9"
+                               style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);color:var(--text-primary);font-size:var(--font-size-sm);outline:none;transition:border-color 0.2s;box-sizing:border-box;">
+                    </div>
+                </div>
+
+                <!-- Nombre Completo -->
+                <div>
+                    <label for="nombreCompleto" style="display:block;font-size:var(--font-size-xs);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-xs);">
+                        Nombre Completo <span style="color:var(--color-danger);">*</span>
+                    </label>
+                    <div style="position:relative;">
+                        <input type="text"
+                               id="nombreCompleto"
+                               name="nombreCompleto"
+                               th:value="${request?.nombreCompleto}"
+                               required
+                               minlength="3"
+                               maxlength="255"
+                               placeholder="Ej: Juan Pérez"
+                               style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);color:var(--text-primary);font-size:var(--font-size-sm);outline:none;transition:border-color 0.2s;box-sizing:border-box;">
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" style="display:block;font-size:var(--font-size-xs);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-xs);">
+                        Email <span style="color:var(--color-danger);">*</span>
+                    </label>
+                    <div style="position:relative;">
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               th:value="${request?.email}"
+                               required
+                               placeholder="ej: usuario@lms.cl"
+                               style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);color:var(--text-primary);font-size:var(--font-size-sm);outline:none;transition:border-color 0.2s;box-sizing:border-box;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fecha de Nacimiento -->
+            <div style="max-width:20rem;">
+                <label for="fechaNacimiento" style="display:block;font-size:var(--font-size-xs);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-xs);">
+                    Fecha de Nacimiento
+                </label>
+                <input type="date"
+                       id="fechaNacimiento"
+                       name="fechaNacimiento"
+                       style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);color:var(--text-primary);font-size:var(--font-size-sm);outline:none;transition:border-color 0.2s;box-sizing:border-box;">
+                <p style="margin-top:0.25rem;font-size:var(--font-size-xs);color:var(--text-muted);">Opcional. Solo para verificar mayoría de edad.</p>
+            </div>
+
+            <div style="display:grid;gap:var(--spacing-md);grid-template-columns:1fr 1fr;">
+                <!-- Contraseña -->
+                <div>
+                    <label for="password" style="display:block;font-size:var(--font-size-xs);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-xs);">
+                        Contraseña <span style="color:var(--color-danger);">*</span>
+                    </label>
+                    <div style="position:relative;">
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               autocomplete="new-password"
+                               required
+                               minlength="12"
+                               placeholder="Mín. 12 caracteres"
+                               style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);color:var(--text-primary);font-size:var(--font-size-sm);outline:none;transition:border-color 0.2s;box-sizing:border-box;padding-right:2.5rem;">
+                        <button type="button"
+                                onclick="togglePasswordVisibilidad('password', this)"
+                                style="position:absolute;right:0.5rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0.25rem;color:var(--text-muted);display:flex;align-items:center;">
+                            <svg class="eye-open" style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <svg class="eye-closed" style="width:1.25rem;height:1.25rem;display:none;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Confirmar Contraseña -->
+                <div>
+                    <label for="confirmarPassword" style="display:block;font-size:var(--font-size-xs);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-xs);">
+                        Confirmar Contraseña <span style="color:var(--color-danger);">*</span>
+                    </label>
+                    <div style="position:relative;">
+                        <input type="password"
+                               id="confirmarPassword"
+                               name="confirmarPassword"
+                               autocomplete="new-password"
+                               required
+                               minlength="12"
+                               placeholder="Repite la contraseña"
+                               style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);color:var(--text-primary);font-size:var(--font-size-sm);outline:none;transition:border-color 0.2s;box-sizing:border-box;padding-right:2.5rem;">
+                        <button type="button"
+                                onclick="togglePasswordVisibilidad('confirmarPassword', this)"
+                                style="position:absolute;right:0.5rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0.25rem;color:var(--text-muted);display:flex;align-items:center;">
+                            <svg class="eye-open" style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <svg class="eye-closed" style="width:1.25rem;height:1.25rem;display:none;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rol -->
+            <div style="max-width:20rem;">
+                <label for="rolId" style="display:block;font-size:var(--font-size-xs);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-xs);">
+                    Rol <span style="color:var(--color-danger);">*</span>
+                </label>
+                <div style="position:relative;">
+                    <select id="rolId"
+                            name="rolId"
+                            required
+                            style="width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);color:var(--text-primary);font-size:var(--font-size-sm);outline:none;transition:border-color 0.2s;cursor:pointer;box-sizing:border-box;appearance:auto;">
+                        <option value="">Seleccionar rol...</option>
+                        <option th:each="rol : ${roles}"
+                                th:value="${rol.id}"
+                                th:text="${rol.nombre}"
+                                th:selected="${request?.rolId == rol.id}">
+                            SUPERADMIN
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div style="display:flex;align-items:center;gap:var(--spacing-md);padding-top:var(--spacing-sm);border-top:1px solid var(--border-default);">
+                <button type="submit" class="btn btn-accent btn-sm"
+                        style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                    <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>
+                    Crear Usuario
+                </button>
+                <button type="button" class="btn btn-ghost btn-sm"
+                        onclick="document.getElementById('crear-usuario-form').style.display='none'"
+                        style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

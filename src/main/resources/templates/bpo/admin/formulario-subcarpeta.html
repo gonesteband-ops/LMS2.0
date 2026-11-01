@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo=${subcarpetaId != null ? 'Editar Carpeta' : 'Nueva Carpeta'})}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-bpo-contenidos')}"></div>
+        <main class="dashboard-content">
+            <div style="max-width:720px;margin:0 auto;padding:var(--spacing-lg);">
+                <div style="margin-bottom:1.5rem;font-size:0.875rem;color:var(--text-muted);">
+                    <a href="/admin/bpo/gestores" th:href="@{/admin/bpo/gestores}" style="color:var(--color-accento);text-decoration:none;">Gestores</a>
+                    / <a th:href="@{/admin/bpo/gestores/{id}(id=${gestor.codigo})}" style="color:var(--color-accento);text-decoration:none;" th:text="${gestor.nombre}">Gestor</a>
+                    / <span th:text="${subcarpetaId != null ? 'Editar Carpeta' : 'Nueva Carpeta'}">Nueva Carpeta</span>
+                </div>
+
+                <h1 style="font-size:1.5rem;font-weight:600;margin-bottom:1.5rem;" th:text="${subcarpetaId != null ? 'Editar Carpeta' : 'Nueva Carpeta'}">Nueva Carpeta</h1>
+
+                <div class="card">
+                    <div style="padding:var(--spacing-xl);">
+                        <!-- Form para crear subcarpeta -->
+                        <form th:if="${subcarpetaId == null}" th:action="@{/admin/bpo/gestores/{id}/subcarpetas(id=${gestor.codigo})}"
+                              th:object="${subcarpeta}" method="post"
+                              style="display:flex;flex-direction:column;gap:1.25rem;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                            <div th:if="${error}" style="padding:0.75rem 1rem;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:0.375rem;color:#b91c1c;font-size:0.875rem;">
+                                <span th:text="${error}">Error</span>
+                            </div>
+
+                            <div style="display:flex;flex-direction:column;gap:0.375rem;">
+                                <label style="font-weight:500;font-size:0.875rem;">Nombre de la carpeta</label>
+                                <input type="text" th:field="*{nombre}" required
+                                       style="padding:0.5rem 0.75rem;border:1px solid var(--border-default);border-radius:0.375rem;font-size:0.9375rem;">
+                            </div>
+
+                            <div style="display:flex;gap:0.75rem;margin-top:0.5rem;padding-top:1rem;border-top:1px solid var(--border-default);">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <a th:href="@{/admin/bpo/gestores/{id}(id=${gestor.codigo})}" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        </form>
+
+                        <!-- Form para editar subcarpeta -->
+                        <form th:unless="${subcarpetaId == null}" th:action="@{/admin/bpo/gestores/{gid}/subcarpetas/{sid}/editar(gid=${gestor.codigo},sid=${subcarpetaId})}"
+                              th:object="${subcarpeta}" method="post"
+                              style="display:flex;flex-direction:column;gap:1.25rem;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                            <div th:if="${error}" style="padding:0.75rem 1rem;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:0.375rem;color:#b91c1c;font-size:0.875rem;">
+                                <span th:text="${error}">Error</span>
+                            </div>
+
+                            <div style="display:flex;flex-direction:column;gap:0.375rem;">
+                                <label style="font-weight:500;font-size:0.875rem;">Nombre de la carpeta</label>
+                                <input type="text" th:field="*{nombre}" required
+                                       style="padding:0.5rem 0.75rem;border:1px solid var(--border-default);border-radius:0.375rem;font-size:0.9375rem;">
+                            </div>
+
+                            <div style="display:flex;gap:0.75rem;margin-top:0.5rem;padding-top:1rem;border-top:1px solid var(--border-default);">
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                <a th:href="@{/admin/bpo/gestores/{id}(id=${gestor.codigo})}" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

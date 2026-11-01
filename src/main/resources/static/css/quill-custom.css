@@ -1,0 +1,306 @@
+/* ============================================================
+   QUILL-CUSTOM.CSS — Sobrescritura del tema Snow de Quill.js
+   para que coincida con el sistema de diseño de LMS LegalTech.
+   ============================================================
+   Depende de: variables.css, quill.snow.css
+   ============================================================ */
+
+/* === CONTENEDOR PRINCIPAL DEL EDITOR === */
+.ql-container {
+    font-family: var(--font-primary, 'Inter', sans-serif);
+    font-size: var(--font-size-base, 1rem);
+    line-height: 1.75;
+    color: var(--text-primary, #0f172a);
+    background: var(--bg-surface, #ffffff);
+    border-bottom-left-radius: var(--border-radius-lg, 12px);
+    border-bottom-right-radius: var(--border-radius-lg, 12px);
+    min-height: 250px;
+}
+
+.ql-editor {
+    min-height: 250px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding: var(--spacing-lg, 1.5rem);
+}
+
+.ql-editor.ql-blank::before {
+    color: var(--text-muted, #94a3b8);
+    font-style: normal;
+    font-family: var(--font-primary, 'Inter', sans-serif);
+    font-size: var(--font-size-base, 1rem);
+    left: var(--spacing-lg, 1.5rem);
+}
+
+/* === TOOLBAR === */
+.ql-toolbar {
+    font-family: var(--font-primary, 'Inter', sans-serif);
+    background: var(--bg-surface-hover, #f8fafc);
+    border: 1px solid var(--border-default, #e2e8f0);
+    border-top-left-radius: var(--border-radius-lg, 12px);
+    border-top-right-radius: var(--border-radius-lg, 12px);
+    border-bottom: none;
+    padding: var(--spacing-sm, 0.5rem);
+}
+
+/* Botones del toolbar */
+.ql-toolbar button {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-sm, 6px);
+    color: var(--text-secondary, #475569);
+    transition: all var(--transition-fast, 150ms ease);
+}
+
+.ql-toolbar button:hover {
+    background: rgba(245, 158, 11, 0.08);
+    color: var(--color-accento, #f59e0b);
+}
+
+.ql-toolbar button.ql-active {
+    background: rgba(245, 158, 11, 0.12);
+    color: var(--color-accento-dark, #d97706);
+}
+
+/* Selects del toolbar (header, font, etc.) */
+.ql-toolbar select {
+    height: 32px;
+    border: 1px solid var(--border-default, #e2e8f0);
+    border-radius: var(--border-radius-sm, 6px);
+    background: var(--bg-surface, #ffffff);
+    color: var(--text-primary, #0f172a);
+    font-family: var(--font-primary, 'Inter', sans-serif);
+    font-size: var(--font-size-xs, 0.75rem);
+    padding: 0 var(--spacing-sm, 0.5rem);
+    transition: border-color var(--transition-fast, 150ms ease);
+}
+
+.ql-toolbar select:hover {
+    border-color: var(--color-accento, #f59e0b);
+}
+
+/* === BORDE DEL EDITOR CUANDO ESTÁ ENFOCADO === */
+.ql-container.ql-snow {
+    border: 1px solid var(--border-default, #e2e8f0);
+    border-top: none;
+}
+
+.ql-snow.ql-toolbar + .ql-container.ql-snow {
+    border-top: 1px solid var(--border-default, #e2e8f0);
+}
+
+/* Contenedor del editor con foco */
+.editor-wrapper:focus-within .ql-toolbar {
+    border-color: var(--color-accento, #f59e0b);
+}
+
+.editor-wrapper:focus-within .ql-container.ql-snow {
+    border-color: var(--color-accento, #f59e0b);
+}
+
+.editor-wrapper:focus-within .ql-snow.ql-toolbar + .ql-container.ql-snow {
+    border-color: var(--color-accento, #f59e0b);
+}
+
+/* === COLORES DE SVG EN BOTONES === */
+.ql-snow .ql-stroke {
+    stroke: var(--text-secondary, #475569);
+}
+
+.ql-snow .ql-fill {
+    fill: var(--text-secondary, #475569);
+}
+
+.ql-snow .ql-picker {
+    color: var(--text-primary, #0f172a);
+}
+
+.ql-snow .ql-picker-options {
+    background: var(--bg-surface, #ffffff);
+    border: 1px solid var(--border-default, #e2e8f0);
+    border-radius: var(--border-radius-md, 8px);
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0,0,0,0.08));
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-label {
+    border-color: var(--color-accento, #f59e0b);
+    color: var(--color-accento, #f59e0b);
+}
+
+/* === CONTENIDO RENDERIZADO (preview / listado) === */
+.ql-renderizado {
+    font-family: var(--font-primary, 'Inter', sans-serif);
+    font-size: var(--font-size-base, 1rem);
+    line-height: 1.75;
+    color: var(--text-primary, #0f172a);
+}
+
+.ql-renderizado h1,
+.ql-renderizado h2,
+.ql-renderizado h3,
+.ql-renderizado h4 {
+    font-family: var(--font-heading, 'Inter', sans-serif);
+    font-weight: 600;
+    margin-top: var(--spacing-lg, 1.5rem);
+    margin-bottom: var(--spacing-sm, 0.5rem);
+    color: var(--text-primary, #0f172a);
+}
+
+.ql-renderizado h1 { font-size: var(--font-size-2xl, 1.5rem); }
+.ql-renderizado h2 { font-size: var(--font-size-xl, 1.25rem); }
+.ql-renderizado h3 { font-size: var(--font-size-lg, 1.125rem); }
+
+.ql-renderizado p {
+    margin-bottom: var(--spacing-md, 1rem);
+}
+
+.ql-renderizado ul,
+.ql-renderizado ol {
+    padding-left: var(--spacing-xl, 2rem);
+    margin-bottom: var(--spacing-md, 1rem);
+}
+
+.ql-renderizado li {
+    margin-bottom: var(--spacing-xs, 0.25rem);
+}
+
+.ql-renderizado blockquote {
+    border-left: 3px solid var(--color-accento, #f59e0b);
+    padding-left: var(--spacing-md, 1rem);
+    margin: var(--spacing-md, 1rem) 0;
+    color: var(--text-secondary, #475569);
+    font-style: italic;
+    background: var(--bg-surface-hover, #f8fafc);
+    border-radius: var(--border-radius-sm, 6px);
+    padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+}
+
+.ql-renderizado pre {
+    background: var(--bg-body, #f8fafc);
+    border: 1px solid var(--border-default, #e2e8f0);
+    border-radius: var(--border-radius-md, 8px);
+    padding: var(--spacing-md, 1rem);
+    overflow-x: auto;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: var(--font-size-sm, 0.875rem);
+    margin-bottom: var(--spacing-md, 1rem);
+}
+
+.ql-renderizado code {
+    background: var(--bg-surface-hover, #f8fafc);
+    border: 1px solid var(--border-default, #e2e8f0);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.875em;
+}
+
+.ql-renderizado pre code {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.ql-renderizado img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-md, 8px);
+    margin: var(--spacing-md, 1rem) 0;
+    box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.04));
+}
+
+.ql-renderizado a {
+    color: var(--color-accento, #f59e0b);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.ql-renderizado a:hover {
+    color: var(--color-accento-dark, #d97706);
+}
+
+.ql-renderizado iframe {
+    max-width: 100%;
+    border-radius: var(--border-radius-md, 8px);
+    margin: var(--spacing-md, 1rem) 0;
+    aspect-ratio: 16 / 9;
+}
+
+/* === MODO OSCURO === */
+[data-theme="dark"] .ql-container {
+    color: var(--text-primary, #f1f5f9);
+    background: var(--bg-surface, #0f172a);
+}
+
+[data-theme="dark"] .ql-editor.ql-blank::before {
+    color: var(--text-muted, #64748b);
+}
+
+[data-theme="dark"] .ql-toolbar {
+    background: var(--bg-surface-hover, #1e293b);
+    border-color: var(--border-default, #334155);
+}
+
+[data-theme="dark"] .ql-toolbar button {
+    color: var(--text-secondary, #94a3b8);
+}
+
+[data-theme="dark"] .ql-toolbar button:hover {
+    background: rgba(245, 158, 11, 0.12);
+}
+
+[data-theme="dark"] .ql-snow .ql-stroke {
+    stroke: var(--text-secondary, #94a3b8);
+}
+
+[data-theme="dark"] .ql-snow .ql-fill {
+    fill: var(--text-secondary, #94a3b8);
+}
+
+[data-theme="dark"] .ql-snow .ql-picker {
+    color: var(--text-primary, #f1f5f9);
+}
+
+[data-theme="dark"] .ql-snow .ql-picker-options {
+    background: var(--bg-surface, #0f172a);
+    border-color: var(--border-default, #334155);
+}
+
+[data-theme="dark"] .ql-snow .ql-picker.ql-expanded .ql-picker-label {
+    border-color: var(--color-accento, #f59e0b);
+}
+
+[data-theme="dark"] .ql-container.ql-snow {
+    border-color: var(--border-default, #334155);
+}
+
+[data-theme="dark"] .ql-toolbar select {
+    background: var(--bg-surface, #0f172a);
+    color: var(--text-primary, #f1f5f9);
+    border-color: var(--border-default, #334155);
+}
+
+[data-theme="dark"] .ql-toolbar select:hover {
+    border-color: var(--color-accento, #f59e0b);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 640px) {
+    .ql-toolbar {
+        padding: var(--spacing-xs, 0.25rem);
+    }
+
+    .ql-toolbar button {
+        width: 28px;
+        height: 28px;
+    }
+
+    .ql-editor {
+        min-height: 180px;
+        max-height: 400px;
+        padding: var(--spacing-md, 1rem);
+    }
+}

@@ -1,0 +1,125 @@
+/* ============================================================
+   ESTILOS BASE - LMS LegalTech
+   ============================================================ */
+
+/* === RESET === */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: var(--font-primary);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    color: var(--color-primario);
+    background-color: var(--color-secundario);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* === TIPOGRAFÍA === */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-primario);
+}
+
+h1 { font-size: var(--font-size-4xl); }
+h2 { font-size: var(--font-size-3xl); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl); }
+h5 { font-size: var(--font-size-lg); }
+h6 { font-size: var(--font-size-base); }
+
+p {
+    margin-bottom: var(--spacing-md);
+    color: #4a4a4a;
+}
+
+a {
+    color: var(--color-primario);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-primario-light);
+}
+
+/* === ENLACES CON EFECTO CORPORATIVO === */
+a.link-corporativo {
+    color: var(--color-primario);
+    text-decoration: none;
+    position: relative;
+    font-weight: 500;
+}
+
+a.link-corporativo::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-accento);
+    transition: width var(--transition-base);
+}
+
+a.link-corporativo:hover::after {
+    width: 100%;
+}
+
+/* === LISTAS === */
+ul, ol {
+    padding-left: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+/* === IMÁGENES === */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* === CONTENEDOR === */
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+/* === SELECTION === */
+::selection {
+    background-color: var(--color-primario);
+    color: white;
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-secundario);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-primario-light);
+    border-radius: var(--border-radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primario);
+}

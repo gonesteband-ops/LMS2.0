@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:lang="es">
+<head th:replace="~{fragments/head :: head(titulo='Inicio')}">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Hero Section -->
+    <section class="hero" aria-label="Hero principal">
+        <div class="hero-content" style="margin:0 auto;text-align:center;">
+            <!-- Badge -->
+            <div class="badge badge-accent animate-fade-in" style="display:inline-flex;margin-bottom:var(--spacing-lg);">
+                <span style="width:8px;height:8px;background:#22c55e;border-radius:50%;display:inline-block;margin-right:0.5rem;"></span>
+                Plataforma corporativa con cumplimiento legal
+            </div>
+
+            <h1 class="hero-title animate-slide-up" style="animation-delay:0.1s;">
+                Sistema de Gestión de Aprendizaje
+                <span style="display:block;background:linear-gradient(135deg,var(--color-accento),var(--color-accento-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                    LegalTech
+                </span>
+            </h1>
+
+            <p class="hero-subtitle animate-slide-up" style="animation-delay:0.2s;">
+                Plataforma corporativa de capacitación con cumplimiento legal total.
+                Trazabilidad inmutable, firma electrónica vinculante y seguridad por diseño
+                conforme a las Leyes 19.799 y 21.719.
+            </p>
+
+            <div class="hero-actions animate-slide-up" style="justify-content:center;animation-delay:0.3s;">
+                <a th:href="@{/registro}" class="btn btn-accent btn-lg">
+                    Comenzar Ahora
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
+                </a>
+                <a th:href="@{/#caracteristicas}" class="btn btn-secondary btn-lg" style="color:white;border-color:rgba(255,255,255,0.3);">
+                    Conocer Más
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid-4 animate-stagger" style="max-width:640px;margin:var(--spacing-3xl) auto 0;gap:var(--spacing-md);">
+                <div style="text-align:center;padding:var(--spacing-md);background:rgba(255,255,255,0.05);border-radius:var(--border-radius-lg);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size:var(--font-size-2xl);font-weight:700;color:white;">13</div>
+                    <div style="font-size:var(--font-size-sm);color:rgba(255,255,255,0.4);margin-top:0.25rem;">Entidades del sistema</div>
+                </div>
+                <div style="text-align:center;padding:var(--spacing-md);background:rgba(255,255,255,0.05);border-radius:var(--border-radius-lg);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size:var(--font-size-2xl);font-weight:700;color:white;">SHA-256</div>
+                    <div style="font-size:var(--font-size-sm);color:rgba(255,255,255,0.4);margin-top:0.25rem;">Hash Encadenado</div>
+                </div>
+                <div style="text-align:center;padding:var(--spacing-md);background:rgba(255,255,255,0.05);border-radius:var(--border-radius-lg);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size:var(--font-size-2xl);font-weight:700;color:white;">RBAC</div>
+                    <div style="font-size:var(--font-size-sm);color:rgba(255,255,255,0.4);margin-top:0.25rem;">Permisos Granulares</div>
+                </div>
+                <div style="text-align:center;padding:var(--spacing-md);background:rgba(255,255,255,0.05);border-radius:var(--border-radius-lg);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size:var(--font-size-2xl);font-weight:700;color:white;">JWT</div>
+                    <div style="font-size:var(--font-size-sm);color:rgba(255,255,255,0.4);margin-top:0.25rem;">Auth Stateless</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="caracteristicas" class="section" aria-label="Características del sistema">
+        <div style="max-width:var(--container-max);margin:0 auto;padding:0 var(--spacing-lg);">
+            <div class="section-title">
+                <span class="badge badge-accent">Características</span>
+                <h2>Todo lo que necesitas para gestionar aprendizaje corporativo</h2>
+                <p>Diseñado para empresas que requieren cumplimiento legal, trazabilidad total y seguridad de nivel enterprise.</p>
+            </div>
+
+            <div class="grid-3 animate-stagger">
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3>Seguridad Legal</h3>
+                    <p>Consentimiento informado, firma electrónica vinculante y no repudio bajo Ley 19.799 con hash SHA-256 encadenado.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h3>Trazabilidad Total</h3>
+                    <p>Event Sourcing con hash encadenado SHA-256. Cada acción queda registrada de forma inmutable con auditoría completa.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <h3>Gestión de Cursos</h3>
+                    <p>Cursos con versionado semántico, evaluaciones multimedia con pesos editables y progreso de estudiantes en tiempo real.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3>RBAC Granular</h3>
+                    <p>Control de acceso basado en roles con permisos granulares. Impersonación auditada para soporte y administración.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3>Dashboards con KPIs</h3>
+                    <p>Indicadores en tiempo real, exportación XLSX profesional y reportes descargables sin bloquear la interfaz de usuario.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/>
+                        </svg>
+                    </div>
+                    <h3>MFA y Auditoría</h3>
+                    <p>Autenticación multifactor para administradores, registro completo de accesos y eventos con notificaciones en tiempo real.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="section" style="background:var(--bg-body);border-top:1px solid var(--border-default);">
+        <div style="max-width:var(--container-max);margin:0 auto;padding:0 var(--spacing-lg);">
+            <div class="section-title">
+                <span class="badge badge-accent">Stack Tecnológico</span>
+                <h2>Construido para producción</h2>
+                <p>Tecnologías modernas para un sistema robusto, escalable y seguro.</p>
+            </div>
+
+            <div class="grid-4 animate-stagger">
+                <div class="feature-card" style="text-align:center;padding:var(--spacing-lg);">
+                    <div class="feature-icon" style="width:48px;height:48px;margin:0 auto var(--spacing-md);font-size:1.25rem;">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        </svg>
+                    </div>
+                    <div style="font-weight:600;color:var(--text-primary);">Java 17</div>
+                    <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:0.25rem;">Spring Boot 3.3</div>
+                </div>
+                <div class="feature-card" style="text-align:center;padding:var(--spacing-lg);">
+                    <div class="feature-icon" style="width:48px;height:48px;margin:0 auto var(--spacing-md);font-size:1.25rem;">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                        </svg>
+                    </div>
+                    <div style="font-weight:600;color:var(--text-primary);">PostgreSQL 16</div>
+                    <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:0.25rem;">Flyway Migrations</div>
+                </div>
+                <div class="feature-card" style="text-align:center;padding:var(--spacing-lg);">
+                    <div class="feature-icon" style="width:48px;height:48px;margin:0 auto var(--spacing-md);font-size:1.25rem;">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                        </svg>
+                    </div>
+                    <div style="font-weight:600;color:var(--text-primary);">MinIO</div>
+                    <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:0.25rem;">S3-Compatible Storage</div>
+                </div>
+                <div class="feature-card" style="text-align:center;padding:var(--spacing-lg);">
+                    <div class="feature-icon" style="width:48px;height:48px;margin:0 auto var(--spacing-md);font-size:1.25rem;">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div style="font-weight:600;color:var(--text-primary);">HTMX + Thymeleaf</div>
+                    <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:0.25rem;">Interactividad sin SPA</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="padding:var(--spacing-3xl) 0;background:linear-gradient(135deg,var(--color-primario),var(--color-primario-dark));position:relative;overflow:hidden;text-align:center;">
+        <div style="position:relative;max-width:640px;margin:0 auto;padding:0 var(--spacing-lg);">
+            <h2 style="font-size:var(--font-size-3xl);font-weight:700;color:white;margin-bottom:var(--spacing-md);">¿Listo para transformar tu capacitación corporativa?</h2>
+            <p style="font-size:var(--font-size-lg);color:rgba(255,255,255,0.7);margin-bottom:var(--spacing-xl);">Únete a las empresas que ya confían en LMS LegalTech para sus programas de aprendizaje con cumplimiento legal.</p>
+            <a th:href="@{/registro}" class="btn btn-accent btn-lg" style="background:white;color:var(--color-primario);">
+                Comenzar Gratis
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Loading Indicator Global (HTMX) -->
+    <div id="global-loading"></div>
+</body>
+</html>

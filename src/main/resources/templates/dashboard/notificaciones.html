@@ -1,0 +1,458 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Notificaciones')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <aside class="dashboard-sidebar" role="navigation" aria-label="Navegación del dashboard">
+            <nav style="flex:1;padding:var(--spacing-lg) var(--spacing-sm);overflow-y:auto;">
+                <div style="padding:0 var(--spacing-sm);margin-bottom:var(--spacing-lg);">
+                    <p style="font-size:var(--font-size-xs);font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Navegación</p>
+                </div>
+                <a href="/dashboard" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                    <span>Panel Principal</span>
+                </a>
+                <a href="/cursos" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                    <span>Mis Cursos</span>
+                </a>
+                <a href="/dashboard/documentos" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                    <span>Documentos</span>
+                </a>
+                <a href="/consentimiento" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                    <span>Consentimiento</span>
+                </a>
+                <a href="/dashboard/firmas" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                    <span>Mis Firmas</span>
+                </a>
+                <a href="/dashboard/perfil" class="sidebar-link">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                    <span>Mi Perfil</span>
+                </a>
+                <a href="/dashboard/notificaciones" class="sidebar-link active">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+                    <span>Notificaciones</span>
+                    <span id="sidebar-notif-count" class="badge" style="margin-left:auto;background:var(--color-danger);color:#fff;font-size:0.625rem;padding:0.125rem 0.375rem;display:none;">0</span>
+                </a>
+                <a href="/dashboard/exportaciones" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                    <span>Exportaciones</span>
+                </a>
+
+                <div style="padding-top:var(--spacing-lg);margin-top:var(--spacing-lg);border-top:1px solid var(--border-default);" sec:authorize="hasAnyRole('SUPERADMIN')">
+                    <p style="padding:0 var(--spacing-sm);margin-bottom:var(--spacing-sm);font-size:var(--font-size-xs);font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Administración</p>
+                    <a href="/admin/usuarios" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                        <span>Usuarios</span>
+                    </a>
+                    <a href="/admin/roles" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                        <span>Roles</span>
+                    </a>
+                    <a href="/admin/auditoria" class="sidebar-link" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                        <span>Auditoría</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <!-- Mobile nav pills -->
+                <div style="display:none;" class="mobile-nav-pills">
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);">
+                        <a href="/dashboard" class="pills-link">Panel</a>
+                        <a href="/cursos" class="pills-link">Cursos</a>
+                        <a href="/dashboard/documentos" class="pills-link">Docs</a>
+                        <a href="/dashboard/firmas" class="pills-link">Firmas</a>
+                        <a href="/dashboard/notificaciones" class="pills-link active">Notif.</a>
+                        <a href="/dashboard/exportaciones" class="pills-link" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">Export</a>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);margin-top:var(--spacing-xs);" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <a href="/admin/usuarios" class="pills-link">Usuarios</a>
+                        <a href="/admin/roles" class="pills-link">Roles</a>
+                        <a href="/admin/auditoria" class="pills-link">Auditoría</a>
+                    </div>
+                </div>
+
+                <!-- Page Header -->
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 class="dashboard-page-title">Notificaciones</h1>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-top:var(--spacing-xs);">
+                            Mantente al día con las novedades del sistema
+                            <span id="header-unread-badge" style="display:none;margin-left:var(--spacing-sm);">· <span id="unread-count-text">0</span> sin leer</span>
+                        </p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);flex-wrap:wrap;">
+                        <button id="btn-marcar-todas" class="btn btn-ghost btn-sm" onclick="marcarTodasLeidas()" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Marcar todas leídas
+                        </button>
+                        <button id="btn-refrescar" class="btn btn-ghost btn-sm" onclick="cargarNotificaciones()" title="Refrescar" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/></svg>
+                            Refrescar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="animate-slide-up" style="margin-bottom:var(--spacing-lg);display:flex;gap:var(--spacing-sm);flex-wrap:wrap;">
+                    <button class="btn btn-sm filter-btn active" data-filter="todas" onclick="filtrarNotificaciones('todas', this)" style="background:var(--color-accento);color:#fff;border:none;">Todas</button>
+                    <button class="btn btn-sm filter-btn" data-filter="no-leidas" onclick="filtrarNotificaciones('no-leidas', this)" style="background:var(--bg-body);color:var(--text-secondary);border:1px solid var(--border-default);">No leídas</button>
+                    <button class="btn btn-sm filter-btn" data-filter="vencimiento" onclick="filtrarNotificaciones('vencimiento', this)" style="background:var(--bg-body);color:var(--text-secondary);border:1px solid var(--border-default);">Vencimientos</button>
+                    <button class="btn btn-sm filter-btn" data-filter="logro" onclick="filtrarNotificaciones('logro', this)" style="background:var(--bg-body);color:var(--text-secondary);border:1px solid var(--border-default);">Logros</button>
+                    <button class="btn btn-sm filter-btn" data-filter="sistema" onclick="filtrarNotificaciones('sistema', this)" style="background:var(--bg-body);color:var(--text-secondary);border:1px solid var(--border-default);">Sistema</button>
+                </div>
+
+                <!-- Notifications List -->
+                <div id="notificaciones-container" class="animate-fade-in">
+                    <div style="text-align:center;padding:var(--spacing-2xl);">
+                        <div class="spinner" style="margin:0 auto;"></div>
+                        <p style="margin-top:var(--spacing-sm);font-size:var(--font-size-sm);color:var(--text-muted);">Cargando notificaciones...</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div id="pagination-container" style="display:none;margin-top:var(--spacing-xl);" class="animate-fade-in">
+                    <nav style="display:flex;align-items:center;justify-content:center;gap:var(--spacing-sm);" aria-label="Paginación">
+                        <button id="btn-prev" class="btn btn-ghost btn-sm" onclick="cambiarPagina('prev')" disabled>
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+                            Anterior
+                        </button>
+                        <span id="page-info" style="font-size:var(--font-size-sm);color:var(--text-secondary);padding:0 var(--spacing-sm);">Página 1 de 1</span>
+                        <button id="btn-next" class="btn btn-ghost btn-sm" onclick="cambiarPagina('next')" disabled>
+                            Siguiente
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            var paginaActual = 0;
+            var filtroActual = 'todas';
+            var totalPaginas = 1;
+
+            function escapeHtml(t) { if (!t) return ''; var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+
+            function formatFecha(fechaStr) {
+                if (!fechaStr) return '';
+                try {
+                    var d = new Date(fechaStr);
+                    return d.toLocaleDateString('es-CL', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                } catch(e) {
+                    return fechaStr;
+                }
+            }
+
+            function getTipoIcon(tipo) {
+                switch(tipo) {
+                    case 'vencimiento': return '<svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                    case 'reprobacion': return '<svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>';
+                    case 'logro': return '<svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>';
+                    case 'sistema': return '<svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+                    default: return '<svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>';
+                }
+            }
+
+            function getTipoColor(tipo) {
+                switch(tipo) {
+                    case 'vencimiento': return { bg: 'rgba(245,158,11,0.1)', color: 'rgba(180,83,9,1)' };
+                    case 'reprobacion': return { bg: 'rgba(239,68,68,0.1)', color: 'var(--color-danger)' };
+                    case 'logro': return { bg: 'rgba(16,185,129,0.1)', color: 'var(--color-success)' };
+                    case 'sistema': return { bg: 'rgba(99,102,241,0.1)', color: 'var(--color-info)' };
+                    default: return { bg: 'var(--border-default)', color: 'var(--text-muted)' };
+                }
+            }
+
+            function getTipoLabel(tipo) {
+                switch(tipo) {
+                    case 'vencimiento': return 'Vencimiento';
+                    case 'reprobacion': return 'Reprobación';
+                    case 'logro': return 'Logro';
+                    case 'sistema': return 'Sistema';
+                    default: return tipo;
+                }
+            }
+
+            window.cargarNotificaciones = function() {
+                var container = document.getElementById('notificaciones-container');
+                container.innerHTML = '<div style="text-align:center;padding:var(--spacing-2xl);">' +
+                    '<div class="spinner" style="margin:0 auto;"></div>' +
+                    '<p style="margin-top:var(--spacing-sm);font-size:var(--font-size-sm);color:var(--text-muted);">Cargando notificaciones...</p>' +
+                    '</div>';
+
+                var url = '/api/v1/notificaciones?page=' + paginaActual + '&size=10&sort=createdAt,desc';
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            totalPaginas = data.totalPages || 1;
+                            renderizarNotificaciones(data.content || []);
+                            actualizarPaginacion();
+                            actualizarContadorNoLeidas();
+                        } catch(e) {
+                            container.innerHTML = '<div style="text-align:center;padding:var(--spacing-2xl);color:var(--color-danger);"><p>Error al procesar las notificaciones.</p></div>';
+                        }
+                    } else {
+                        container.innerHTML = '<div style="text-align:center;padding:var(--spacing-2xl);color:var(--color-danger);"><p>Error al cargar notificaciones.</p></div>';
+                    }
+                };
+                xhr.onerror = function() {
+                    container.innerHTML = '<div style="text-align:center;padding:var(--spacing-2xl);color:var(--color-danger);"><p>Error de conexión.</p></div>';
+                };
+                xhr.send();
+            };
+
+            function renderizarNotificaciones(items) {
+                var container = document.getElementById('notificaciones-container');
+                if (!items || items.length === 0) {
+                    container.innerHTML = '<div class="card"><div style="text-align:center;padding:var(--spacing-2xl);">' +
+                        '<svg style="width:3rem;height:3rem;margin:0 auto var(--spacing-md);color:var(--text-muted);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>' +
+                        '<p style="font-size:var(--font-size-sm);color:var(--text-muted);">No tienes notificaciones</p>' +
+                        '<p style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--spacing-xs);">Las notificaciones de vencimientos, logros y del sistema aparecerán aquí.</p>' +
+                        '</div></div>';
+                    return;
+                }
+
+                var html = '<div class="card" style="overflow:hidden;">';
+                for (var i = 0; i < items.length; i++) {
+                    var n = items[i];
+                    var tc = getTipoColor(n.tipo);
+                    var leidaClass = n.leida ? '' : 'notif-no-leida';
+                    var htmlLeida = n.leida ? '' : '<span class="notif-dot" style="width:0.5rem;height:0.5rem;border-radius:50%;background:var(--color-accento);flex-shrink:0;"></span>';
+
+                    html += '<div class="notif-item ' + leidaClass + '" data-id="' + n.id + '" data-leida="' + n.leida + '" style="display:flex;align-items:flex-start;gap:var(--spacing-md);padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);transition:background 0.2s;cursor:pointer;"';
+                    html += ' onmouseover="this.style.background=\'var(--bg-body)\'" onmouseout="this.style.background=\'transparent\'"';
+                    html += ' onclick="marcarLeida(\'' + n.id + '\', this)">';
+
+                    // Icon
+                    html += '<div style="width:2.5rem;height:2.5rem;border-radius:var(--border-radius-lg);background:' + tc.bg + ';color:' + tc.color + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;">';
+                    html += getTipoIcon(n.tipo);
+                    html += '</div>';
+
+                    // Content
+                    html += '<div style="flex:1;min-width:0;">';
+                    html += '<div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-xs);">';
+                    html += htmlLeida;
+                    html += '<span class="badge" style="background:' + tc.bg + ';color:' + tc.color + ';font-size:0.625rem;">' + escapeHtml(getTipoLabel(n.tipo)) + '</span>';
+                    if (n.titulo) {
+                        html += '<span style="font-weight:' + (n.leida ? '500' : '700') + ';font-size:var(--font-size-sm);color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(n.titulo) + '</span>';
+                    }
+                    html += '</div>';
+                    if (n.mensaje) {
+                        html += '<p style="font-size:var(--font-size-xs);color:var(--text-secondary);margin:0;line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">' + escapeHtml(n.mensaje) + '</p>';
+                    }
+                    html += '<div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-top:var(--spacing-xs);">';
+                    html += '<span style="font-size:0.625rem;color:var(--text-muted);">' + formatFecha(n.createdAt) + '</span>';
+                    if (n.link) {
+                        html += '<a href="' + escapeHtml(n.link) + '" style="font-size:0.625rem;color:var(--color-accento);text-decoration:none;" onclick="event.stopPropagation();">Ver detalle →</a>';
+                    }
+                    if (!n.leida) {
+                        html += '<button style="margin-left:auto;font-size:0.625rem;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:0.125rem 0.375rem;border-radius:var(--border-radius-sm);" onclick="event.stopPropagation();marcarLeida(\'' + n.id + '\', this.parentElement.parentElement.parentElement)">Marcar leída</button>';
+                    }
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                }
+                html += '</div>';
+                container.innerHTML = html;
+            }
+
+            function actualizarPaginacion() {
+                var pagContainer = document.getElementById('pagination-container');
+                var pageInfo = document.getElementById('page-info');
+                var btnPrev = document.getElementById('btn-prev');
+                var btnNext = document.getElementById('btn-next');
+
+                if (totalPaginas <= 1) {
+                    pagContainer.style.display = 'none';
+                    return;
+                }
+
+                pagContainer.style.display = 'block';
+                pageInfo.textContent = 'Página ' + (paginaActual + 1) + ' de ' + totalPaginas;
+                btnPrev.disabled = paginaActual <= 0;
+                btnNext.disabled = paginaActual >= totalPaginas - 1;
+            }
+
+            window.cambiarPagina = function(dir) {
+                if (dir === 'prev' && paginaActual > 0) {
+                    paginaActual--;
+                    cargarNotificaciones();
+                } else if (dir === 'next' && paginaActual < totalPaginas - 1) {
+                    paginaActual++;
+                    cargarNotificaciones();
+                }
+            };
+
+            window.marcarLeida = function(id, elemento) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/v1/notificaciones/' + id + '/leer', true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        // Update UI
+                        var item = elemento;
+                        while (item && !item.dataset.id) item = item.parentElement;
+                        if (item) {
+                            item.dataset.leida = 'true';
+                            item.classList.remove('notif-no-leida');
+                            var dot = item.querySelector('.notif-dot');
+                            if (dot) dot.remove();
+                            var btn = item.querySelector('button');
+                            if (btn && btn.textContent.trim() === 'Marcar leída') btn.remove();
+                            // Update unread count
+                            actualizarContadorNoLeidas();
+                        }
+                    }
+                };
+                xhr.send();
+            };
+
+            window.marcarTodasLeidas = function() {
+                var btn = document.getElementById('btn-marcar-todas');
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner" style="width:1rem;height:1rem;border-width:2px;"></div> Procesando...';
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/v1/notificaciones/leer-todas', true);
+                xhr.onload = function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Marcar todas leídas';
+                    if (xhr.status === 200) {
+                        cargarNotificaciones();
+                    }
+                };
+                xhr.onerror = function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Marcar todas leídas';
+                };
+                xhr.send();
+            };
+
+            window.filtrarNotificaciones = function(filtro, btn) {
+                // Update active filter button
+                var btns = document.querySelectorAll('.filter-btn');
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].style.background = 'var(--bg-body)';
+                    btns[i].style.color = 'var(--text-secondary)';
+                    btns[i].style.border = '1px solid var(--border-default)';
+                }
+                if (btn) {
+                    btn.style.background = 'var(--color-accento)';
+                    btn.style.color = '#fff';
+                    btn.style.border = 'none';
+                }
+
+                // For now, just reload (server-side filtering would need query param)
+                // Client-side filtering by tipo
+                filtroActual = filtro;
+                paginaActual = 0;
+                cargarNotificaciones();
+
+                // Apply client-side filter after load
+                var originalRender = renderizarNotificaciones;
+                renderizarNotificaciones = function(items) {
+                    var filtered = items;
+                    if (filtro === 'no-leidas') {
+                        filtered = items.filter(function(n) { return !n.leida; });
+                    } else if (filtro !== 'todas') {
+                        filtered = items.filter(function(n) { return n.tipo === filtro; });
+                    }
+                    originalRender(filtered);
+                    renderizarNotificaciones = originalRender;
+                };
+            };
+
+            function actualizarContadorNoLeidas() {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/notificaciones/contar', true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            var count = data.noLeidas || 0;
+                            var badge = document.getElementById('sidebar-notif-count');
+                            var headerBadge = document.getElementById('header-unread-badge');
+                            var countText = document.getElementById('unread-count-text');
+
+                            if (count > 0) {
+                                badge.textContent = count;
+                                badge.style.display = 'inline';
+                                headerBadge.style.display = 'inline';
+                                countText.textContent = count;
+                            } else {
+                                badge.style.display = 'none';
+                                headerBadge.style.display = 'none';
+                            }
+                        } catch(e) {}
+                    }
+                };
+                xhr.send();
+            }
+
+            // Initial load
+            cargarNotificaciones();
+
+            // Auto-refresh every 60 seconds
+            setInterval(cargarNotificaciones, 60000);
+        })();
+    </script>
+
+    <style>
+        /* Notification-specific styles */
+        .notif-item:last-child {
+            border-bottom: none !important;
+        }
+        .notif-item:hover {
+            background: var(--bg-body);
+        }
+        .notif-no-leida {
+            background: rgba(245,158,11,0.03);
+        }
+        .filter-btn {
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: var(--font-size-xs);
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--border-radius-xl);
+        }
+        .filter-btn:hover {
+            opacity: 0.85;
+        }
+        #sidebar-notif-count {
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: var(--border-radius-xl);
+            background: var(--color-danger);
+            color: #fff;
+            margin-left: auto;
+        }
+        @media (max-width: 768px) {
+            .mobile-nav-pills {
+                display: flex !important;
+                flex-wrap: wrap;
+                gap: var(--spacing-xs);
+                padding: 0 var(--spacing-lg) var(--spacing-md);
+            }
+        }
+    </style>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

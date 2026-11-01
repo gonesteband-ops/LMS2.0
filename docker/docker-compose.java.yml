@@ -1,0 +1,115 @@
+# ============================================================
+# Docker Compose para LMS LegalTech (Stack Java)
+# ============================================================
+
+services:
+  # ---- Base de datos PostgreSQL ----
+  postgres:
+    image: postgres:16-alpine
+    container_name: lms-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-lms_db}
+      POSTGRES_USER: ${POSTGRES_USER:-lms_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cambiar_esto}
+      TZ: America/Santiago
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---- Almacenamiento de objetos MinIO ----
+  minio:
+    image: minio/minio:latest
+    container_name: lms-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-lms_admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-cambiar_esto}
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   # API S3
+      - "9001:9001"   # Consola web
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ---- Redis (caché + cola de tareas) ----
+  redis:
+    image: redis:7-alpine
+    container_name: lms-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---- API LMS (Spring Boot) ----
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java.dev
+    container_name: lms-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: development
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-lms_db}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-lms_user}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-cambiar_esto}
+      APP_MINIO_ENDPOINT: http://minio:9000
+      APP_MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-lms_admin}
+      APP_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-cambiar_esto}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_FLYWAY_VALIDATE_ON_MIGRATE: "false"
+      # DevTools: forzar habilitación de live reload y restart
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"
+      TZ: America/Santiago
+    command: ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=development", "-DskipTests"]
+    ports:
+      - "8080:8080"
+      - "35729:35729"   # LiveReload (devtools)
+    volumes:
+      # Bind mount del código fuente → cambios instantáneos sin rebuild
+      - ../pom.xml:/app/pom.xml
+      - ../src:/app/src
+      - ../target:/app/target
+      # Cache de Maven para no redescargar dependencias en cada restart
+      - maven_cache:/root/.m2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+  minio_data:
+    driver: local
+  redis_data:
+    driver: local
+  maven_cache:
+    driver: local

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Reproductor de Video')}">
+</head>
+<body style="background:#0f0f0f;color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar con playlist -->
+        <aside class="dashboard-sidebar" role="navigation" aria-label="Lista de reproducción"
+               style="background:#1a1a1a;border-right:1px solid #2a2a2a;">
+            <nav style="flex:1;padding:var(--spacing-lg) var(--spacing-sm);overflow-y:auto;">
+                <div style="padding:0 var(--spacing-sm) var(--spacing-md);">
+                    <p class="sidebar-section-title" style="color:rgba(255,255,255,0.5);">Navegación</p>
+                </div>
+                <a href="/dashboard" class="sidebar-link" style="color:rgba(255,255,255,0.7);">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                    <span>Panel Principal</span>
+                </a>
+                <a href="/cursos" class="sidebar-link" style="color:rgba(255,255,255,0.7);">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                    <span>Mis Cursos</span>
+                </a>
+                <a href="/dashboard/documentos" class="sidebar-link" style="color:rgba(255,255,255,0.7);">
+                    <svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                    <span>Documentos</span>
+                </a>
+
+                <div style="padding-top:var(--spacing-lg);margin-top:var(--spacing-lg);border-top:1px solid #2a2a2a;margin-bottom:var(--spacing-md);">
+                    <p class="sidebar-section-title" style="color:rgba(255,255,255,0.5);padding:0 var(--spacing-sm);margin-bottom:var(--spacing-sm);font-size:var(--font-size-xs);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">
+                        Lista de Reproducción
+                    </p>
+                </div>
+
+                <!-- Playlist -->
+                <div id="playlist-container" style="display:flex;flex-direction:column;gap:var(--spacing-xs);">
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-xl) 0;color:rgba(255,255,255,0.3);">
+                        <svg style="width:2rem;height:2rem;margin-bottom:var(--spacing-sm);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        <p style="font-size:var(--font-size-xs);text-align:center;">Cargando videos...</p>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content: Reproductor -->
+        <main class="dashboard-content" style="background:#0f0f0f;">
+            <div style="max-width:var(--container-max);margin:0 auto;padding:var(--spacing-lg);">
+
+                <!-- Contenedor del Reproductor -->
+                <div class="card" style="background:#000;border:1px solid #2a2a2a;border-radius:var(--border-radius-xl);overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+                    <!-- Video Player -->
+                    <div style="position:relative;background:#000;width:100%;" id="player-wrapper">
+                        <video id="main-player"
+                               style="width:100%;display:block;max-height:70vh;background:#000;"
+                               preload="metadata"
+                               playsinline
+                               controls>
+                            <source id="video-source" src="" type="video/mp4">
+                            <source id="video-source-webm" src="" type="video/webm">
+                            <p style="padding:var(--spacing-xl);text-align:center;color:rgba(255,255,255,0.7);background:#1a1a1a;border-radius:var(--border-radius-lg);">
+                                Tu navegador no soporta la reproducción de video. 
+                                <a href="#" id="fallback-download" style="color:var(--color-accento);text-decoration:underline;">Descarga el archivo</a> para verlo.
+                            </p>
+                        </video>
+
+                        <!-- Overlay de carga -->
+                        <div id="loading-overlay" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:10;transition:opacity 0.3s;">
+                            <div style="text-align:center;">
+                                <div class="spinner" style="margin:0 auto var(--spacing-md);border-color:var(--color-accento) transparent transparent transparent;"></div>
+                                <p style="font-size:var(--font-size-sm);color:rgba(255,255,255,0.7);">Cargando video...</p>
+                            </div>
+                        </div>
+
+                        <!-- Error overlay -->
+                        <div id="error-overlay" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);z-index:10;">
+                            <div style="text-align:center;padding:var(--spacing-xl);">
+                                <svg style="width:3rem;height:3rem;margin:0 auto var(--spacing-md);color:#ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+                                <p id="error-message" style="font-size:var(--font-size-sm);color:rgba(255,255,255,0.8);">Error al cargar el video.</p>
+                                <button onclick="reloadVideo()" class="btn btn-accent btn-sm" style="margin-top:var(--spacing-md);">Reintentar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info del Video -->
+                    <div style="padding:var(--spacing-xl);background:#1a1a1a;">
+                        <div id="video-info">
+                            <h1 id="video-title" style="font-size:var(--font-size-xl);font-weight:700;color:#fff;margin:0 0 var(--spacing-xs);">Cargando...</h1>
+                            <p id="video-description" style="font-size:var(--font-size-sm);color:rgba(255,255,255,0.6);margin:0 0 var(--spacing-md);">—</p>
+                            <div id="video-metadata" style="display:flex;flex-wrap:wrap;gap:var(--spacing-md);font-size:var(--font-size-xs);color:rgba(255,255,255,0.4);">
+                                <span id="meta-curso">Curso: —</span>
+                                <span id="meta-duracion">Duración: —</span>
+                                <span id="meta-tamano">Tamaño: —</span>
+                                <span id="meta-fecha">Subido: —</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controles personalizados (barra adicional) -->
+                <div style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-md);background:#1a1a1a;border-radius:var(--border-radius-lg);margin-top:var(--spacing-sm);border:1px solid #2a2a2a;">
+                    <button id="btn-play" class="btn btn-ghost btn-sm" style="color:rgba(255,255,255,0.7);" onclick="togglePlay()" title="Reproducir/Pausar">
+                        <svg style="width:1.25rem;height:1.25rem;" fill="currentColor" viewBox="0 0 24 24"><path id="play-icon" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+                    </button>
+                    <button id="btn-volume" class="btn btn-ghost btn-sm" style="color:rgba(255,255,255,0.7);" onclick="toggleMute()" title="Silenciar">
+                        <svg style="width:1.25rem;height:1.25rem;" fill="currentColor" viewBox="0 0 24 24"><path id="volume-icon" d="M11.93 5.18c-.83-.507-1.89-.05-1.89.856v11.927c0 .906 1.06 1.364 1.89.857l9.455-5.964c.746-.47.746-1.644 0-2.114l-9.455-5.963zM4.5 9.75a.75.75 0 00-.75.75v3c0 .414.336.75.75.75h3.75V9.75H4.5z"/></svg>
+                    </button>
+                    <span id="time-display" style="font-size:var(--font-size-xs);color:rgba(255,255,255,0.5);font-variant-numeric:tabular-nums;min-width:6rem;">00:00 / 00:00</span>
+                    <button id="btn-fullscreen" class="btn btn-ghost btn-sm" style="color:rgba(255,255,255,0.7);margin-left:auto;" onclick="toggleFullscreen()" title="Pantalla completa">
+                        <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"/></svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            // Obtener parámetros de la URL
+            var params = new URLSearchParams(window.location.search);
+            var cursoId = params.get('cursoId');
+            var documentoId = params.get('documentoId');
+
+            var player = document.getElementById('main-player');
+            var loadingOverlay = document.getElementById('loading-overlay');
+            var errorOverlay = document.getElementById('error-overlay');
+            var errorMessage = document.getElementById('error-message');
+
+            // Cargar datos del curso
+            function cargarCurso() {
+                if (!cursoId) {
+                    document.getElementById('video-title').textContent = 'Seleccione un video';
+                    document.getElementById('video-description').textContent = 'Navegue por la lista de reproducción para comenzar.';
+                    ocultarCargando();
+                    return;
+                }
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/cursos/' + cursoId, true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var curso = JSON.parse(xhr.responseText);
+                        document.getElementById('video-title').textContent = curso.titulo || 'Sin título';
+                        document.getElementById('video-description').textContent = curso.descripcion || 'Sin descripción';
+                        document.getElementById('meta-curso').textContent = 'Curso: ' + (curso.titulo || '—');
+                        document.getElementById('meta-fecha').textContent = 'Creado: ' + (curso.createdAt ? new Date(curso.createdAt).toLocaleDateString('es-CL') : '—');
+
+                        // Cargar playlist de documentos asociados al curso
+                        cargarPlaylist(cursoId);
+                    } else {
+                        document.getElementById('video-title').textContent = 'Error al cargar el curso';
+                        ocultarCargando();
+                    }
+                };
+                xhr.onerror = function() {
+                    document.getElementById('video-title').textContent = 'Error de conexión';
+                    ocultarCargando();
+                };
+                xhr.send();
+            }
+
+            // Cargar playlist (documentos del sistema que sean videos)
+            function cargarPlaylist(cursoId) {
+                var container = document.getElementById('playlist-container');
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/documentos', true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var documentos = JSON.parse(xhr.responseText);
+                        // Filtrar solo videos
+                        var videos = documentos.filter(function(doc) {
+                            var mt = (doc.mimeType || doc.mimeType || '').toLowerCase();
+                            return mt.indexOf('video/') === 0;
+                        });
+
+                        if (videos.length === 0) {
+                            container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-xl) 0;color:rgba(255,255,255,0.3);">' +
+                                '<svg style="width:2rem;height:2rem;margin-bottom:var(--spacing-sm);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"/></svg>' +
+                                '<p style="font-size:var(--font-size-xs);text-align:center;">No hay videos disponibles</p></div>';
+                            ocultarCargando();
+                            return;
+                        }
+
+                        var html = '';
+                        videos.forEach(function(video, index) {
+                            var isActive = (documentoId && video.id === documentoId) || (index === 0 && !documentoId);
+                            if (!documentoId && index === 0) {
+                                // Auto-seleccionar el primer video si no hay selección
+                                documentoId = video.id;
+                            }
+                            html += '<a href="/dashboard/reproductor?cursoId=' + cursoId + '&documentoId=' + video.id + '" ' +
+                                'class="sidebar-link" style="color:rgba(255,255,255,0.7);padding:var(--spacing-sm) var(--spacing-sm);border-radius:var(--border-radius-lg);display:flex;align-items:center;gap:var(--spacing-sm);text-decoration:none;transition:all 0.2s;' +
+                                (isActive ? 'background:rgba(245,158,11,0.15);color:var(--color-accento);' : '') +
+                                '" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + (isActive ? 'rgba(245,158,11,0.15)' : 'transparent') + '\'">' +
+                                '<svg style="width:1.25rem;height:1.25rem;flex-shrink:0;" fill="currentColor" viewBox="0 0 24 24"><path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>' +
+                                '<div style="flex:1;min-width:0;">' +
+                                '   <p style="font-size:var(--font-size-xs);font-weight:500;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(video.nombreOriginal || 'Video ' + (index+1)) + '</p>' +
+                                '   <p style="font-size:var(--font-size-xs);color:rgba(255,255,255,0.4);margin:0;">' + formatBytes(video.tamanoBytes || 0) + '</p>' +
+                                '</div>' +
+                                '</a>';
+                        });
+                        container.innerHTML = html;
+
+                        // Cargar el video seleccionado
+                        if (documentoId) {
+                            cargarVideo(documentoId);
+                        } else {
+                            ocultarCargando();
+                        }
+                    } else {
+                        container.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:rgba(255,255,255,0.3);"><p style="font-size:var(--font-size-xs);">Error al cargar playlist</p></div>';
+                        ocultarCargando();
+                    }
+                };
+                xhr.onerror = function() {
+                    container.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:rgba(255,255,255,0.3);"><p style="font-size:var(--font-size-xs);">Error de conexión</p></div>';
+                    ocultarCargando();
+                };
+                xhr.send();
+            }
+
+            // Cargar un video específico
+            function cargarVideo(docId) {
+                mostrarCargando();
+                ocultarError();
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/documentos/' + docId, true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var doc = JSON.parse(xhr.responseText);
+                        var streamUrl = '/api/v1/documentos/' + docId + '/stream';
+
+                        // Configurar fuente del video
+                        var source = document.getElementById('video-source');
+                        source.src = streamUrl;
+
+                        // Intentar con WebM también
+                        var sourceWebm = document.getElementById('video-source-webm');
+                        sourceWebm.src = streamUrl;
+
+                        // Actualizar metadatos
+                        document.getElementById('meta-tamano').textContent = 'Tamaño: ' + formatBytes(doc.tamanoBytes || 0);
+                        if (doc.createdAt) {
+                            document.getElementById('meta-fecha').textContent = 'Subido: ' + new Date(doc.createdAt).toLocaleDateString('es-CL');
+                        }
+
+                        // Actualizar enlace de fallback
+                        document.getElementById('fallback-download').href = streamUrl;
+
+                        // Recargar el player
+                        player.load();
+
+                        // Cuando el video esté listo, ocultar loading
+                        player.oncanplay = function() {
+                            ocultarCargando();
+                            actualizarTiempo();
+                        };
+
+                        player.onerror = function() {
+                            ocultarCargando();
+                            mostrarError('No se pudo cargar el video. Verifique que el archivo sea un formato válido (MP4, WebM).');
+                        };
+
+                        // Metadata del video (duración)
+                        player.onloadedmetadata = function() {
+                            var dur = player.duration;
+                            if (dur && isFinite(dur)) {
+                                document.getElementById('meta-duracion').textContent = 'Duración: ' + formatTime(dur);
+                            }
+                        };
+
+                        // Actualizar tiempo periódicamente
+                        player.ontimeupdate = function() {
+                            actualizarTiempo();
+                        };
+
+                    } else {
+                        ocultarCargando();
+                        mostrarError('Error al obtener información del video.');
+                    }
+                };
+                xhr.onerror = function() {
+                    ocultarCargando();
+                    mostrarError('Error de conexión al cargar el video.');
+                };
+                xhr.send();
+            }
+
+            // Controles personalizados
+            window.togglePlay = function() {
+                if (player.paused) {
+                    player.play();
+                    document.getElementById('play-icon').setAttribute('d', 'M6 4.75a.75.75 0 01.75-.75h2.5a.75.75 0 01.75.75v14.5a.75.75 0 01-.75.75h-2.5a.75.75 0 01-.75-.75V4.75zm7.5 0a.75.75 0 01.75-.75h2.5a.75.75 0 01.75.75v14.5a.75.75 0 01-.75.75h-2.5a.75.75 0 01-.75-.75V4.75z');
+                } else {
+                    player.pause();
+                    document.getElementById('play-icon').setAttribute('d', 'M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z');
+                }
+            };
+
+            window.toggleMute = function() {
+                player.muted = !player.muted;
+                var icon = document.getElementById('volume-icon');
+                if (player.muted) {
+                    icon.setAttribute('d', 'M11.93 5.18c-.83-.507-1.89-.05-1.89.856v11.927c0 .906 1.06 1.364 1.89.857l9.455-5.964c.746-.47.746-1.644 0-2.114l-9.455-5.963zM4.5 9.75a.75.75 0 00-.75.75v3c0 .414.336.75.75.75h3.75V9.75H4.5z');
+                } else {
+                    icon.setAttribute('d', 'M11.93 5.18c-.83-.507-1.89-.05-1.89.856v11.927c0 .906 1.06 1.364 1.89.857l9.455-5.964c.746-.47.746-1.644 0-2.114l-9.455-5.963zM4.5 9.75a.75.75 0 00-.75.75v3c0 .414.336.75.75.75h3.75V9.75H4.5z');
+                }
+            };
+
+            window.toggleFullscreen = function() {
+                var wrapper = document.getElementById('player-wrapper');
+                if (!document.fullscreenElement) {
+                    if (wrapper.requestFullscreen) {
+                        wrapper.requestFullscreen();
+                    } else if (wrapper.webkitRequestFullscreen) {
+                        wrapper.webkitRequestFullscreen();
+                    } else if (wrapper.msRequestFullscreen) {
+                        wrapper.msRequestFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
+            };
+
+            window.reloadVideo = function() {
+                ocultarError();
+                if (documentoId) {
+                    cargarVideo(documentoId);
+                }
+            };
+
+            // Helpers
+            function actualizarTiempo() {
+                var current = player.currentTime || 0;
+                var duration = player.duration || 0;
+                document.getElementById('time-display').textContent = formatTime(current) + ' / ' + formatTime(duration);
+            }
+
+            function formatTime(seconds) {
+                if (!seconds || !isFinite(seconds)) return '00:00';
+                var h = Math.floor(seconds / 3600);
+                var m = Math.floor((seconds % 3600) / 60);
+                var s = Math.floor(seconds % 60);
+                if (h > 0) {
+                    return h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+                }
+                return m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+            }
+
+            function formatBytes(bytes) {
+                if (!bytes || bytes === 0) return '0 B';
+                var k = 1024, sizes = ['B', 'KB', 'MB', 'GB'], i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            }
+
+            function escapeHtml(t) { if (!t) return ''; var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+
+            function mostrarCargando() {
+                loadingOverlay.style.display = 'flex';
+                loadingOverlay.style.opacity = '1';
+            }
+
+            function ocultarCargando() {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(function() { loadingOverlay.style.display = 'none'; }, 300);
+            }
+
+            function mostrarError(msg) {
+                errorMessage.textContent = msg || 'Error al cargar el video.';
+                errorOverlay.style.display = 'flex';
+            }
+
+            function ocultarError() {
+                errorOverlay.style.display = 'none';
+            }
+
+            // Inicializar
+            cargarCurso();
+        })();
+    </script>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

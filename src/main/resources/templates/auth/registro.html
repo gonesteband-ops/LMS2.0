@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:lang="es">
+<head th:replace="~{fragments/head :: head(titulo='Registro')}">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main style="padding-top:calc(var(--header-height) + var(--spacing-xl));padding-bottom:var(--spacing-2xl);padding-left:var(--spacing-md);padding-right:var(--spacing-md);min-height:100vh;display:flex;align-items:center;">
+        <div style="max-width:32rem;margin:0 auto;width:100%;">
+            <!-- Header -->
+            <div style="text-align:center;margin-bottom:var(--spacing-xl);" class="animate-fade-in">
+                <div class="header-logo-icon" style="width:4rem;height:4rem;margin:0 auto var(--spacing-lg);font-size:1.5rem;border-radius:var(--border-radius-xl);">
+                    <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>
+                </div>
+                <h1 style="font-size:var(--font-size-2xl);font-weight:700;color:var(--text-primary);">Crear Cuenta</h1>
+                <p style="color:var(--text-secondary);margin-top:var(--spacing-xs);">Regístrate en el sistema LMS LegalTech</p>
+            </div>
+
+            <!-- Card -->
+            <div style="background:var(--bg-surface);border-radius:var(--border-radius-xl);box-shadow:var(--shadow-card);border:1px solid var(--border-default);padding:var(--spacing-2xl);" class="animate-slide-up">
+                <div id="form-response" style="margin-bottom:var(--spacing-md);"></div>
+
+                <form th:action="@{/api/v1/auth/register}" method="POST"
+                      hx-post="/api/v1/auth/register"
+                      hx-target="#form-response"
+                      hx-swap="innerHTML"
+                      hx-on::after-request="if(event.detail.successful) { var html = event.detail.xhr.responseText; if(html.includes('window.location.href')) { window.location.href='/consentimiento'; } else { document.getElementById('form-response').innerHTML = html; } }">
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+                    <!-- Full Name -->
+                    <div style="margin-bottom:var(--spacing-lg);">
+                        <label for="nombreCompleto" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:0.375rem;">Nombre Completo</label>
+                        <div style="position:relative;">
+                            <div style="position:absolute;inset-y:0;left:0;padding-left:0.875rem;display:flex;align-items:center;pointer-events:none;color:var(--text-muted);">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </div>
+                            <input type="text" id="nombreCompleto" name="nombreCompleto"
+                                   style="width:100%;padding:0.75rem 1rem 0.75rem 2.5rem;border-radius:var(--border-radius-lg);border:1px solid var(--border-default);font-size:var(--font-size-sm);background:var(--bg-body);color:var(--text-primary);outline:none;transition:all 0.2s ease;"
+                                   placeholder="Juan Pérez"
+                                   required
+                                   onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+                                   onblur="this.style.borderColor='';this.style.boxShadow=''">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div style="margin-bottom:var(--spacing-lg);">
+                        <label for="email" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:0.375rem;">Correo Electrónico</label>
+                        <div style="position:relative;">
+                            <div style="position:absolute;inset-y:0;left:0;padding-left:0.875rem;display:flex;align-items:center;pointer-events:none;color:var(--text-muted);">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <input type="email" id="email" name="email"
+                                   style="width:100%;padding:0.75rem 1rem 0.75rem 2.5rem;border-radius:var(--border-radius-lg);border:1px solid var(--border-default);font-size:var(--font-size-sm);background:var(--bg-body);color:var(--text-primary);outline:none;transition:all 0.2s ease;"
+                                   placeholder="tu@correo.cl"
+                                   required
+                                   onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+                                   onblur="this.style.borderColor='';this.style.boxShadow=''">
+                        </div>
+                    </div>
+
+                    <!-- Fecha de Nacimiento -->
+                    <div style="margin-bottom:var(--spacing-lg);">
+                        <label for="fechaNacimiento" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:0.375rem;">Fecha de Nacimiento</label>
+                        <div style="position:relative;">
+                            <div style="position:absolute;inset-y:0;left:0;padding-left:0.875rem;display:flex;align-items:center;pointer-events:none;color:var(--text-muted);">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <input type="date" id="fechaNacimiento" name="fechaNacimiento"
+                                   style="width:100%;padding:0.75rem 1rem 0.75rem 2.5rem;border-radius:var(--border-radius-lg);border:1px solid var(--border-default);font-size:var(--font-size-sm);background:var(--bg-body);color:var(--text-primary);outline:none;transition:all 0.2s ease;"
+                                   placeholder="AAAA-MM-DD"
+                                   onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+                                   onblur="this.style.borderColor='';this.style.boxShadow=''">
+                        </div>
+                        <p style="margin-top:0.375rem;font-size:var(--font-size-xs);color:var(--text-muted);">Opcional. Solo para verificar mayoría de edad.</p>
+                    </div>
+
+                    <!-- Password -->
+                    <div style="margin-bottom:var(--spacing-lg);">
+                        <label for="password" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:0.375rem;">Contraseña</label>
+                        <div style="position:relative;">
+                            <div style="position:absolute;inset-y:0;left:0;padding-left:0.875rem;display:flex;align-items:center;pointer-events:none;color:var(--text-muted);">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                            </div>
+                            <input type="password" id="password" name="password"
+                                   style="width:100%;padding:0.75rem 1rem 0.75rem 2.5rem;border-radius:var(--border-radius-lg);border:1px solid var(--border-default);font-size:var(--font-size-sm);background:var(--bg-body);color:var(--text-primary);outline:none;transition:all 0.2s ease;"
+                                   placeholder="Mínimo 12 caracteres"
+                                   required minlength="12"
+                                   onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+                                   onblur="this.style.borderColor='';this.style.boxShadow=''">
+                        </div>
+                        <p style="margin-top:0.375rem;font-size:var(--font-size-xs);color:var(--text-muted);">Mínimo 12 caracteres: mayúscula, minúscula, número y carácter especial.</p>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div style="margin-bottom:var(--spacing-lg);">
+                        <label for="confirmarPassword" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:0.375rem;">Confirmar Contraseña</label>
+                        <div style="position:relative;">
+                            <div style="position:absolute;inset-y:0;left:0;padding-left:0.875rem;display:flex;align-items:center;pointer-events:none;color:var(--text-muted);">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                            </div>
+                            <input type="password" id="confirmarPassword" name="confirmarPassword"
+                                   style="width:100%;padding:0.75rem 1rem 0.75rem 2.5rem;border-radius:var(--border-radius-lg);border:1px solid var(--border-default);font-size:var(--font-size-sm);background:var(--bg-body);color:var(--text-primary);outline:none;transition:all 0.2s ease;"
+                                   placeholder="Repite la contraseña"
+                                   required
+                                   onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+                                   onblur="this.style.borderColor='';this.style.boxShadow=''">
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.875rem;">
+                        Crear Cuenta
+                    </button>
+                </form>
+
+                <!-- Login link -->
+                <p style="margin-top:var(--spacing-lg);text-align:center;font-size:var(--font-size-sm);color:var(--text-secondary);">
+                    ¿Ya tienes cuenta?
+                    <a th:href="@{/login}" style="font-weight:600;color:var(--color-accento);">Inicia sesión</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

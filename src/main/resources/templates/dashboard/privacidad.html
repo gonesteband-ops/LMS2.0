@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Mis Datos ARCOP')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='privacidad')}"></div>
+
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <div class="animate-fade-in" style="margin-bottom:var(--spacing-xl);">
+                    <h1 style="font-size:var(--font-size-2xl);font-weight:700;color:var(--text-primary);">Mis Datos ARCOP</h1>
+                    <p style="color:var(--text-secondary);margin-top:var(--spacing-xs);">Controla tus datos personales y ejerce tus derechos ARCOP</p>
+                </div>
+
+                <div style="display:grid;gap:var(--spacing-xl);" class="lg-grid-2">
+
+                    <!-- Card: Datos que almacenamos -->
+                    <div class="card animate-slide-up">
+                        <div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-lg);">
+                            <svg width="24" height="24" fill="none" stroke="var(--color-accento)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                            <h2 style="font-size:var(--font-size-lg);font-weight:600;color:var(--text-primary);">Datos que almacenamos</h2>
+                        </div>
+                        <ul style="list-style:none;padding:0;margin:0;display:grid;gap:var(--spacing-sm);">
+                            <li style="display:flex;justify-content:space-between;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">
+                                <span style="color:var(--text-secondary);">Nombre completo</span>
+                                <span style="color:var(--text-primary);font-weight:500;" th:text="${usuario.nombreCompleto}">—</span>
+                            </li>
+                            <li style="display:flex;justify-content:space-between;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">
+                                <span style="color:var(--text-secondary);">Correo electrónico</span>
+                                <span style="color:var(--text-primary);font-weight:500;" th:text="${usuario.email}">—</span>
+                            </li>
+                            <li style="display:flex;justify-content:space-between;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">
+                                <span style="color:var(--text-secondary);">RUT</span>
+                                <span style="color:var(--text-primary);font-weight:500;" th:if="${usuario.rut != null}" th:text="${usuario.rut}">—</span>
+                                <span style="color:var(--text-muted);font-style:italic;" th:unless="${usuario.rut != null}">No proporcionado</span>
+                            </li>
+                            <li style="display:flex;justify-content:space-between;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">
+                                <span style="color:var(--text-secondary);">Fecha de nacimiento</span>
+                                <span style="color:var(--text-primary);font-weight:500;" th:if="${usuario.fechaNacimiento != null}" th:text="${#temporals.format(usuario.fechaNacimiento, 'dd/MM/yyyy')}">—</span>
+                                <span style="color:var(--text-muted);font-style:italic;" th:unless="${usuario.fechaNacimiento != null}">No proporcionada</span>
+                            </li>
+                            <li style="display:flex;justify-content:space-between;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">
+                                <span style="color:var(--text-secondary);">Fecha de registro</span>
+                                <span style="color:var(--text-primary);font-weight:500;" th:if="${usuario.createdAt != null}" th:text="${#temporals.format(usuario.createdAt, 'dd/MM/yyyy HH:mm')}">—</span>
+                            </li>
+                        </ul>
+
+                        <!-- Rectificar datos -->
+                        <div style="margin-top:var(--spacing-lg);padding-top:var(--spacing-lg);border-top:1px solid var(--border-default);">
+                            <p style="font-size:var(--font-size-sm);font-weight:600;color:var(--text-primary);margin-bottom:var(--spacing-sm);">Rectificar datos</p>
+                            <form hx-put="/api/v1/arcop/rectificar" hx-target="#rectificar-msg" hx-swap="innerHTML" hx-on::after-request="location.reload()">
+                                <div style="display:grid;gap:var(--spacing-sm);">
+                                    <input type="text" name="nombre" placeholder="Nuevo nombre" th:value="${usuario.nombreCompleto}" style="padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--border-radius-md);background:var(--bg-body);color:var(--text-primary);font-size:var(--font-size-sm);">
+                                    <input type="email" name="email" placeholder="Nuevo email" th:value="${usuario.email}" style="padding:0.5rem;border:1px solid var(--border-default);border-radius:var(--border-radius-md);background:var(--bg-body);color:var(--text-primary);font-size:var(--font-size-sm);">
+                                    <button type="submit" class="btn btn-primary btn-sm" style="justify-content:center;">Actualizar datos</button>
+                                </div>
+                            </form>
+                            <div id="rectificar-msg" style="margin-top:var(--spacing-sm);"></div>
+                        </div>
+                    </div>
+
+                    <!-- Card: Finalidades del tratamiento -->
+                    <div class="card animate-slide-up" style="animation-delay:0.1s;">
+                        <div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-lg);">
+                            <svg width="24" height="24" fill="none" stroke="var(--color-accento)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                            <h2 style="font-size:var(--font-size-lg);font-weight:600;color:var(--text-primary);">Finalidades del tratamiento</h2>
+                        </div>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-bottom:var(--spacing-md);">Tus datos se utilizan para las siguientes finalidades. Puedes gestionar tus preferencias desde la sección <a href="/consentimiento" style="color:var(--color-accento);font-weight:600;">Consentimiento</a>.</p>
+                        <ul style="list-style:none;padding:0;margin:0;display:grid;gap:var(--spacing-sm);">
+                            <li style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">
+                                <svg width="16" height="16" fill="none" stroke="#16a34a" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                <span><strong>Cuenta:</strong> Crear y gestionar tu cuenta de usuario</span>
+                            </li>
+                            <li style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">
+                                <svg width="16" height="16" fill="none" stroke="var(--text-muted)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span><strong>Marketing:</strong> Comunicaciones comerciales sobre cursos y promociones</span>
+                            </li>
+                            <li style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">
+                                <svg width="16" height="16" fill="none" stroke="var(--text-muted)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span><strong>Análisis:</strong> Mejorar la experiencia de usuario basado en uso</span>
+                            </li>
+                            <li style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);">
+                                <svg width="16" height="16" fill="none" stroke="var(--text-muted)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span><strong>Compartir terceros:</strong> Compartir datos con instituciones educativas asociadas</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Card: Consentimientos otorgados -->
+                    <div class="card animate-slide-up" style="animation-delay:0.2s;">
+                        <div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-lg);">
+                            <svg width="24" height="24" fill="none" stroke="var(--color-accento)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+                            <h2 style="font-size:var(--font-size-lg);font-weight:600;color:var(--text-primary);">Consentimientos otorgados</h2>
+                        </div>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-bottom:var(--spacing-md);">Historial de consentimientos. Puedes revocar o modificar tus consentimientos en cualquier momento.</p>
+                        <div id="consentimientos-list">
+                            <p style="color:var(--text-muted);font-size:var(--font-size-sm);" id="consentimientos-loading">Cargando consentimientos...</p>
+                        </div>
+                        <a href="/consentimiento" class="btn btn-secondary" style="width:100%;margin-top:var(--spacing-md);">Editar consentimientos</a>
+                    </div>
+
+                    <!-- Card: Descargar mis datos -->
+                    <div class="card animate-slide-up" style="animation-delay:0.3s;">
+                        <div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-lg);">
+                            <svg width="24" height="24" fill="none" stroke="var(--color-accento)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                            <h2 style="font-size:var(--font-size-lg);font-weight:600;color:var(--text-primary);">Portabilidad de datos</h2>
+                        </div>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-bottom:var(--spacing-md);">Descarga todos tus datos personales en formato portable para transferirlos a otra plataforma.</p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-sm);">
+                            <a href="/api/v1/arcop/portabilidad" class="btn btn-primary" style="justify-content:center;text-decoration:none;">
+                                Descargar JSON
+                            </a>
+                            <button class="btn btn-secondary" style="justify-content:center;" disabled title="Próximamente">
+                                Descargar CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card: Bloquear cuenta -->
+                    <div class="card animate-slide-up" style="animation-delay:0.4s;">
+                        <div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-lg);">
+                            <svg width="24" height="24" fill="none" stroke="var(--color-accento)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                            <h2 style="font-size:var(--font-size-lg);font-weight:600;color:var(--text-primary);">Bloquear cuenta</h2>
+                        </div>
+                        <p style="color:var(--text-secondary);font-size:var(--font-size-sm);margin-bottom:var(--spacing-md);">Bloquea tu cuenta temporalmente por 90 días. Puedes reactivarla iniciando sesión.</p>
+                        <button class="btn btn-secondary" style="justify-content:center;width:100%;" hx-post="/api/v1/arcop/bloquear" hx-target="#bloqueo-msg" hx-swap="innerHTML">
+                            Bloquear cuenta
+                        </button>
+                        <div id="bloqueo-msg" style="margin-top:var(--spacing-sm);"></div>
+                    </div>
+
+                    <!-- Card: Eliminar cuenta -->
+                    <div class="card animate-slide-up" style="animation-delay:0.5s;grid-column:1/-1;">
+                        <div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-lg);">
+                            <svg width="24" height="24" fill="none" stroke="#dc2626" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+                            <h2 style="font-size:var(--font-size-lg);font-weight:600;color:var(--text-primary);">Eliminar mi cuenta</h2>
+                        </div>
+                        <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:var(--border-radius-lg);padding:var(--spacing-md);margin-bottom:var(--spacing-md);">
+                            <p style="color:#991b1b;font-size:var(--font-size-sm);">
+                                <strong>Atención:</strong> Al solicitar la eliminación de tu cuenta:
+                            </p>
+                            <ul style="color:#991b1b;font-size:var(--font-size-sm);margin:var(--spacing-sm) 0 0 var(--spacing-lg);">
+                                <li>Perderás el progreso de cursos en los que estés inscrito</li>
+                                <li>Los certificados emitidos quedarán anonimizados (no se eliminan por obligación legal)</li>
+                                <li>Hay un período de gracia de 30 días para cancelar la solicitud</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-danger" style="justify-content:center;width:100%;" hx-delete="/api/v1/arcop/suprimir" hx-confirm="Confirma la eliminacion de tu cuenta? Se anonimizaran tus datos personales. Tienes 30 dias para cancelar." hx-target="#eliminar-msg" hx-swap="innerHTML">
+                            Solicitar eliminacion de cuenta
+                        </button>
+                        <div id="eliminar-msg"></div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+<script>
+fetch("/api/v1/consentimiento/mis-preferencias",{credentials:"include"}).then(function(r){if(!r.ok)throw Error(r.status);return r.json()}).then(function(d){
+var items=[{k:"CUENTA",l:"Crear y gestionar tu cuenta de usuario"},{k:"MARKETING",l:"Comunicaciones comerciales sobre cursos y promociones"},{k:"ANALISIS",l:"Mejorar la experiencia de usuario basado en uso"},{k:"COMPARTIR_TERCEROS",l:"Compartir datos con instituciones educativas asociadas"}];
+var fh="";var ch="<ul style=\"list-style:none;padding:0;margin:0;display:grid;gap:var(--spacing-sm);\">";
+items.forEach(function(i){
+var a=d[i.k];
+var ic=a?"<svg width=\"16\" height=\"16\" fill=\"none\" stroke=\"#16a34a\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"/></svg>":"<svg width=\"16\" height=\"16\" fill=\"none\" stroke=\"#dc2626\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"/></svg>";
+fh+="<li style=\"display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);\">"+ic+"<span><strong>"+i.k+":</strong> "+i.l+"</span></li>";
+var es=a?"Activo":"Revocado";var co=a?"#16a34a":"#dc2626";
+ch+="<li style=\"display:flex;justify-content:space-between;padding:var(--spacing-sm) var(--spacing-md);background:var(--bg-body);border-radius:var(--border-radius-lg);\"><span style=\"color:var(--text-secondary);\">"+i.k+"</span><span style=\"color:"+co+";font-weight:500;\">"+es+"</span></li>";
+});
+ch+="</ul>";
+var el1=document.getElementById("finalidades-list");if(el1)el1.innerHTML=fh;
+var el2=document.getElementById("consentimientos-list");if(el2)el2.innerHTML=ch;
+}).catch(function(e){
+var msg=e.message||"Error desconocido";
+var btn="<button onclick=\"location.reload()\" style=\"background:none;border:1px solid #991b1b;border-radius:4px;padding:2px 8px;cursor:pointer;margin-left:8px;font-size:0.875rem;\">Reintentar</button>";
+var el1=document.getElementById("consentimientos-list");if(el1)el1.innerHTML="<div style=\"padding:var(--spacing-md);background:#fef2f2;border:1px solid #fecaca;border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);color:#991b1b;\">Error al cargar consentimientos ("+msg+"). "+btn+"</div>";
+var el2=document.getElementById("finalidades-list");if(el2)el2.innerHTML="<p style=\"color:var(--text-muted);font-size:var(--font-size-sm);\">Error al cargar.</p>";
+});
+</script>
+</body>
+</html>

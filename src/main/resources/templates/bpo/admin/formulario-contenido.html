@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Nuevo Contenido BPO')}"></head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='admin-bpo-contenidos')}"></div>
+        <main class="dashboard-content">
+            <div class="bpo-form-container">
+                <h1>Nuevo Contenido</h1>
+                <form th:action="@{/bpo/admin/contenidos}" th:object="${contenido}" method="post" class="bpo-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <div class="bpo-form-group">
+                        <label for="tipo">Tipo de contenido</label>
+                        <select id="tipo" th:field="*{tipo}" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="procedimiento">Procedimiento</option>
+                            <option value="noticia">Noticia</option>
+                            <option value="oferta">Oferta</option>
+                        </select>
+                    </div>
+                    <div class="bpo-form-group">
+                        <label for="cuentaId">Cuenta</label>
+                        <select id="cuentaId" name="cuentaId" required>
+                            <option th:each="c : ${cuentas}" th:value="${c.id}" th:text="${c.nombre}">Cuenta</option>
+                        </select>
+                    </div>
+                    <div class="bpo-form-group">
+                        <label for="titulo">Título</label>
+                        <input type="text" id="titulo" th:field="*{titulo}" required>
+                    </div>
+                    <div class="bpo-form-group">
+                        <label for="descripcionCorta">Descripción corta</label>
+                        <textarea id="descripcionCorta" th:field="*{descripcionCorta}" rows="3"></textarea>
+                    </div>
+                    <div class="bpo-form-group">
+                        <label for="contenidoHtml">Contenido</label>
+                        <textarea id="contenidoHtml" th:field="*{contenidoHtml}" rows="10" required></textarea>
+                    </div>
+                    <div class="bpo-form-actions">
+                        <button type="submit" class="bpo-btn bpo-btn-primary">Guardar como borrador</button>
+                        <a th:href="@{/bpo/admin/contenidos}" class="bpo-btn bpo-btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

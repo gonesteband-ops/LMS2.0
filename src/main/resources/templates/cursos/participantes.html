@@ -1,0 +1,488 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      data-theme="light">
+<head th:replace="~{fragments/head :: head(titulo='Inscribir Participantes')}">
+</head>
+<body style="background:var(--bg-body);color:var(--text-primary);-webkit-font-smoothing:antialiased;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="dashboard-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar(seccion='cursos')}"></div>
+
+        <main class="dashboard-content">
+            <div style="max-width:var(--container-max);margin:0 auto;">
+                <div class="dashboard-page-header animate-fade-in">
+                    <div>
+                        <h1 class="dashboard-page-title" id="page-title">Inscribir Participantes</h1>
+                        <p style="margin-top:var(--spacing-xs);font-size:var(--font-size-sm);color:var(--text-secondary);" id="page-subtitle">Gestione los participantes inscritos en el curso.</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:var(--spacing-sm);flex-wrap:wrap;">
+                        <a href="/cursos" class="btn btn-primary btn-sm">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg>
+                            Volver a cursos
+                        </a>
+                    </div>
+                </div>
+
+                <div style="display:grid;gap:var(--spacing-xl);" class="lg-grid-2" sec:authorize="hasAnyRole('SUPERADMIN', 'INSTRUCTOR')">
+                    <!-- Inscripción Individual -->
+                    <div class="card animate-slide-up">
+                        <div style="padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                            <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                                <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/></svg>
+                                Inscripción Individual
+                            </h2>
+                        </div>
+                        <div style="padding:var(--spacing-xl);">
+                            <div id="inscripcion-individual-response"></div>
+                            <form id="inscripcion-individual-form" style="display:flex;flex-direction:column;gap:var(--spacing-lg);">
+                                <input type="hidden" id="curso-id-individual" name="cursoId" value="">
+                                <div>
+                                    <label for="usuarioId" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">ID del Usuario o Email</label>
+                                    <div style="position:relative;">
+                                        <div style="position:absolute;inset-y:0;left:0;padding-left:0.875rem;display:flex;align-items:center;pointer-events:none;color:var(--text-muted);">
+                                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.98l7.5-4.04a2.25 2.25 0 012.134 0l7.5 4.04a2.25 2.25 0 011.183 1.98V19.5z"/></svg>
+    </div>
+
+    <!-- Modal Forzar Completado -->
+    <div id="modal-forzar-completado" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+        <div style="background:var(--bg-body);border-radius:var(--border-radius-xl);box-shadow:var(--shadow-lg);width:90%;max-width:500px;padding:var(--spacing-xl);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--spacing-lg);">
+                <h3 style="font-size:var(--font-size-lg);font-weight:700;color:var(--text-primary);">Forzar Completado</h3>
+                <button type="button" id="btn-close-modal" class="btn btn-ghost" style="padding:0;width:2rem;height:2rem;">×</button>
+            </div>
+            
+            <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:var(--border-radius-lg);padding:var(--spacing-md);margin-bottom:var(--spacing-lg);">
+                <p style="font-size:var(--font-size-sm);color:rgba(180,83,9,1);font-weight:600;margin:0;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg> Solo usar por falla técnica SCORM</p>
+                <p style="font-size:var(--font-size-xs);color:var(--text-secondary);margin:var(--spacing-xs) 0 0;">Este botón debe usarse únicamente cuando el estudiante no puede completar el curso debido a una falla técnica del sistema SCORM.</p>
+            </div>
+
+            <input type="hidden" id="inscripcion-id-forzar" value="">
+            
+            <div style="margin-bottom:var(--spacing-lg);">
+                <label for="motivo-forzado" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">Motivo (obligatorio)</label>
+                <select id="motivo-forzado" class="form-input" style="width:100%;">
+                    <option value="">Seleccionar motivo...</option>
+                    <option value="Falla técnica SCORM">Falla técnica SCORM</option>
+                    <option value="Error de procesamiento LMS">Error de procesamiento LMS</option>
+                    <option value="Migración de datos">Migración de datos</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom:var(--spacing-lg);">
+                <label for="comentario-forzado" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">Comentario adicional (opcional)</label>
+                <textarea id="comentario-forzado" class="form-input" rows="3" style="width:100%;resize:vertical;"></textarea>
+            </div>
+            
+            <div style="display:flex;align-items:center;justify-content:flex-end;gap:var(--spacing-sm);">
+                <button type="button" id="btn-cancelar-forzar" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="btn-confirmar-forzar" class="btn btn-danger">Confirmar Forzar Completado</button>
+            </div>
+        </div>
+    </div>
+                                        <input type="text" id="usuarioId" name="usuarioId"
+                                               style="width:100%;padding:var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 2.5rem;border:1px solid var(--border-default);border-radius:var(--border-radius-lg);background:var(--bg-surface);font-size:var(--font-size-sm);color:var(--text-primary);transition:all 0.2s;outline:none;"
+                                               onfocus="this.style.borderColor='var(--color-accento)';this.style.boxShadow='0 0 0 3px rgba(245,158,11,0.15)'"
+                                               onblur="this.style.borderColor='var(--border-default)';this.style.boxShadow='none'"
+                                               placeholder="UUID o email del usuario">
+                                    </div>
+                                    <span style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--spacing-xs);display:block;">Ingrese el UUID o email del usuario a inscribir.</span>
+                                </div>
+                                <button type="submit" class="btn btn-accent" style="display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-sm);">
+                                    <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                                    Inscribir Usuario
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Inscripción Masiva (CSV) - Solo ADMIN/SUPERADMIN -->
+                    <div class="card animate-slide-up" sec:authorize="hasAnyRole('SUPERADMIN')">
+                        <div style="padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                            <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                                <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg>
+                                Inscripción Masiva (CSV)
+                            </h2>
+                        </div>
+                        <div style="padding:var(--spacing-xl);">
+                            <div id="inscripcion-masiva-response"></div>
+                            <form id="inscripcion-masiva-form" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:var(--spacing-lg);">
+                                <input type="hidden" id="curso-id-masivo" name="cursoId" value="">
+                                <div>
+                                    <label for="archivo-csv" style="display:block;font-size:var(--font-size-sm);font-weight:500;color:var(--text-primary);margin-bottom:var(--spacing-xs);">Archivo CSV con usuarios</label>
+                                    <div style="border:2px dashed var(--border-default);border-radius:var(--border-radius-xl);padding:var(--spacing-xl);text-align:center;transition:all 0.2s;cursor:pointer;"
+                                         ondragover="event.preventDefault();this.style.borderColor='var(--color-accento)';this.style.background='rgba(245,158,11,0.04)';"
+                                         ondragleave="this.style.borderColor='var(--border-default)';this.style.background='transparent';"
+                                         ondrop="event.preventDefault();document.getElementById('archivo-csv').files=event.dataTransfer.files;document.getElementById('csv-file-name').innerHTML='<span style=\\'font-weight:700;font-size:1.1rem;\\'>'+event.dataTransfer.files[0].name+'</span>';this.style.borderColor='var(--border-default)';this.style.background='transparent';"
+                                         onclick="document.getElementById('archivo-csv').click();">
+                                        <input type="file" id="archivo-csv" name="archivo" accept=".csv,.xlsx,.xls" style="display:none;"
+                                               onchange="document.getElementById('csv-file-name').innerHTML=this.files.length ? '<span style=\\'font-weight:700;font-size:1.1rem;\\'>'+this.files[0].name+'</span>' : 'Ningún archivo seleccionado';">
+                                        <svg style="width:2rem;height:2rem;margin:0 auto var(--spacing-sm);color:var(--color-accento);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                        <p id="csv-file-name" style="font-size:var(--font-size-sm);color:var(--text-secondary);font-weight:500;margin:0;">Arrastra o selecciona archivo CSV</p>
+                                    </div>
+                                    <span style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:var(--spacing-xs);display:block;">Formato: CSV con columnas "email" o "usuarioId". Máx 100 registros.</span>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-sm);">
+                                    <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg>
+                                    Inscribir Masivamente
+                                </button>
+                                <a href="/api/v1/plantilla-inscripcion" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);margin-left:var(--spacing-sm);">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                    Descargar plantilla CSV
+                                </a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Inscritos -->
+                <div class="card animate-fade-in" style="margin-top:var(--spacing-xl);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md) var(--spacing-xl);border-bottom:1px solid var(--border-default);">
+                        <h2 style="font-size:var(--font-size-sm);font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:var(--spacing-sm);">
+                            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                            Participantes Inscritos
+                        </h2>
+                        <span style="font-size:var(--font-size-xs);color:var(--text-muted);" id="inscritos-count">Cargando...</span>
+                    </div>
+                    <div style="padding:var(--spacing-xl);" id="inscritos-list">
+                        <div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">
+                            <div class="spinner" style="margin:0 auto var(--spacing-sm);"></div>
+                            <p style="font-size:var(--font-size-sm);">Cargando inscritos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <span id="user-roles-data" style="display:none;" th:data-roles="${#authentication.principal.authorities}"></span>
+
+<script>
+        (function() {
+            // Obtener cursoId de la URL
+            var params = new URLSearchParams(window.location.search);
+            var cursoId = params.get('cursoId');
+
+            // Variable global con roles del usuario actual
+            window.userRoles = [];
+            window.userPermisos = [];
+            // Obtener roles del usuario actual via Thymeleaf
+            var spanRoles = document.getElementById('user-roles-data');
+            if (spanRoles && spanRoles.dataset.roles) {
+                try {
+                    // Convertir string de roles+permisos a arrays
+                    var all = spanRoles.dataset.roles.split(', ');
+                    window.userRoles = [];
+                    window.userPermisos = [];
+                    all.forEach(function(a) {
+                        if (a.startsWith('ROLE_')) {
+                            window.userRoles.push(a.replace('ROLE_', '').trim());
+                        } else if (a.match(/^[A-Z_]+_[A-Z_]+$/)) {
+                            window.userPermisos.push(a.trim());
+                        }
+                    });
+                } catch(e) {
+                    console.error('Error parsing roles/permisos:', e);
+                }
+            }
+
+             if (!cursoId) {
+                 document.getElementById('page-title').textContent = 'Error: Curso no especificado';
+                 document.getElementById('page-subtitle').textContent = 'Seleccione un curso desde el listado de cursos.';
+                 return;
+             }
+
+             document.getElementById('curso-id-individual').value = cursoId;
+             document.getElementById('curso-id-masivo').value = cursoId;
+
+             // Cargar nombre del curso y verificar si requiere firma
+             var xhrCurso = new XMLHttpRequest();
+             xhrCurso.open('GET', '/api/v1/cursos/' + cursoId, true);
+             xhrCurso.onload = function() {
+                 if (xhrCurso.status === 200) {
+                     var curso = JSON.parse(xhrCurso.responseText);
+                     document.getElementById('page-title').textContent = 'Inscribir Participantes';
+                     var subtitle = 'Curso: ' + (curso.titulo || 'Sin título');
+                     // Agregar badge si requiere firma
+                     if (curso.requiereFirmaCumplimiento) {
+                         subtitle += ' <span class="badge badge-warning" style="margin-left:var(--spacing-sm);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1"/></svg> Firma de Cumplimiento requerida</span>';
+                     }
+                     document.getElementById('page-subtitle').innerHTML = subtitle;
+                 }
+             };
+             xhrCurso.send();
+
+            // Cargar lista de inscritos
+            function cargarInscritos() {
+                var list = document.getElementById('inscritos-list');
+                var count = document.getElementById('inscritos-count');
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/v1/cursos/' + cursoId + '/participantes', true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var inscripciones = JSON.parse(xhr.responseText);
+                        count.textContent = inscripciones.length + ' inscrito(s)';
+                        if (inscripciones.length > 0) {
+                            var html = '<div style="overflow-x:auto;"><table class="table-base" style="width:100%;"><thead><tr style="border-bottom:2px solid var(--border-default);">' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Usuario</th>' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Estado</th>' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Fecha Inscripción</th>' +
+                                '<th style="text-align:left;padding:var(--spacing-sm) var(--spacing-md);font-weight:600;color:var(--text-primary);font-size:var(--font-size-sm);">Nota</th></tr></thead><tbody>';
+                            inscripciones.forEach(function(ins) {
+                                 var estadoBadge = ins.completado
+                                     ? '<span class="badge badge-success"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Completado</span>'
+                                     : '<span class="badge badge-info"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg> Inscrito</span>';
+                                 // Agregar badge adicional si fue forzado por supervisor
+                                 if (ins.forzadoPorSupervisor) {
+                                     estadoBadge += ' <span class="badge badge-warning" title="Aprobado por Supervisor (Falla de SCORM)"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg> Forzado</span>';
+                                 }
+                                 // Construir celda extra para botón Forzar (o celda vacía)
+                                 var celdaAccion = '';
+                                 if (!ins.completado && (window.userRoles.includes('ADMIN') || window.userRoles.includes('SUPERADMIN') || window.userPermisos.includes('INSCRIPCION_CREAR'))) {
+                                     celdaAccion = '<td style="padding:var(--spacing-sm) var(--spacing-md);white-space:nowrap;display:flex;gap:var(--spacing-xs);">' +
+                                         '<button type="button" class="btn btn-warning btn-sm btn-forzar-completado" data-id="' + escapeHtml(ins.id) + '" style="display:inline-flex;align-items:center;gap:var(--spacing-xs);">' +
+                                             '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+                                             ' Forzar' +
+                                         '</button>' +
+                                         '<button type="button" class="btn btn-info btn-sm btn-reiniciar-evaluacion" data-inscripcion="' + escapeHtml(ins.id) + '" data-curso="' + escapeHtml(cursoId) + '" style="display:inline-flex;align-items:center;gap:var(--spacing-xs);background:var(--color-accento);color:white;border:none;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.75rem;cursor:pointer;">' +
+                                             '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/></svg>' +
+                                             ' Reiniciar Eval' +
+                                         '</button>' +
+                                     '</td>';
+                                 } else {
+                                     celdaAccion = '<td></td>';
+                                 }
+                                 // Construir fila completa en una sola variable
+                                 var fila = '<tr style="border-bottom:1px solid var(--border-default);">' +
+                                     '<td style="padding:var(--spacing-sm) var(--spacing-md);font-weight:500;color:var(--text-primary);font-size:var(--font-size-sm);">' + escapeHtml(ins.usuarioNombre || ins.usuarioId) + '</td>' +
+                                     '<td style="padding:var(--spacing-sm) var(--spacing-md);">' + estadoBadge + '</td>' +
+                                     '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-xs);">' + (ins.fechaInscripcion ? new Date(ins.fechaInscripcion).toLocaleDateString('es-CL') : '—') + '</td>' +
+                                     '<td style="padding:var(--spacing-sm) var(--spacing-md);color:var(--text-secondary);font-size:var(--font-size-sm);font-weight:600;">' + (ins.nota != null ? ins.nota : '—') + '</td>' +
+                                     celdaAccion +
+                                     '</tr>';
+                                 html += fila;
+                            });
+                            html += '</tbody></table></div>';
+                            list.innerHTML = html;
+                        } else {
+                            list.innerHTML = '<div style="text-align:center;padding:var(--spacing-xl) 0;color:var(--text-muted);">' +
+                                '<svg style="width:3rem;height:3rem;margin:0 auto var(--spacing-md);opacity:0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07"/></svg>' +
+                                '<p style="font-size:var(--font-size-sm);">No hay participantes inscritos en este curso.</p></div>';
+                        }
+                    }
+                };
+                xhr.send();
+            }
+
+             cargarInscritos();
+
+             // Eventos para modal forzar completado
+             document.addEventListener('click', function(e) {
+                 if (e.target.classList.contains('btn-forzar-completado')) {
+                     var inscripcionId = e.target.getAttribute('data-id');
+                     document.getElementById('inscripcion-id-forzar').value = inscripcionId;
+                     document.getElementById('modal-forzar-completado').style.display = 'flex';
+                 }
+             });
+
+             // Cerrar modal
+             document.getElementById('btn-close-modal').addEventListener('click', function() {
+                 document.getElementById('modal-forzar-completado').style.display = 'none';
+             });
+
+             document.getElementById('btn-cancelar-forzar').addEventListener('click', function() {
+                 document.getElementById('modal-forzar-completado').style.display = 'none';
+             });
+
+             // Evento para reiniciar evaluacion (modal simple)
+             document.addEventListener('click', function(e) {
+                 if (e.target.classList.contains('btn-reiniciar-evaluacion') || e.target.closest('.btn-reiniciar-evaluacion')) {
+                     var btn = e.target.classList.contains('btn-reiniciar-evaluacion') ? e.target : e.target.closest('.btn-reiniciar-evaluacion');
+                     var inscripcionId = btn.getAttribute('data-inscripcion');
+                     var cursoId = btn.getAttribute('data-curso');
+                     var evaluacionId = prompt('Ingresa el ID de la evaluacion a reiniciar (se encuentra en la URL al editar la evaluacion):');
+                     if (!evaluacionId) return;
+                     var motivo = prompt('Motivo del reinicio:');
+                     if (!motivo) return;
+                     fetch('/api/v1/cursos/' + cursoId + '/evaluaciones/' + evaluacionId + '/reiniciar', {
+                         method: 'POST',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({
+                             usuarioId: btn.getAttribute('data-usuario-id') || '',
+                             motivo: motivo
+                         })
+                     })
+                     .then(function(r) {
+                         if (r.ok) {
+                             alert('Intento reiniciado correctamente');
+                             cargarInscritos();
+                         } else {
+                             return r.json().then(function(d) { alert('Error: ' + (d.mensaje || d.error || 'Error desconocido')); });
+                         }
+                     })
+                     .catch(function(err) { alert('Error de conexion: ' + err.message); });
+                 }
+             });
+
+             // Confirmar forzado
+             document.getElementById('btn-confirmar-forzar').addEventListener('click', function() {
+                 var inscripcionId = document.getElementById('inscripcion-id-forzar').value;
+                 var motivo = document.getElementById('motivo-forzado').value;
+                 var comentario = document.getElementById('comentario-forzado').value;
+
+                 if (!motivo) {
+                     alert('Debe seleccionar un motivo');
+                     return;
+                 }
+
+                 var btn = this;
+                 btn.disabled = true;
+                 btn.innerHTML = '<div class="spinner" style="width:1rem;height:1rem;margin:0;"></div> Forzando...';
+
+                 fetch('/api/v1/inscripciones/' + inscripcionId + '/forzar-completado', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({
+                         motivo: motivo,
+                         comentario: comentario
+                     })
+                 })
+                 .then(function(res) {
+                     btn.disabled = false;
+                     btn.innerHTML = 'Confirmar Forzar Completado';
+                     
+                     if (res.ok) {
+                         document.getElementById('modal-forzar-completado').style.display = 'none';
+                         alert('Inscripción forzada como completada exitosamente');
+                         cargarInscritos();
+                     } else {
+                         return res.json().then(function(data) {
+                             alert('Error: ' + (data.message || 'No se pudo forzar la completación'));
+                         });
+                     }
+                 })
+                 .catch(function(err) {
+                     btn.disabled = false;
+                     btn.innerHTML = 'Confirmar Forzar Completado';
+                     alert('Error de conexión: ' + err.message);
+                 });
+             });
+
+             // Inscripción Individual
+            document.getElementById('inscripcion-individual-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var btn = this.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner" style="width:1rem;height:1rem;margin:0;"></div> Inscribiendo...';
+                var responseDiv = document.getElementById('inscripcion-individual-response');
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/v1/cursos/' + cursoId + '/inscribir', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg> Inscribir Usuario';
+                    if (xhr.status === 200 || xhr.status === 201) {
+                        responseDiv.innerHTML = '<div style="padding:var(--spacing-sm) var(--spacing-md);background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);color:var(--color-success);font-weight:500;"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Usuario inscrito exitosamente</div>';
+                        document.getElementById('usuarioId').value = '';
+                        cargarInscritos();
+                    } else {
+                        var msg = 'Error al inscribir usuario';
+                        try { var d = JSON.parse(xhr.responseText); if (d.message) msg = d.message; } catch(e) {}
+                        responseDiv.innerHTML = '<div style="padding:var(--spacing-sm) var(--spacing-md);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);color:var(--color-danger);font-weight:500;"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> ' + escapeHtml(msg) + '</div>';
+                    }
+                };
+                xhr.onerror = function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg> Inscribir Usuario';
+                    responseDiv.innerHTML = '<div style="padding:var(--spacing-sm) var(--spacing-md);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);color:var(--color-danger);font-weight:500;"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> Error de conexión</div>';
+                };
+                xhr.send(JSON.stringify({ usuarioId: document.getElementById('usuarioId').value.trim() }));
+            });
+
+            // Inscripción Masiva
+            document.getElementById('inscripcion-masiva-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var btn = this.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner" style="width:1rem;height:1rem;margin:0;"></div> Inscribiendo...';
+                var responseDiv = document.getElementById('inscripcion-masiva-response');
+                var formData = new FormData();
+                var fileInput = document.getElementById('archivo-csv');
+                if (!fileInput.files.length) {
+                    responseDiv.innerHTML = '<div style="padding:var(--spacing-sm) var(--spacing-md);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);color:var(--color-danger);font-weight:500;"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> Seleccione un archivo CSV</div>';
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg> Inscribir Masivamente';
+                    return;
+                }
+                formData.append('archivo', fileInput.files[0]);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/v1/cursos/' + cursoId + '/inscribir-masivo', true);
+                xhr.onload = function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg> Inscribir Masivamente';
+                    if (xhr.status === 200 || xhr.status === 201) {
+                        var data = JSON.parse(xhr.responseText);
+                        // Construir reporte detallado
+                        var reportHtml = '<div style="padding:var(--spacing-md);background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);">';
+                        reportHtml += '<div style="font-weight:600;color:var(--color-success);margin-bottom:var(--spacing-sm);"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg> Reporte de carga masiva</div>';
+                        reportHtml += '<div style="display:flex;flex-wrap:wrap;gap:var(--spacing-sm);margin-bottom:var(--spacing-sm);">';
+                        reportHtml += '<span style="background:rgba(16,185,129,0.1);padding:2px 8px;border-radius:12px;font-weight:500;"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> ' + (data.exitosos || 0) + ' inscritos</span>';
+                        if (data.noEncontrados > 0) {
+                            reportHtml += '<span style="background:rgba(239,68,68,0.1);padding:2px 8px;border-radius:12px;font-weight:500;"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> ' + data.noEncontrados + ' no encontrados</span>';
+                        }
+                        if (data.yaInscritos > 0) {
+                            reportHtml += '<span style="background:rgba(245,158,11,0.1);padding:2px 8px;border-radius:12px;font-weight:500;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg> ' + data.yaInscritos + ' ya inscritos</span>';
+                        }
+                        if (data.errores > 0) {
+                            reportHtml += '<span style="background:rgba(239,68,68,0.15);padding:2px 8px;border-radius:12px;font-weight:500;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.5A11.25 11.25 0 0012 21a11.25 11.25 0 000-22.5zM12 15.75h.008v.008H12v-.008z"/></svg> ' + data.errores + ' errores</span>';
+                        }
+                        reportHtml += '</div>';
+                        reportHtml += '<div style="color:var(--text-muted);font-size:var(--font-size-xs);">Total procesados: ' + (data.totalProcesados || 0) + ' líneas</div>';
+                        // Detalle de no encontrados
+                        if (data.detalleNoEncontrados && data.detalleNoEncontrados.length > 0) {
+                            reportHtml += '<div style="margin-top:var(--spacing-sm);padding:var(--spacing-sm);background:rgba(239,68,68,0.05);border-radius:var(--border-radius-md);">';
+                            reportHtml += '<div style="font-weight:500;color:var(--color-danger);font-size:var(--font-size-xs);margin-bottom:4px;">Usuarios no encontrados:</div>';
+                            reportHtml += '<ul style="margin:0;padding-left:var(--spacing-lg);font-size:var(--font-size-xs);color:var(--text-secondary);">';
+                            data.detalleNoEncontrados.forEach(function(item) {
+                                reportHtml += '<li>' + escapeHtml(item) + '</li>';
+                            });
+                            reportHtml += '</ul></div>';
+                        }
+                        // Detalle de ya inscritos
+                        if (data.detalleYaInscritos && data.detalleYaInscritos.length > 0) {
+                            reportHtml += '<div style="margin-top:var(--spacing-sm);padding:var(--spacing-sm);background:rgba(245,158,11,0.05);border-radius:var(--border-radius-md);">';
+                            reportHtml += '<div style="font-weight:500;color:rgba(180,83,9,1);font-size:var(--font-size-xs);margin-bottom:4px;">Participantes ya inscritos:</div>';
+                            reportHtml += '<ul style="margin:0;padding-left:var(--spacing-lg);font-size:var(--font-size-xs);color:var(--text-secondary);">';
+                            data.detalleYaInscritos.forEach(function(item) {
+                                reportHtml += '<li>' + escapeHtml(item) + '</li>';
+                            });
+                            reportHtml += '</ul></div>';
+                        }
+                        reportHtml += '</div>';
+                        responseDiv.innerHTML = reportHtml;
+                        fileInput.value = '';
+                        document.getElementById('csv-file-name').textContent = 'Ningún archivo seleccionado';
+                        cargarInscritos();
+                    } else {
+                        var msg = 'Error en inscripción masiva';
+                        try { var d = JSON.parse(xhr.responseText); if (d.message) msg = d.message; } catch(e) {}
+                        responseDiv.innerHTML = '<div style="padding:var(--spacing-sm) var(--spacing-md);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);color:var(--color-danger);font-weight:500;"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> ' + escapeHtml(msg) + '</div>';
+                    }
+                };
+                xhr.onerror = function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"/></svg> Inscribir Masivamente';
+                    responseDiv.innerHTML = '<div style="padding:var(--spacing-sm) var(--spacing-md);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--border-radius-lg);font-size:var(--font-size-sm);color:var(--color-danger);font-weight:500;"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> Error de conexión</div>';
+                };
+                xhr.send(formData);
+            });
+
+            function escapeHtml(t) { if (!t) return ''; var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+        })();
+    </script>
+</body>
+</html>
